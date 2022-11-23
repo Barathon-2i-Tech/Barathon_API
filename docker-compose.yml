@@ -1,0 +1,112 @@
+# For more information: https://laravel.com/docs/sail
+version: '3'
+services:
+#Laravel Service
+    laravel.test:
+        build:
+            context: ./vendor/laravel/sail/runtimes/8.1
+            dockerfile: Dockerfile
+            args:
+                WWWGROUP: '${WWWGROUP}'
+        image: sail-8.1/app
+        container_name: barathon-laravel
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        ports:
+            - '${APP_PORT:-80}:80'
+            - '${VITE_PORT:-5173}:${VITE_PORT:-5173}'
+        environment:
+            WWWUSER: '${WWWUSER}'
+            LARAVEL_SAIL: 1
+            XDEBUG_MODE: '${SAIL_XDEBUG_MODE:-off}'
+            XDEBUG_CONFIG: '${SAIL_XDEBUG_CONFIG:-client_host=host.docker.internal}'
+        volumes:
+            - '.:/var/www/html'
+        networks:
+            - barathon
+        depends_on:
+            - pgsql
+            - meilisearch
+            - mailhog
+            - selenium
+
+#Postgres Service (Database)
+    pgsql:
+        image: 'postgres:14'
+        container_name: barathon-pgsql
+        ports:
+            - '${FORWARD_DB_PORT:-5432}:5432'
+        environment:
+            PGPASSWORD: '${DB_PASSWORD:-secret}'
+            POSTGRES_DB: '${DB_DATABASE}'
+            POSTGRES_USER: '${DB_USERNAME}'
+            POSTGRES_PASSWORD: '${DB_PASSWORD:-secret}'
+        volumes:
+            - 'barathon-pgsql:/var/lib/postgresql/data'
+            - './vendor/laravel/sail/database/pgsql/create-testing-database.sql:/docker-entrypoint-initdb.d/10-create-testing-database.sql'
+        networks:
+            - barathon
+        healthcheck:
+            test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}"]
+            retries: 3
+            timeout: 5s
+
+#CloudBeaver Service (DataBase Management System )
+    CloudBeaver:
+        image: dbeaver/cloudbeaver:latest
+        container_name: barathon-cloudbeaver
+        restart: unless-stopped
+        links:
+            - pgsql
+        ports:
+            - '${FORWARD_DB_PORT:-8080}:8978'
+        volumes:
+            - cloudbeaver:/opt/cloudbeaver/workspace
+        networks:
+            - barathon
+
+#MeiliSearch Service ( search engine)
+    meilisearch:
+        image: 'getmeili/meilisearch:latest'
+        container_name: barathon-meilisearch
+        ports:
+            - '${FORWARD_MEILISEARCH_PORT:-7700}:7700'
+        volumes:
+            - 'barathon-meilisearch:/meili_data'
+        networks:
+            - barathon
+        healthcheck:
+            test: ["CMD", "wget", "--no-verbose", "--spider",  "http://localhost:7700/health"]
+            retries: 3
+            timeout: 5s
+
+#Mailhog Service (for email testing)
+    mailhog:
+        image: 'mailhog/mailhog:latest'
+        container_name: barathon-mailhog
+        ports:
+            - '${FORWARD_MAILHOG_PORT:-1025}:1025'
+            - '${FORWARD_MAILHOG_DASHBOARD_PORT:-8025}:8025'
+        networks:
+            - barathon
+
+#Selenium Service (for testing)
+    selenium:
+        image: 'selenium/standalone-chrome'
+        container_name: barathon-selenium
+        extra_hosts:
+            - 'host.docker.internal:host-gateway'
+        volumes:
+            - '/dev/shm:/dev/shm'
+        networks:
+            - barathon
+networks:
+    barathon:
+        driver: bridge
+volumes:
+    barathon-pgsql:
+        driver: local
+    cloudbeaver:
+        driver: local
+    barathon-meilisearch:
+        driver: local
