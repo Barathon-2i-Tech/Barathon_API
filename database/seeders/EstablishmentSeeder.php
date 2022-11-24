@@ -23,7 +23,7 @@ class EstablishmentSeeder extends Seeder
         $datas = [
             [
                 'trade_name'=>'Fait Foif',
-                'siret'=>"kjbnerkbngerk",
+                'siret'=>fake()->siret(),
                 'address'=>'267 Rue Marcel Mérieux',
                 'postal_code'=>'69007',
                 'city'=>'Lyon',

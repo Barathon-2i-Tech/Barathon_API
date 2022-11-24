@@ -20,7 +20,7 @@ class OwnerSeeder extends Seeder
 
         $datas = [
             [
-                'siren' => "fegtfregkn,jerlger",
+                'siren' => fake()->siren(),
                 'avatar' => fake()->imageUrl(180,180,"barathon owner",false,),
                 'kbis' => 'chemin/kbis.pdf',
                 'active' => true,
