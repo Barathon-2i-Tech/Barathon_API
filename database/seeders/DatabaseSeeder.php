@@ -20,5 +20,20 @@ class DatabaseSeeder extends Seeder
         //     'name' => 'Test User',
         //     'email' => 'test@example.com',
         // ]);
+
+        $this->call([
+            // Comment the line to not run the seeder
+            StatusSeeder::class,
+            CategorySeeder::class,
+            EmployeeSeeder::class,
+            BarathonienSeeder::class,
+            AdministratorSeeder::class,
+            OwnerSeeder::class,
+            UserSeeder::class,
+            EstablishmentSeeder::class,
+            CategoryEstablishmentSeeder::class,
+            EstablishmentEmployeeSeeder::class,
+            EventSeeder::class
+        ]);
     }
 }
