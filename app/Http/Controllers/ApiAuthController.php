@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
 use App\Models\User;
+use App\Models\Barathonien;
 
 class ApiAuthController extends Controller
 {
@@ -50,6 +51,11 @@ class ApiAuthController extends Controller
             'user' => $user,
             'token' => $user->createToken('API Token')->plainTextToken
         ]);
+    }
+
+    public function registerBarathonien(Request $request) 
+    {
+
     }
 
     public function logout() 
