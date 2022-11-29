@@ -31,7 +31,8 @@ class Owner extends Model
         'avatar',
         'kbis',
         'active',
-        'deleted_at'
+        'deleted_at',
+        'status_id'
     ];
 
     /**

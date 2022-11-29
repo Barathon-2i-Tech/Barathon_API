@@ -4,6 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiAuthController;
 use App\Http\Controllers\BarathonienController;
+use App\Http\Controllers\OwnerController;
+use App\Http\Controllers\AdministratorController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -19,6 +22,8 @@ use App\Http\Controllers\BarathonienController;
 Route::post('/login', [ApiAuthController::class, 'login']);
 Route::post('/register', [ApiAuthController::class, 'register']);
 Route::post('/register/barathonien', [BarathonienController::class, 'create']);
+Route::post('/register/owner', [OwnerController::class, 'create']);
+Route::post('/register/admin', [AdministratorController::class, 'create']);
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [ApiAuthController::class, 'logout']);
