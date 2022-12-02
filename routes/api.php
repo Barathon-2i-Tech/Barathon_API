@@ -35,16 +35,16 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 });
 
 //Route for Barathonien
-Route::group(['middleware' => ['auth:sanctum']], function () {
+Route::name('barathonien.')->group(['middleware' => ['auth:sanctum']], function () {
 
 });
 
 //Route for Owner
-Route::group(['middleware' => ['auth:sanctum']], function () {
+Route::name('owner.')->group(['middleware' => ['auth:sanctum']], function () {
 
 });
 
 //Route for Admin
-Route::group(['middleware' => ['auth:sanctum']], function () {
+Route::name('admin.')->group(['middleware' => ['auth:sanctum']], function () {
 
 });

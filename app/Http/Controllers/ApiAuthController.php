@@ -53,11 +53,6 @@ class ApiAuthController extends Controller
         ]);
     }
 
-    public function registerBarathonien(Request $request) 
-    {
-
-    }
-
     public function logout() 
     {
         Auth::user()->currentAccessToken()->delete();
