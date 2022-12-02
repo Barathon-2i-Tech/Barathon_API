@@ -4,10 +4,18 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreOwnerRequest;
 use App\Http\Requests\UpdateOwnerRequest;
+use Illuminate\Http\Request;
 use App\Models\Owner;
+use Illuminate\Validation\Rules;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
+use App\Models\User;
+use App\Traits\HttpResponses;
 
 class OwnerController extends Controller
 {
+    use HttpResponses;
+
     /**
      * Display a listing of the resource.
      *
@@ -23,9 +31,38 @@ class OwnerController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function create(Request $request)
     {
-        //
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'siren' => 'required|string|max:255',
+            'kbis' => 'required|string',
+        ]);
+
+        $user = User::create([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+        ]);
+
+        $owner = Owner::create([
+            'siren' => $request->siren,
+            'kbis' => $request->kbis,
+            'active' => true,
+            'status_id' => 3,
+        ]);
+
+        $user->owner_id = $owner->owner_id;
+        $user->save();
+
+        return $this->success([
+            'user' => $user,
+            'token' => $user->createToken('API Token')->plainTextToken
+        ]);
     }
 
     /**
