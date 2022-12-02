@@ -33,18 +33,3 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         return $request->user();
     });
 });
-
-//Route for Barathonien
-Route::name('barathonien.')->group(['middleware' => ['auth:sanctum']], function () {
-
-});
-
-//Route for Owner
-Route::name('owner.')->group(['middleware' => ['auth:sanctum']], function () {
-
-});
-
-//Route for Admin
-Route::name('admin.')->group(['middleware' => ['auth:sanctum']], function () {
-
-});
