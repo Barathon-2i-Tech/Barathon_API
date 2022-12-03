@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Event;
+use App\Models\User;
 use Illuminate\Http\Request;
+use App\Traits\HttpResponses;
 
 class EventController extends Controller
 {
+    use HttpResponses;
+
     /**
      * Display a listing of the resource.
      *
@@ -81,5 +85,20 @@ class EventController extends Controller
     public function destroy(Event $event)
     {
         //
+    }
+
+    public function getEventByUserCity($id){
+        $user = User::find($id);
+        $barathonien = $user->barathoniens;
+        $events = Event::all();
+        $events = $events->filter(function($event) use ($barathonien){
+            return $event->establishments->where('city', '=', $barathonien->city);
+        });
+
+
+        return $this->success([
+            'event' => $events,
+        ]);
+
     }
 }

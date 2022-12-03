@@ -6,6 +6,7 @@ use App\Http\Controllers\ApiAuthController;
 use App\Http\Controllers\BarathonienController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\AdministratorController;
+use App\Http\Controllers\EventController;
 
 
 /*
@@ -28,6 +29,13 @@ Route::post('/register/admin', [AdministratorController::class, 'create']);
 
 // Route Commun
 Route::group(['middleware' => ['auth:sanctum']], function () {
+
+    //Route Barathonien
+    Route::get('/barathonien/{id}/city/event', [EventController::class, 'getEventByUserCity']);
+
+
+
+
     Route::post('/logout', [ApiAuthController::class, 'logout']);
     Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
         return $request->user();
