@@ -4,8 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\User;
+use App\Models\Establishment;
 use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
+use Eloquent\Support\Collection;
 
 class EventController extends Controller
 {
@@ -90,14 +92,19 @@ class EventController extends Controller
     public function getEventByUserCity($id){
         $user = User::find($id);
         $barathonien = $user->barathoniens;
-        $events = Event::all();
-        $events = $events->filter(function($event) use ($barathonien){
-            return $event->establishments->where('city', '=', $barathonien->city);
+        $establishments = Establishment::all()->where("city", "=", $barathonien->city);
+        $lesevent = $establishments[0]->events;
+
+        $collections = collect();
+        $establishments->each(function($establish, $key) use($collections){
+            $events = $establish->events;
+            $events->each(function($event, $key) use($collections){
+                $collections->push($event);
+            });
         });
 
-
         return $this->success([
-            'event' => $events,
+            'event' => $collections,
         ]);
 
     }
