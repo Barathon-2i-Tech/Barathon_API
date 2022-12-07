@@ -90,31 +90,21 @@ class EventController extends Controller
     }
 
     public function getEventByUserCity($id){
-        /*
-         * TODO:
-         * 1. Get user city
-         * 2. Get all events from that city
-         * 3. Return events
-         *
-         */
-
+        // Get the user
         $user = User::find($id);
-        dd($user);
-        $barathonien = $user->barathoniens;
-        $establishments = Establishment::all()->where("city", "=", $barathonien->city);
-        $lesevent = $establishments[0]->events;
 
-        $collections = collect();
+        // Get the user city
+        $city = $user->barathoniens->city;
 
-        $establishments->each(function($establish, $key) use($collections){
-            $events = $establish->events;
-            $events->each(function($event, $key) use($collections){
-                $collections->push($event);
-            });
-        });
+        // Get all establishment id in the city
+        $establishments = Establishment::all()->where("city", "=", $city)->modelKeys();
 
+        // Get all event from the establishments
+        $allEvents =Event::whereIn('establishment_id', $establishments)->get();
+
+        // Return all events
         return $this->success([
-            'event' => $collections,
+            'event' => $allEvents,
         ]);
 
     }
