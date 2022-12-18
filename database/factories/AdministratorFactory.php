@@ -17,7 +17,7 @@ class AdministratorFactory extends Factory
     public function definition()
     {
         return [
-            'avatar' => fake()->imageUrl(180,180,"barathon administrator",false,)
+            'avatar' => "https://picsum.photos/180"
         ];
     }
 }

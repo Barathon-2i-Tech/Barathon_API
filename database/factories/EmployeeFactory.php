@@ -17,7 +17,7 @@ class EmployeeFactory extends Factory
     public function definition()
     {
         return [
-            'avatar' => fake()->imageUrl(180,180,"barathon employee",false,)
+            'avatar' => "https://picsum.photos/180"
         ];
     }
 }

@@ -21,6 +21,7 @@ class BarathonienSeeder extends Seeder
                 'address' => '69 avenue tony garnier',
                 'postal_code' => '69007',
                 'city' => 'Lyon',
+                'avatar' => "https://picsum.photos/180"
             ]
         ];
         Barathonien::create($datas[0]);
