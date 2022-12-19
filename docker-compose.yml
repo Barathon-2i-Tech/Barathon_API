@@ -28,7 +28,6 @@ services:
             - pgsql
             - meilisearch
             - mailhog
-            - selenium
 
 #Postgres Service (Database)
     pgsql:
@@ -90,16 +89,6 @@ services:
         networks:
             - barathon
 
-#Selenium Service (for testing)
-    selenium:
-        image: 'selenium/standalone-chrome'
-        container_name: barathon-selenium
-        extra_hosts:
-            - 'host.docker.internal:host-gateway'
-        volumes:
-            - '/dev/shm:/dev/shm'
-        networks:
-            - barathon
 networks:
     barathon:
         driver: bridge
