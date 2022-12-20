@@ -20,7 +20,7 @@ use App\Http\Controllers\AdministratorController;
 */
 
 //Register and Login Methods
-Route::post('/login', [ApiAuthController::class, 'login']);
+Route::post('/login', [ApiAuthController::class, 'login'])->name('user.login');
 Route::post('/register', [ApiAuthController::class, 'register']);
 Route::post('/register/barathonien', [BarathonienController::class, 'create']);
 Route::post('/register/owner', [OwnerController::class, 'create']);
