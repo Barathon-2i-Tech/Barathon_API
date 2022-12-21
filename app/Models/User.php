@@ -99,4 +99,12 @@ class User extends Authenticatable
     {
         return $this->belongsTo(Event::class, "event_id");
     }
+
+    /**
+     * Get the booking associated with the user
+     */
+    public function bookings(){
+        return $this->belongsToMany(Booking::class, "bookings", "user_id", "booking_id" );
+    }
+
 }
