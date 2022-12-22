@@ -15,11 +15,11 @@ abstract class TestCase extends BaseTestCase
      * Indicates whether the default seeder should run before each test.
      * @var bool
      */
+
     protected $seed = true;
 
     public function createAdminUser()
     {
-        // Run the DatabaseSeeder...
         $user = User::whereNotNull('administrator_id')->first();
         return $user;
     }
@@ -41,5 +41,6 @@ abstract class TestCase extends BaseTestCase
         $user = User::whereNotNull('employee_id')->first();
         return $user;
     }
+
 
 }

@@ -21,10 +21,10 @@ use App\Http\Controllers\AdministratorController;
 
 //Register and Login Methods
 Route::post('/login', [ApiAuthController::class, 'login'])->name('user.login');
-Route::post('/register', [ApiAuthController::class, 'register']);
-Route::post('/register/barathonien', [BarathonienController::class, 'create']);
-Route::post('/register/owner', [OwnerController::class, 'create']);
-Route::post('/register/admin', [AdministratorController::class, 'create']);
+Route::post('/register', [ApiAuthController::class, 'register'])->name('user.register');
+Route::post('/register/barathonien', [BarathonienController::class, 'create'])->name('user.register.barathonien');
+Route::post('/register/owner', [OwnerController::class, 'create'])->name('user.register.owner');
+Route::post('/register/admin', [AdministratorController::class, 'create'])->name('user.register.admin');
 
 // Route Commun
 Route::group(['middleware' => ['auth:sanctum']], function () {

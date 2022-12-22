@@ -17,6 +17,31 @@ class LoginTest extends TestCase
     {
         $user = $this->createAdminUser();
 
+        $structure = [
+            "status",
+            "message",
+            "data" => [
+                "userLogged" => [
+                    "user_id",
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "email_verified_at",
+                    "owner_id",
+                    "barathonien_id",
+                    "administrator_id",
+                    "employee_id",
+                    "deleted_at",
+                    "updated_at",
+                    "created_at"
+                ],
+                "barathonienAvatar",
+                "ownerAvatar",
+                "employeeAvatar",
+                "adminAvatar",
+                "token"
+            ]];
+
         $response = $this->withHeaders([
             'Accept' => 'application/json',
             'Content-Type' => 'application/json'
@@ -26,7 +51,7 @@ class LoginTest extends TestCase
         ])
             ->assertOk();
 
-        $this->assertArrayHasKey('token', $response->json('data'));
+        $response->assertJsonStructure($structure);
     }
 
 
@@ -37,6 +62,31 @@ class LoginTest extends TestCase
     {
         $user = $this->createBarathonienUser();
 
+        $structure = [
+            "status",
+            "message",
+            "data" => [
+                "userLogged" => [
+                    "user_id",
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "email_verified_at",
+                    "owner_id",
+                    "barathonien_id",
+                    "administrator_id",
+                    "employee_id",
+                    "deleted_at",
+                    "updated_at",
+                    "created_at"
+                ],
+                "barathonienAvatar",
+                "ownerAvatar",
+                "employeeAvatar",
+                "adminAvatar",
+                "token"
+            ]];
+
         $response = $this->withHeaders([
             'Accept' => 'application/json',
             'Content-Type' => 'application/json'
@@ -46,7 +96,7 @@ class LoginTest extends TestCase
         ])
             ->assertOk();
 
-        $this->assertArrayHasKey('token', $response->json('data'));
+        $response->assertJsonStructure($structure);
     }
 
     /**
@@ -56,6 +106,31 @@ class LoginTest extends TestCase
     {
         $user = $this->createOwnerUser();
 
+        $structure = [
+            "status",
+            "message",
+            "data" => [
+                "userLogged" => [
+                    "user_id",
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "email_verified_at",
+                    "owner_id",
+                    "barathonien_id",
+                    "administrator_id",
+                    "employee_id",
+                    "deleted_at",
+                    "updated_at",
+                    "created_at"
+                ],
+                "barathonienAvatar",
+                "ownerAvatar",
+                "employeeAvatar",
+                "adminAvatar",
+                "token"
+            ]];
+
         $response = $this->withHeaders([
             'Accept' => 'application/json',
             'Content-Type' => 'application/json'
@@ -65,7 +140,7 @@ class LoginTest extends TestCase
         ])
             ->assertOk();
 
-        $this->assertArrayHasKey('token', $response->json('data'));
+        $response->assertJsonStructure($structure);
     }
 
     /**
@@ -75,6 +150,31 @@ class LoginTest extends TestCase
     {
         $user = $this->createEmployeeUser();
 
+        $structure = [
+            "status",
+            "message",
+            "data" => [
+                "userLogged" => [
+                    "user_id",
+                    "first_name",
+                    "last_name",
+                    "email",
+                    "email_verified_at",
+                    "owner_id",
+                    "barathonien_id",
+                    "administrator_id",
+                    "employee_id",
+                    "deleted_at",
+                    "updated_at",
+                    "created_at"
+                ],
+                "barathonienAvatar",
+                "ownerAvatar",
+                "employeeAvatar",
+                "adminAvatar",
+                "token"
+            ]];
+
         $response = $this->withHeaders([
             'Accept' => 'application/json',
             'Content-Type' => 'application/json'
@@ -84,7 +184,7 @@ class LoginTest extends TestCase
         ])
             ->assertOk();
 
-        $this->assertArrayHasKey('token', $response->json('data'));
+        $response->assertJsonStructure($structure);
     }
 
     /**
