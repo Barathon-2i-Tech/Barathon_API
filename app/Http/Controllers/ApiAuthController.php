@@ -18,7 +18,7 @@ class ApiAuthController extends Controller
 {
     use HttpResponses;
 
-    public function login(LoginUserRequest $request)
+    public function login(LoginUserRequest $request): \Illuminate\Http\JsonResponse
     {
         $request->validated($request->only(['email', 'password']));
 
@@ -64,7 +64,7 @@ class ApiAuthController extends Controller
         ]);
     }
 
-    public function register(Request $request)
+    public function register(Request $request): \Illuminate\Http\JsonResponse
     {
         $request->validate([
             'first_name' => 'required|string|max:255',
@@ -86,12 +86,10 @@ class ApiAuthController extends Controller
         ]);
     }
 
-    public function logout()
+    public function logout(): \Illuminate\Http\JsonResponse
     {
-        Auth::user()->currentAccessToken()->delete();
-
-        return $this->success([
-            'message' => 'You have succesfully been logged out and your token has been removed'
-        ]);
+        Auth::user()->tokens()->delete();
+        $message = "You have successfully been logged out and your tokens has been removed";
+        return $this->success([],$message );
     }
 }
