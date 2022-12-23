@@ -37,7 +37,7 @@ Route::post('/register/admin', [AdministratorController::class, 'create'])->name
 |--------------------------------------------------------------------------
 */
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::post('/logout', [ApiAuthController::class, 'logout'])->name('user.logout');;
+    Route::post('/logout', [ApiAuthController::class, 'logout'])->name('user.logout');
     Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
         return $request->user();
     });

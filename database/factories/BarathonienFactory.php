@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Barathonien;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Barathonien>
+ * @extends Factory<Barathonien>
  */
 class BarathonienFactory extends Factory
 {
@@ -17,7 +18,11 @@ class BarathonienFactory extends Factory
     public function definition()
     {
         return [
-            //
+            'birthday' => fake(),
+            'address'=>fake()->address,
+            'postal_code'=>fake()->postcode(),
+            'city'=>fake()->city(),
+            'avatar' => "https://picsum.photos/180"
         ];
     }
 }

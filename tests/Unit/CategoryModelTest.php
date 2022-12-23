@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,7 +15,8 @@ class CategoryModelTest extends TestCase
      */
     public function test_category_model_exist()
     {
-
+        $category = Category::factory()->create();
+        $this->assertModelExists($category);
     }
 
 

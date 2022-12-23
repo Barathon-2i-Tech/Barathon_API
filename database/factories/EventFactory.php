@@ -3,18 +3,16 @@
 namespace Database\Factories;
 
 
-use App\Models\Employee;
 use App\Models\Establishment;
+use App\Models\Event;
 use App\Models\Status;
-use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Event>
+ * @extends Factory<Event>
  */
 class EventFactory extends Factory
 {

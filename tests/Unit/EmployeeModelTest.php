@@ -1,6 +1,7 @@
 <?php
 
 
+use App\Models\Employee;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -14,8 +15,8 @@ class EmployeeModelTest extends TestCase
      */
     public function test_employee_model_exist()
     {
-
+        $employee = Employee::all()->first();
+        $this->assertModelExists($employee);
     }
-
 
 }
