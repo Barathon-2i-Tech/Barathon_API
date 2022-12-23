@@ -7,6 +7,7 @@ use App\Http\Controllers\BarathonienController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\AdministratorController;
 use App\Http\Controllers\EventController;
+use App\Http\Controllers\TagController;
 
 
 /*
@@ -31,10 +32,12 @@ Route::post('/register/admin', [AdministratorController::class, 'create']);
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
     //Route Barathonien
-    Route::get('/barathonien/{id}/city/event', [EventController::class, 'getEventByUserCity']);
 
+        //get Event by user's city
+        Route::get('/barathonien/{id}/city/event', [EventController::class, 'getEventByUserCity']);
 
-
+        // get top 10 tags
+        Route::get('/barathonien/top/tags', [TagController::class, 'getTopTenTags']);
 
     Route::post('/logout', [ApiAuthController::class, 'logout']);
     Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
