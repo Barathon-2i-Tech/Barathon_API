@@ -96,6 +96,8 @@ class TagController extends Controller
             ->select('tags.tag_id', 'tags.label', DB::raw('COUNT(tags_events.tag_id) as total_tag'))
             ->groupBy('tags.tag_id')
             ->orderBy('total_tag', 'desc')
+            ->skip(0)
+            ->take(10)
             ->get();
         
         
