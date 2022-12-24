@@ -3,13 +3,13 @@
 namespace Database\Seeders;
 
 
-use App\Models\Tag;
-use App\Models\Tag_Event;
+use App\Models\Category;
+use App\Models\Category_Event;
 use App\Models\Event;
 
 use Illuminate\Database\Seeder;
 
-class TagEventSeeder extends Seeder
+class CategoryEventSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -21,51 +21,51 @@ class TagEventSeeder extends Seeder
 
         $datas = [
             [
-                'tag_id' => 1,
+                'category_id' => 1,
                 'event_id' => 1,
             ]
         ];
-        Tag_Event::create($datas[0]);
+        Category_Event::create($datas[0]);
 
         $datas = [
             [
-                'tag_id' => 1,
+                'category_id' => 1,
                 'event_id' => 2,
             ]
         ];
-        Tag_Event::create($datas[0]);
+        Category_Event::create($datas[0]);
 
         $datas = [
             [
-                'tag_id' => 1,
+                'category_id' => 1,
                 'event_id' => 3,
             ]
         ];
-        Tag_Event::create($datas[0]);
+        Category_Event::create($datas[0]);
 
         $datas = [
             [
-                'tag_id' => 2,
+                'category_id' => 2,
                 'event_id' => 1,
             ]
         ];
-        Tag_Event::create($datas[0]);
+        Category_Event::create($datas[0]);
 
         $datas = [
             [
-                'tag_id' => 2,
+                'category_id' => 2,
                 'event_id' => 2,
             ]
         ];
-        Tag_Event::create($datas[0]);
+        Category_Event::create($datas[0]);
 
         $datas = [
             [
-                'tag_id' => 3,
+                'category_id' => 3,
                 'event_id' => 3,
             ]
         ];
-        Tag_Event::create($datas[0]);
+        Category_Event::create($datas[0]);
 
     }
 }

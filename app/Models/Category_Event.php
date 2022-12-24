@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Tag_Event extends Model
+class Category_Event extends Model
 {
     use HasFactory;
 
@@ -14,12 +14,12 @@ class Tag_Event extends Model
      *
      * @var string
      */
-    protected $table = 'tags_events';
+    protected $table = 'categories_events';
 
     /**
      * The primary key associated with the model
      */
-    protected $primaryKey = 'tag_event_id';
+    protected $primaryKey = 'category_event_id';
 
 
     /**
@@ -28,15 +28,15 @@ class Tag_Event extends Model
      * @var string[]
      */
     protected $fillable = [
-        'tag_id',
+        'category_id',
         'event_id'
     ];
 
     protected $hidden = ['pivot'];
 
-    public function tags()
+    public function categories()
     {
-        return $this->belongsTo(Tag::class, 'tag_id');
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
     public function events()

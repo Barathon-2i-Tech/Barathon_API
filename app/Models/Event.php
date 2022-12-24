@@ -77,6 +77,6 @@ class Event extends Model
      * Get the tag  associated with the event
      */
     public function categories(){
-        return $this->belongsToMany(Tag::class, "tag_event", "event_id", "tag_id");
+        return $this->belongsToMany(Category::class, "category_event", "event_id", "category_id");
     }
 }

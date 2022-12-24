@@ -13,10 +13,10 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('tags_events', function (Blueprint $table) {
-            $table->id('tag_event_id');
-            $table->foreignId('tag_id');
-            $table->foreign('tag_id')->references('tag_id')->on('tags');
+        Schema::create('categories_events', function (Blueprint $table) {
+            $table->id('category_event_id');
+            $table->foreignId('category_id');
+            $table->foreign('category_id')->references('category_id')->on('categories');
             $table->foreignId('event_id');
             $table->foreign('event_id')->references('event_id')->on('events');
             $table->timestamps();
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('tags_events');
+        Schema::dropIfExists('categories_events');
     }
 };
