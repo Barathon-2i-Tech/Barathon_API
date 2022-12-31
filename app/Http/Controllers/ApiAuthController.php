@@ -2,6 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Administrator;
+use App\Models\Employee;
+use App\Models\Owner;
 use Illuminate\Http\Request;
 use App\Http\Requests\LoginUserRequest;
 use App\Traits\HttpResponses;
@@ -15,7 +18,7 @@ class ApiAuthController extends Controller
 {
     use HttpResponses;
 
-    public function login(LoginUserRequest $request)
+    public function login(LoginUserRequest $request): \Illuminate\Http\JsonResponse
     {
         $request->validated($request->only(['email', 'password']));
 
@@ -25,13 +28,43 @@ class ApiAuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
+
+        if($user->barathonien_id != null) {
+            $barathonienAvatar = Barathonien::where("barathonien_id",$user->barathonien_id )->get('avatar');
+        } else {
+            $barathonienAvatar = null;
+        }
+
+        if($user->owner_id != null) {
+            $ownerAvatar = Owner::where("owner_id",$user->owner_id )->get('avatar');
+        } else {
+            $ownerAvatar = null;
+        }
+
+        if($user->employee_id != null) {
+            $employeeAvatar = Employee::where("employee_id",$user->employee_id )->get('avatar');
+        } else {
+            $employeeAvatar = null;
+        }
+
+        if($user->administrator_id != null) {
+            $adminAvatar = Administrator::where("administrator_id",$user->administrator_id )->get('avatar');
+        } else {
+            $adminAvatar = null;
+        }
+
+
         return $this->success([
-            'user' => $user,
+            'userLogged' => $user,
+            'barathonienAvatar' => $barathonienAvatar,
+            'ownerAvatar' => $ownerAvatar,
+            'employeeAvatar' => $employeeAvatar,
+            'adminAvatar' => $adminAvatar,
             'token' => $user->createToken('API Token')->plainTextToken
         ]);
     }
 
-    public function register(Request $request) 
+    public function register(Request $request): \Illuminate\Http\JsonResponse
     {
         $request->validate([
             'first_name' => 'required|string|max:255',
@@ -53,12 +86,10 @@ class ApiAuthController extends Controller
         ]);
     }
 
-    public function logout() 
+    public function logout(): \Illuminate\Http\JsonResponse
     {
-        Auth::user()->currentAccessToken()->delete();
-
-        return $this->success([
-            'message' => 'You have succesfully been logged out and your token has been removed'
-        ]);
+        Auth::user()->tokens()->delete();
+        $message = "You have successfully been logged out and your tokens has been removed";
+        return $this->success([],$message );
     }
 }

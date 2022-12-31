@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barathonien;
+use Carbon\Carbon;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Traits\HttpResponses;
@@ -26,18 +28,21 @@ class BarathonienController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function create(Request $request)
     {
+        $today = new Carbon();
+        $minor = $today->subYears(18);
+
         $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'birthday' => 'required|date',
-            'adress' => 'required|string|max:255',
-            'postal_code' => 'required|string|max:5',
+            'birthday' => 'required|date|before:'.$minor,
+            'address' => 'min:5|required|string|max:255',
+            'postal_code' => 'required|string|size:5',
             'city' => 'required|string|max:255',
         ]);
 
@@ -50,7 +55,7 @@ class BarathonienController extends Controller
 
         $barathonien = Barathonien::create([
             'birthday' => $request->birthday,
-            'address' => $request->adress,
+            'address' => $request->address,
             'postal_code' => $request->postal_code,
             'city' => $request->city,
         ]);

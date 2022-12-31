@@ -2,10 +2,12 @@
 
 namespace Database\Factories;
 
+use App\Models\Owner;
+use App\Models\Status;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Owner>
+ * @extends Factory<Owner>
  */
 class OwnerFactory extends Factory
 {
@@ -16,8 +18,14 @@ class OwnerFactory extends Factory
      */
     public function definition()
     {
+        $OWNER_VALID = Status::where('comment->code', 'OWNER_VALID')->first();
+
         return [
-            //
+            'siren' => fake()->siren(),
+            'avatar' => "https://picsum.photos/180",
+            'kbis' => 'chemin/kbis.pdf',
+            'active' => true,
+            'status_id' => $OWNER_VALID->status_id
         ];
     }
 }

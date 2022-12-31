@@ -14,7 +14,7 @@ class Event_update extends Model
      *
      * @var string
      */
-    protected $table = 'events';
+    protected $table = 'events_updates';
 
     /**
      * The primary key associated with the model

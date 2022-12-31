@@ -72,4 +72,11 @@ class Event extends Model
     {
         return $this->hasMany(Event_update::class, "event_update_id");
     }
+
+    /**
+     * Get the booking associated with the event
+     */
+    public function bookings(){
+        return $this->belongsToMany(Booking::class, "bookings", "event_id", "booking_id" );
+    }
 }

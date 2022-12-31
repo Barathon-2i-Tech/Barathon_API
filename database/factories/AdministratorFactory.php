@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Administrator;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Administrator>
+ * @extends Factory<Administrator>
  */
 class AdministratorFactory extends Factory
 {
@@ -17,7 +18,7 @@ class AdministratorFactory extends Factory
     public function definition()
     {
         return [
-            'avatar' => fake()->imageUrl(180,180,"barathon administrator",false,)
+            'avatar' => "https://picsum.photos/180"
         ];
     }
 }
