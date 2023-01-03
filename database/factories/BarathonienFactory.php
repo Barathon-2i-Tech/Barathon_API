@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\Administrator;
+use App\Models\Barathonien;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Administrator>
+ * @extends Factory<Barathonien>
  */
-class AdministratorFactory extends Factory
+class BarathonienFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,6 +18,10 @@ class AdministratorFactory extends Factory
     public function definition()
     {
         return [
+            'birthday' => fake(),
+            'address'=>fake()->address,
+            'postal_code'=>fake()->postcode(),
+            'city'=>fake()->city(),
             'avatar' => "https://picsum.photos/180"
         ];
     }

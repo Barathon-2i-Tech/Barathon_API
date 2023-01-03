@@ -79,4 +79,10 @@ class Event extends Model
     public function categories(){
         return $this->belongsToMany(Category::class, "category_event", "event_id", "category_id");
     }
+    /*
+     * Get the booking associated with the event
+     */
+    public function bookings(){
+        return $this->belongsToMany(Booking::class, "bookings", "event_id", "booking_id" );
+    }
 }

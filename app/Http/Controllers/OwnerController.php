@@ -29,7 +29,7 @@ class OwnerController extends Controller
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return \Illuminate\Http\JsonResponse
      */
     public function create(Request $request)
     {
@@ -52,7 +52,7 @@ class OwnerController extends Controller
         $owner = Owner::create([
             'siren' => $request->siren,
             'kbis' => $request->kbis,
-            'active' => true,
+            'active' => false,
             'status_id' => 3,
         ]);
 

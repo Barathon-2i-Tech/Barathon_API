@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 
 use App\Models\Establishment;
+use App\Models\Event;
 use App\Models\Status;
 use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -11,7 +12,7 @@ use Illuminate\Support\Facades\DB;
 
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Event>
+ * @extends Factory<Event>
  */
 class EventFactory extends Factory
 {

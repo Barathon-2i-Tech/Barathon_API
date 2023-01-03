@@ -2,10 +2,11 @@
 
 namespace Database\Factories;
 
+use App\Models\Employee;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Employee>
+ * @extends Factory<Employee>
  */
 class EmployeeFactory extends Factory
 {
@@ -17,7 +18,7 @@ class EmployeeFactory extends Factory
     public function definition()
     {
         return [
-            'avatar' => fake()->imageUrl(180,180,"barathon employee",false,)
+            'avatar' => "https://picsum.photos/180"
         ];
     }
 }

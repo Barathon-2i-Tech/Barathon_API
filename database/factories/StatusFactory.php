@@ -2,13 +2,13 @@
 
 namespace Database\Factories;
 
-use App\Models\Administrator;
+use App\Models\Status;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends Factory<Administrator>
+ * @extends Factory<Status>
  */
-class AdministratorFactory extends Factory
+class StatusFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -18,7 +18,7 @@ class AdministratorFactory extends Factory
     public function definition()
     {
         return [
-            'avatar' => "https://picsum.photos/180"
+            //
         ];
     }
 }
