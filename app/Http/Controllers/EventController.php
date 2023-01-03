@@ -102,7 +102,7 @@ class EventController extends Controller
         // Get 4th first event from the establishments by date now
         $date_now = date("Y-m-j H:i:s");
         
-        $allEvents = Event::where('start_event', '<=', $date_now)->whereIn('establishment_id', $establishments)->skip(0)->take(4)->get();
+        $allEvents = Event::where('start_event', '>=', $date_now)->whereIn('establishment_id', $establishments)->skip(0)->take(4)->get();
 
         // Return all events
         return $this->success([
