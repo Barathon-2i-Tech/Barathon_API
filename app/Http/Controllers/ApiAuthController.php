@@ -81,7 +81,7 @@ class ApiAuthController extends Controller
         ]);
 
         return $this->success([
-            'user' => $user,
+            'userLogged' => $user,
             'token' => $user->createToken('API Token')->plainTextToken
         ]);
     }
