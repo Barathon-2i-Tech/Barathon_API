@@ -74,6 +74,12 @@ class Event extends Model
     }
 
     /**
+     * Get the tag  associated with the event
+     */
+    public function categories(){
+        return $this->belongsToMany(Category::class, "category_event", "event_id", "category_id");
+    }
+    /*
      * Get the booking associated with the event
      */
     public function bookings(){

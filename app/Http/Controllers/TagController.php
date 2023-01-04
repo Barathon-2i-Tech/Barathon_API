@@ -2,17 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Event;
-use App\Models\User;
-use App\Models\Establishment;
+use App\Models\Tag;
+use App\Models\Tag_Event;
 use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
-use Eloquent\Support\Collection;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Collection;
 
-class EventController extends Controller
+class TagController extends Controller
 {
     use HttpResponses;
-
+    
     /**
      * Display a listing of the resource.
      *
@@ -47,10 +47,10 @@ class EventController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Event  $event
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Http\Response
      */
-    public function show(Event $event)
+    public function show(Tag $tag)
     {
         //
     }
@@ -58,10 +58,10 @@ class EventController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Event  $event
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Http\Response
      */
-    public function edit(Event $event)
+    public function edit(Tag $tag)
     {
         //
     }
@@ -70,10 +70,10 @@ class EventController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Event  $event
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Event $event)
+    public function update(Request $request, Tag $tag)
     {
         //
     }
@@ -81,33 +81,28 @@ class EventController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Event  $event
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Event $event)
+    public function destroy(Tag $tag)
     {
         //
     }
 
-    public function getEventByUserCity($id){
-        // Get the user
-        $user = User::find($id);
+    public function getTopTenTags(){
 
-        // Get the user city
-        $city = $user->barathoniens->city;
-
-        // Get all establishment id in the city
-        $establishments = Establishment::all()->where("city", "=", $city)->modelKeys();
-
-        // Get 4th first event from the establishments by date now
-        $date_now = date("Y-m-j H:i:s");
+        $tags = DB::table('tags_events')
+            ->join('tags', 'tags_events.tag_id', '=', 'tags.tag_id')
+            ->select('tags.tag_id', 'tags.label', DB::raw('COUNT(tags_events.tag_id) as total_tag'))
+            ->groupBy('tags.tag_id')
+            ->orderBy('total_tag', 'desc')
+            ->skip(0)
+            ->take(10)
+            ->get();
         
-        $allEvents = Event::where('start_event', '>=', $date_now)->whereIn('establishment_id', $establishments)->skip(0)->take(4)->get();
-
-        // Return all events
+        
         return $this->success([
-            'event' => $allEvents,
+            'tags' => $tags,
         ]);
-
     }
 }

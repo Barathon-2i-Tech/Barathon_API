@@ -6,6 +6,8 @@ use App\Http\Controllers\ApiAuthController;
 use App\Http\Controllers\BarathonienController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\AdministratorController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\CategoryController;
 
 
 /*
@@ -37,6 +39,16 @@ Route::post('/register/admin', [AdministratorController::class, 'create'])->name
 |--------------------------------------------------------------------------
 */
 Route::group(['middleware' => ['auth:sanctum']], function () {
+
+    //Route Barathonien
+
+        //get Event by user's city
+        Route::get('/barathonien/{id}/city/event', [EventController::class, 'getEventByUserCity']);
+
+        // get top 10 tags
+        Route::get('/barathonien/top/categories', [CategoryController::class, 'getTopTenCategories']);
+
+
     Route::post('/logout', [ApiAuthController::class, 'logout'])->name('user.logout');
     Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
         return $request->user();

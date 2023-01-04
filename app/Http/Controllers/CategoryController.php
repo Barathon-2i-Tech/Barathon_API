@@ -4,9 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use App\Traits\HttpResponses;
 
 class CategoryController extends Controller
 {
+
+    use HttpResponses;
+
     /**
      * Display a listing of the resource.
      *
@@ -81,5 +86,22 @@ class CategoryController extends Controller
     public function destroy(Category $category)
     {
         //
+    }
+
+    public function getTopTenCategories(){
+
+        $categories = DB::table('categories_events')
+            ->join('categories', 'categories_events.category_id', '=', 'categories.category_id')
+            ->select('categories.category_id', 'categories.label', DB::raw('COUNT(categories_events.category_id) as total_cate'))
+            ->groupBy('categories.category_id')
+            ->orderBy('total_cate', 'desc')
+            ->skip(0)
+            ->take(10)
+            ->get();
+        
+        
+        return $this->success([
+            'categories' => $categories,
+        ]);
     }
 }

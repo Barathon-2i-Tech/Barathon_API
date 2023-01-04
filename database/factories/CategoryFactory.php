@@ -18,7 +18,7 @@ class CategoryFactory extends Factory
     public function definition()
     {
         return [
-            'label'=>fake()->unique()->word()
+            'label'=> json_encode(["icon" => "home", "name" => fake()->unique()->word()]) 
         ];
     }
 }

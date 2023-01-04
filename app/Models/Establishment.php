@@ -76,7 +76,7 @@ class Establishment extends Model
      * Get the event associated with the establishment
      */
     public function events(){
-        return $this->hasMany(Event::class, "event_id",);
+        return $this->hasMany(Event::class, "event_id");
     }
 
     /**
