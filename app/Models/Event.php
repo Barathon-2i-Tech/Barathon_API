@@ -83,6 +83,6 @@ class Event extends Model
      * Get the booking associated with the event
      */
     public function bookings(){
-        return $this->belongsToMany(Booking::class, "bookings", "event_id", "booking_id" );
+        return $this->belongsToMany(Booking::class, "bookings", "event_id", "user_id" );
     }
 }

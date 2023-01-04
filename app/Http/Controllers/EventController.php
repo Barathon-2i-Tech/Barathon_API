@@ -4,10 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Event;
 use App\Models\User;
+use App\Models\Booking;
 use App\Models\Establishment;
 use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
 use Eloquent\Support\Collection;
+use Carbon\Carbon;
 
 class EventController extends Controller
 {
@@ -107,6 +109,19 @@ class EventController extends Controller
         // Return all events
         return $this->success([
             'event' => $allEvents,
+        ]);
+
+    }
+
+    public function getEventBookingByUser($id){
+        // Get the event booking by user
+        $user = User::find($id);
+        $bookings = Booking::with('event')->where('user_id', '=', $user->user_id)->get()->groupBy(function ($val){
+            return Carbon::parse($val->event->start_event)->format('d-m-Y');
+        });
+
+        return $this->success([
+            'bookings' => $bookings,
         ]);
 
     }

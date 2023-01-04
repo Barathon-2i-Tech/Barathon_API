@@ -45,6 +45,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         //get Event by user's city
         Route::get('/barathonien/{id}/city/event', [EventController::class, 'getEventByUserCity']);
 
+        //get Event booking by the User
+        Route::get('/barathonien/{id}/booking/event', [EventController::class, 'getEventBookingByUser']);
+
         // get top 10 tags
         Route::get('/barathonien/top/categories', [CategoryController::class, 'getTopTenCategories']);
 

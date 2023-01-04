@@ -35,12 +35,12 @@ class Booking extends Model
 
     protected $hidden = ['pivot'];
 
-    public function users()
+    public function user()
     {
         return $this->belongsTo(User::class, 'user_id');
     }
 
-    public function events()
+    public function event()
     {
         return $this->belongsTo(Event::class, 'event_id');
     }
