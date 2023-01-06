@@ -28,8 +28,8 @@ class Employee extends Model
      * @var string[]
      */
     protected $fillable = [
-        'avatar',
-        'deleted_at'
+        'hiring_date',
+        'dismissal_date'
     ];
 
     /**

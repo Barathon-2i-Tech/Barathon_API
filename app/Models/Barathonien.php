@@ -28,11 +28,7 @@ class Barathonien extends Model
      */
     protected $fillable = [
         'birthday',
-        'address',
-        'postal_code',
-        'city',
-        'avatar',
-        'deleted_at'
+        'address_id',
     ];
 
     /**
@@ -41,5 +37,15 @@ class Barathonien extends Model
     public function users()
     {
         return $this->hasMany(User::class, "user_id");
+    }
+
+    /**
+     * Get the Address associated with the Barathonien
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function Address(): HasOne
+    {
+        return $this->hasOne(Address::class);
     }
 }
