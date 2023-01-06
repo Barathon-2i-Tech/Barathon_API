@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->string('avatar');
             $table->foreignId('owner_id')->nullable();
             $table->foreign('owner_id')->references('owner_id')->on('owners');
             $table->foreignId('barathonien_id')->nullable();

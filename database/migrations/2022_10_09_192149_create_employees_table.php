@@ -15,9 +15,8 @@ return new class extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->id('employee_id');
-            $table->string('avatar')->nullable();
-            $table->timestamp('deleted_at')->nullable();
-            $table->timestamps();
+            $table->string('hiring_date');
+            $table->string('dismissal_date')->nullable();
         });
     }
 
