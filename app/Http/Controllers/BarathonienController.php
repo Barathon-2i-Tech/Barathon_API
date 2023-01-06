@@ -53,7 +53,7 @@ class BarathonienController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'birthday' => 'required|date|before:'.$minor,
-            'address' => 'required|string|max:255',
+            'address' => 'min:5|required|string|max:255',
             'postal_code' => 'required|string|size:5',
             'city' => 'required|string|max:255',
         ]);

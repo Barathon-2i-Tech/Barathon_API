@@ -57,6 +57,7 @@ class AdministratorController extends Controller
             'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'avatar' => "https://picsum.photos/180",
         ]);
 
         $admin = Administrator::create([

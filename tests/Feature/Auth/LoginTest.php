@@ -9,7 +9,6 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 class LoginTest extends TestCase
 {
     use RefreshDatabase;
-
     /**
      * A test to check if Admin User can log in with email and password
      */
@@ -27,6 +26,7 @@ class LoginTest extends TestCase
                     "last_name",
                     "email",
                     "email_verified_at",
+                    "avatar",
                     "owner_id",
                     "barathonien_id",
                     "administrator_id",
@@ -35,10 +35,6 @@ class LoginTest extends TestCase
                     "updated_at",
                     "created_at"
                 ],
-                "barathonienAvatar",
-                "ownerAvatar",
-                "employeeAvatar",
-                "adminAvatar",
                 "token"
             ]];
 
@@ -62,6 +58,7 @@ class LoginTest extends TestCase
     {
         $user = $this->createBarathonienUser();
 
+
         $structure = [
             "status",
             "message",
@@ -72,6 +69,7 @@ class LoginTest extends TestCase
                     "last_name",
                     "email",
                     "email_verified_at",
+                    "avatar",
                     "owner_id",
                     "barathonien_id",
                     "administrator_id",
@@ -80,10 +78,6 @@ class LoginTest extends TestCase
                     "updated_at",
                     "created_at"
                 ],
-                "barathonienAvatar",
-                "ownerAvatar",
-                "employeeAvatar",
-                "adminAvatar",
                 "token"
             ]];
 
@@ -116,6 +110,7 @@ class LoginTest extends TestCase
                     "last_name",
                     "email",
                     "email_verified_at",
+                    "avatar",
                     "owner_id",
                     "barathonien_id",
                     "administrator_id",
@@ -124,10 +119,6 @@ class LoginTest extends TestCase
                     "updated_at",
                     "created_at"
                 ],
-                "barathonienAvatar",
-                "ownerAvatar",
-                "employeeAvatar",
-                "adminAvatar",
                 "token"
             ]];
 
@@ -160,6 +151,7 @@ class LoginTest extends TestCase
                     "last_name",
                     "email",
                     "email_verified_at",
+                    "avatar",
                     "owner_id",
                     "barathonien_id",
                     "administrator_id",
@@ -168,10 +160,6 @@ class LoginTest extends TestCase
                     "updated_at",
                     "created_at"
                 ],
-                "barathonienAvatar",
-                "ownerAvatar",
-                "employeeAvatar",
-                "adminAvatar",
                 "token"
             ]];
 

@@ -20,10 +20,11 @@ class RegisterAdministratorTest extends TestCase
             "status",
             "message",
             "data" => [
-                "user" => [
+                "userLogged" => [
                     "first_name",
                     "last_name",
                     "email",
+                    "avatar",
                     "updated_at",
                     "created_at",
                     "administrator_id",
@@ -36,7 +37,8 @@ class RegisterAdministratorTest extends TestCase
             'last_name' => 'Dupont',
             'email' => 'toto@gmail.com',
             'password' => 'azertyuiop',
-            'password_confirmation' => 'azertyuiop'], [
+            'password_confirmation' => 'azertyuiop',
+            'superAdmin' => false], [
             'Accept' => 'application/json',
             'Content-Type' => 'application/json'
         ])
