@@ -30,7 +30,7 @@ class DatabaseTest extends TestCase
     {
         $this->assertTrue(
             Schema::hasColumns('owners', [
-                'owner_id', 'siren', 'avatar', 'kbis', 'active', 'status_id', 'deleted_at', 'updated_at', 'created_at'
+                'owner_id', 'siren', 'kbis', 'status_id'
             ]), 1);
     }
 
@@ -42,7 +42,7 @@ class DatabaseTest extends TestCase
     {
         $this->assertTrue(
             Schema::hasColumns('employees', [
-                'employee_id', 'avatar', 'deleted_at', 'updated_at', 'created_at'
+                'employee_id', 'hiring_date', 'dismissal_date'
             ]), 1);
     }
 
@@ -54,7 +54,7 @@ class DatabaseTest extends TestCase
     {
         $this->assertTrue(
             Schema::hasColumns('barathoniens', [
-                'barathonien_id', 'birthday', 'address', 'postal_code', 'city', 'avatar', 'deleted_at', 'updated_at', 'created_at'
+                'barathonien_id', 'birthday', 'address_id'
             ]), 1);
     }
 
@@ -66,7 +66,7 @@ class DatabaseTest extends TestCase
     {
         $this->assertTrue(
             Schema::hasColumns('administrators', [
-                'administrator_id', 'avatar', 'deleted_at', 'updated_at', 'created_at'
+                'administrator_id', 'superAdmin'
             ]), 1);
     }
 
@@ -78,7 +78,7 @@ class DatabaseTest extends TestCase
     {
         $this->assertTrue(
             Schema::hasColumns('users', [
-                'user_id', 'first_name', 'last_name', 'email', 'email_verified_at', 'password', 'owner_id', 'barathonien_id', 'administrator_id', 'employee_id', 'remember_token', 'deleted_at', 'updated_at', 'created_at'
+                'user_id', 'first_name', 'last_name', 'email', 'email_verified_at', 'password', 'avatar', 'owner_id', 'barathonien_id', 'administrator_id', 'employee_id', 'remember_token', 'deleted_at', 'updated_at', 'created_at'
             ]), 1);
     }
 
@@ -90,7 +90,7 @@ class DatabaseTest extends TestCase
     {
         $this->assertTrue(
             Schema::hasColumns('establishments', [
-                'establishment_id', 'trade_name', 'siret', 'address', 'postal_code', 'city', 'logo', 'phone', 'email', 'website', 'opening', 'checked', 'owner_id', 'status_id', 'deleted_at', 'updated_at', 'created_at'
+                'establishment_id', 'trade_name', 'siret', 'address_id', 'logo', 'phone', 'email', 'website', 'opening', 'owner_id', 'status_id', 'deleted_at', 'updated_at', 'created_at'
             ]), 1);
     }
 
@@ -114,7 +114,7 @@ class DatabaseTest extends TestCase
     {
         $this->assertTrue(
             Schema::hasColumns('categories', [
-                'category_id', 'label', 'updated_at', 'created_at'
+                'category_id', 'label'
             ]), 1);
     }
 
@@ -126,7 +126,7 @@ class DatabaseTest extends TestCase
     {
         $this->assertTrue(
             Schema::hasColumns('events', [
-                'event_id', 'event_name', 'description', 'start_event', 'end_event', 'poster', 'price', 'capacity', 'rejected', 'establishment_id', 'status_id', 'user_id', 'deleted_at', 'updated_at', 'created_at'
+                'event_id', 'event_name', 'description', 'start_event', 'end_event', 'poster', 'price', 'capacity', 'establishment_id', 'status_id', 'user_id', 'deleted_at', 'updated_at', 'created_at'
             ]), 1);
     }
 
@@ -138,7 +138,7 @@ class DatabaseTest extends TestCase
     {
         $this->assertTrue(
             Schema::hasColumns('events_updates', [
-                'event_update_id', 'event_id', 'event_name', 'description', 'start_event', 'end_event', 'poster', 'price', 'capacity', 'rejected', 'establishment_id', 'status_id', 'user_id', 'deleted_at', 'updated_at', 'created_at'
+                'event_update_id', 'event_id', 'event_name', 'description', 'start_event', 'end_event', 'poster', 'price', 'capacity', 'establishment_id', 'status_id', 'user_id', 'deleted_at', 'updated_at', 'created_at'
             ]), 1);
     }
 }

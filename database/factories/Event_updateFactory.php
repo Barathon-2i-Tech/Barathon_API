@@ -31,7 +31,6 @@ class Event_updateFactory extends Factory
             'poster'=>$event->poster,
             'price'=>$event->price,
             'capacity'=>$event->capacity,
-            'rejected'=>$event->rejected,
             'establishment_id'=>$event->establishment_id,
             'status_id'=> $EVENT_PENDING,
             'user_id'=> $event->user_id,

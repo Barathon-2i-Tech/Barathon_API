@@ -27,7 +27,7 @@ class EstablishmentFactory extends Factory
         return [
             'trade_name'=>fake()->company,
             'siret'=>fake()->siret(),
-            'address'=>$address->address_id,
+            'address_id'=>$address->address_id,
             'logo'=> fake()->imageUrl(180,180,"Establishment logo",false,),
             'phone'=>fake()->phoneNumber(),
             'email'=>fake()->companyEmail(),
