@@ -27,9 +27,9 @@ use App\Http\Controllers\AdministratorController;
 */
 Route::post('/login', [ApiAuthController::class, 'login'])->name('user.login');
 Route::post('/register', [ApiAuthController::class, 'register'])->name('user.register');
-Route::post('/register/barathonien', [BarathonienController::class, 'create'])->name('user.register.barathonien');
-Route::post('/register/owner', [OwnerController::class, 'create'])->name('user.register.owner');
-Route::post('/register/admin', [AdministratorController::class, 'create'])->name('user.register.admin');
+Route::post('/register/barathonien', [BarathonienController::class, 'store'])->name('user.register.barathonien');
+Route::post('/register/owner', [OwnerController::class, 'store'])->name('user.register.owner');
+Route::post('/register/admin', [AdministratorController::class, 'store'])->name('user.register.admin');
 
 /*
 |--------------------------------------------------------------------------

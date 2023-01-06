@@ -32,9 +32,22 @@ class AdministratorController extends Controller
      */
     public function create(Request $request)
     {
+
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function store(Request $request)
+    {
+
         $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
+            'superAdmin' => 'boolean', // Accept 0 or 1 only with postman
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
         ]);
@@ -46,26 +59,17 @@ class AdministratorController extends Controller
             'password' => Hash::make($request->password),
         ]);
 
-        $admin = Administrator::create([]);
+        $admin = Administrator::create([
+            "superAdmin" => $request->superAdmin
+        ]);
 
         $user->administrator_id = $admin->administrator_id;
         $user->save();
 
         return $this->success([
-            'user' => $user,
+            'userLogged' => $user,
             'token' => $user->createToken('API Token')->plainTextToken
-        ]);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
+        ], "Admin Created");
     }
 
     /**

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Barathonien;
+use App\Models\Address;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -32,41 +33,7 @@ class BarathonienController extends Controller
      */
     public function create(Request $request)
     {
-        $today = new Carbon();
-        $minor = $today->subYears(18);
 
-        $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'birthday' => 'required|date|before:'.$minor,
-            'address' => 'min:5|required|string|max:255',
-            'postal_code' => 'required|string|size:5',
-            'city' => 'required|string|max:255',
-        ]);
-
-        $user = User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        $barathonien = Barathonien::create([
-            'birthday' => $request->birthday,
-            'address' => $request->address,
-            'postal_code' => $request->postal_code,
-            'city' => $request->city,
-        ]);
-
-        $user->barathonien_id = $barathonien->barathonien_id;
-        $user->save();
-
-        return $this->success([
-            'user' => $user,
-            'token' => $user->createToken('API Token')->plainTextToken
-        ]);
     }
 
     /**
@@ -77,7 +44,47 @@ class BarathonienController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $today = new Carbon();
+        $minor = $today->subYears(18);
+
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+            'birthday' => 'required|date|before:'.$minor,
+            'address' => 'required|string|max:255',
+            'postal_code' => 'required|string|size:5',
+            'city' => 'required|string|max:255',
+        ]);
+
+        $user = User::create([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'avatar' => "https://picsum.photos/180",
+        ]);
+
+        $address = Address::create([
+            'address' => $request->address,
+            'postal_code' => $request->postal_code,
+            'city' => $request->city
+        ]);
+
+        $barathonien = Barathonien::create([
+            'birthday' => $request->birthday,
+            'address_id' => $address->address_id
+        ]);
+
+
+        $user->barathonien_id = $barathonien->barathonien_id;
+        $user->save();
+
+        return $this->success([
+            'userLogged' => $user,
+            'token' => $user->createToken('API Token')->plainTextToken
+        ], "Barathonien Created");
     }
 
     /**
