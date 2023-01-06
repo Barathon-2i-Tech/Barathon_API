@@ -43,9 +43,7 @@ class Establishment extends Model
     protected $fillable = [
         'trade_name',
         'siret',
-        'address',
-        'postal_code',
-        'city',
+        'address_id',
         'logo',
         'phone',
         'email',
@@ -91,5 +89,15 @@ class Establishment extends Model
      */
     public function establishmentsStatus(){
         return $this->belongsTo(Status::class, "status_id");
+    }
+
+    /**
+     * Get the Address associated with the Establishment
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     */
+    public function Address(): HasOne
+    {
+        return $this->hasOne(Address::class);
     }
 }

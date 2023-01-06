@@ -18,7 +18,7 @@ class AdministratorFactory extends Factory
     public function definition()
     {
         return [
-            'avatar' => "https://picsum.photos/180"
+            'superAdmin' => false
         ];
     }
 }

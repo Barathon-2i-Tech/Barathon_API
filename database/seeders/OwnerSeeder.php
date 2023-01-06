@@ -21,9 +21,7 @@ class OwnerSeeder extends Seeder
         $datas = [
             [
                 'siren' => fake()->siren(),
-                'avatar' => "https://picsum.photos/180",
                 'kbis' => 'chemin/kbis.pdf',
-                'active' => true,
                 'status_id' => $OWNER_VALID->status_id
             ]
         ];

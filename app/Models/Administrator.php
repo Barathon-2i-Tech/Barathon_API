@@ -28,9 +28,10 @@ class Administrator extends Model
      * @var string[]
      */
     protected $fillable = [
-        'avatar',
-        'deleted_at'
+        'superAdmin'
     ];
+
+    public $timestamps = false;
 
     /**
      * Get the user associated with the profile

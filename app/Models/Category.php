@@ -31,6 +31,8 @@ class Category extends Model
         'label'
     ];
 
+    public $timestamps = false;
+
     /**
      * Get the establishment associated with the category
      */

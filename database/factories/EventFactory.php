@@ -43,7 +43,6 @@ class EventFactory extends Factory
             'poster'=>fake()->imageUrl(1920,540,"barathon poster event",false,),
             'price'=>fake()->numberBetween(0,50),
             'capacity'=>fake()->numberBetween(1, 200),
-            'rejected'=>false,
             'establishment_id'=>$establishment->establishment_id,
             'status_id'=> $EVENT_VALID->status_id,
             'user_id'=> $user[0]->user_id

@@ -29,37 +29,9 @@ class ApiAuthController extends Controller
         $user = User::where('email', $request->email)->first();
 
 
-        if($user->barathonien_id != null) {
-            $barathonienAvatar = Barathonien::where("barathonien_id",$user->barathonien_id )->get('avatar');
-        } else {
-            $barathonienAvatar = null;
-        }
-
-        if($user->owner_id != null) {
-            $ownerAvatar = Owner::where("owner_id",$user->owner_id )->get('avatar');
-        } else {
-            $ownerAvatar = null;
-        }
-
-        if($user->employee_id != null) {
-            $employeeAvatar = Employee::where("employee_id",$user->employee_id )->get('avatar');
-        } else {
-            $employeeAvatar = null;
-        }
-
-        if($user->administrator_id != null) {
-            $adminAvatar = Administrator::where("administrator_id",$user->administrator_id )->get('avatar');
-        } else {
-            $adminAvatar = null;
-        }
-
 
         return $this->success([
             'userLogged' => $user,
-            'barathonienAvatar' => $barathonienAvatar,
-            'ownerAvatar' => $ownerAvatar,
-            'employeeAvatar' => $employeeAvatar,
-            'adminAvatar' => $adminAvatar,
             'token' => $user->createToken('API Token')->plainTextToken
         ]);
     }
@@ -78,10 +50,11 @@ class ApiAuthController extends Controller
             'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'avatar' => "https://picsum.photos/180",
         ]);
 
         return $this->success([
-            'user' => $user,
+            'userLogged' => $user,
             'token' => $user->createToken('API Token')->plainTextToken
         ]);
     }

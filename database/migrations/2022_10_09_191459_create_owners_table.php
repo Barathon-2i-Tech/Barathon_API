@@ -16,13 +16,9 @@ return new class extends Migration
         Schema::create('owners', function (Blueprint $table) {
             $table->id('owner_id');
             $table->string('siren');
-            $table->string('avatar')->nullable();
             $table->string('kbis');
-            $table->boolean('active')->default(false);
             $table->foreignId('status_id');
             $table->foreign('status_id')->references('status_id')->on('status');
-            $table->timestamp('deleted_at')->nullable();
-            $table->timestamps();
         });
     }
 

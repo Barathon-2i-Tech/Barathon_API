@@ -28,9 +28,12 @@ class Employee extends Model
      * @var string[]
      */
     protected $fillable = [
-        'avatar',
-        'deleted_at'
+        'hiring_date',
+        'dismissal_date'
     ];
+
+    public $timestamps = false;
+
 
     /**
      * Get the user associated with the profile
