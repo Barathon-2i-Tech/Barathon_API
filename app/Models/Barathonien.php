@@ -31,6 +31,8 @@ class Barathonien extends Model
         'address_id',
     ];
 
+    public $timestamps = false;
+
     /**
      * Get the user associated with the profile
      */

@@ -31,6 +31,8 @@ class Administrator extends Model
         'superAdmin'
     ];
 
+    public $timestamps = false;
+
     /**
      * Get the user associated with the profile
      */

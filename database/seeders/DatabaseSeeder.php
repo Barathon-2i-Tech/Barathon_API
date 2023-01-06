@@ -24,6 +24,7 @@ class DatabaseSeeder extends Seeder
         $this->call([
             // Comment the line to not run the seeder
             StatusSeeder::class,
+            AddressSeeder::class,
             CategorySeeder::class,
             EmployeeSeeder::class,
             BarathonienSeeder::class,

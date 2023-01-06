@@ -32,6 +32,9 @@ class Employee extends Model
         'dismissal_date'
     ];
 
+    public $timestamps = false;
+
+
     /**
      * Get the user associated with the profile
      */

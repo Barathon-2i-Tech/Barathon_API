@@ -32,6 +32,9 @@ class Owner extends Model
         'status_id'
     ];
 
+    public $timestamps = false;
+
+
     /**
      * Get the status associated with the user
      */

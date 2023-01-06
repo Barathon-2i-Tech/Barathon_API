@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Address extends Model
 {
@@ -14,7 +15,7 @@ class Address extends Model
      *
      * @var string
      */
-    protected $table = 'address';
+    protected $table = 'addresses';
 
     /**
      * The primary key associated with the model
@@ -32,10 +33,12 @@ class Address extends Model
         'city',
     ];
 
+    public $timestamps = false;
+
     /**
      * Get the barathonien that owns the Address
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function barathonien(): BelongsTo
     {
@@ -45,7 +48,7 @@ class Address extends Model
     /**
      * Get the establishment that owns the Address
      *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     * @return BelongsTo
      */
     public function establishment(): BelongsTo
     {

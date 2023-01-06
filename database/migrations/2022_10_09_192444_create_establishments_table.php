@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('establishments', function (Blueprint $table) {
             $table->id('establishment_id');
             $table->string('trade_name');
-            $table->string('siret',14);
+            $table->string('siret');
             $table->foreignId('address_id');
             $table->foreign('address_id')->references('address_id')->on('addresses');
             $table->string('logo')->nullable();

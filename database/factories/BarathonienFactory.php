@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Address;
 use App\Models\Barathonien;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -17,12 +18,12 @@ class BarathonienFactory extends Factory
      */
     public function definition()
     {
+
+        $address_id = Address::all('address_id')->first();
+
         return [
-            'birthday' => fake(),
-            'address'=>fake()->address,
-            'postal_code'=>fake()->postcode(),
-            'city'=>fake()->city(),
-            'avatar' => "https://picsum.photos/180"
+            'birthday' => fake()->dateTimeBetween('-30 years', '-18 years'),
+            'address_id'=>$address_id->address_id
         ];
     }
 }

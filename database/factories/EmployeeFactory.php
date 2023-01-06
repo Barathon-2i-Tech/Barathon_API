@@ -18,7 +18,8 @@ class EmployeeFactory extends Factory
     public function definition()
     {
         return [
-            'avatar' => "https://picsum.photos/180"
+            'hiring_date' => fake()->date,
+            'dismissal_date' => null
         ];
     }
 }
