@@ -34,7 +34,6 @@ class Event extends Model
         'poster',
         'price',
         'capacity',
-        'rejected',
         'establishment_id',
         'status_id',
         'user_id',

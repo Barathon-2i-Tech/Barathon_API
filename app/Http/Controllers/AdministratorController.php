@@ -32,29 +32,7 @@ class AdministratorController extends Controller
      */
     public function create(Request $request)
     {
-        $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-        ]);
 
-        $user = User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
-        ]);
-
-        $admin = Administrator::create([]);
-
-        $user->administrator_id = $admin->administrator_id;
-        $user->save();
-
-        return $this->success([
-            'user' => $user,
-            'token' => $user->createToken('API Token')->plainTextToken
-        ]);
     }
 
     /**
@@ -65,7 +43,34 @@ class AdministratorController extends Controller
      */
     public function store(Request $request)
     {
-        //
+
+        $request->validate([
+            'first_name' => 'required|string|max:255',
+            'last_name' => 'required|string|max:255',
+            'superAdmin' => 'boolean', // Accept 0 or 1 only with postman
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ]);
+
+        $user = User::create([
+            'first_name' => $request->first_name,
+            'last_name' => $request->last_name,
+            'email' => $request->email,
+            'password' => Hash::make($request->password),
+            'avatar' => "https://picsum.photos/180",
+        ]);
+
+        $admin = Administrator::create([
+            "superAdmin" => $request->superAdmin
+        ]);
+
+        $user->administrator_id = $admin->administrator_id;
+        $user->save();
+
+        return $this->success([
+            'userLogged' => $user,
+            'token' => $user->createToken('API Token')->plainTextToken
+        ], "Admin Created");
     }
 
     /**

@@ -33,6 +33,17 @@ class OwnerController extends Controller
      */
     public function create(Request $request)
     {
+
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param  \App\Http\Requests\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function store(Request $request)
+    {
         $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
@@ -47,12 +58,12 @@ class OwnerController extends Controller
             'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
+            'avatar' => "https://picsum.photos/180",
         ]);
 
         $owner = Owner::create([
             'siren' => $request->siren,
             'kbis' => $request->kbis,
-            'active' => false,
             'status_id' => 3,
         ]);
 
@@ -60,20 +71,9 @@ class OwnerController extends Controller
         $user->save();
 
         return $this->success([
-            'user' => $user,
+            'userLogged' => $user,
             'token' => $user->createToken('API Token')->plainTextToken
-        ]);
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \App\Http\Requests\StoreOwnerRequest  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(StoreOwnerRequest $request)
-    {
-        //
+        ], "Owner Created");
     }
 
     /**

@@ -21,10 +21,11 @@ class RegisterBarathonienTest extends TestCase
             "status",
             "message",
             "data" => [
-                "user" => [
+                "userLogged" => [
                     "first_name",
                     "last_name",
                     "email",
+                    "avatar",
                     "updated_at",
                     "created_at",
                     "user_id",

@@ -15,15 +15,8 @@ class BarathonienSeeder extends Seeder
      */
     public function run()
     {
-        $datas = [
-            [
-                'birthday' => '1985-06-08',
-                'address' => '69 avenue tony garnier',
-                'postal_code' => '69007',
-                'city' => 'Lyon',
-                'avatar' => "https://picsum.photos/180"
-            ]
-        ];
-        Barathonien::create($datas[0]);
+        Barathonien::factory()
+            ->count(1)
+            ->create();
     }
 }

@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Address;
 use App\Models\Establishment;
 use App\Models\Owner;
 use App\Models\Status;
@@ -21,13 +22,12 @@ class EstablishmentFactory extends Factory
     {
         $owner_id = Owner::all('owner_id')->first();
         $ESTABL_VALID = Status::where('comment->code', 'ESTABL_VALID')->first();
+        $address = Address::all('address_id')->first();
 
         return [
             'trade_name'=>fake()->company,
             'siret'=>fake()->siret(),
-            'address'=>fake()->address,
-            'postal_code'=>fake()->postcode(),
-            'city'=>fake()->city(),
+            'address_id'=>$address->address_id,
             'logo'=> fake()->imageUrl(180,180,"Establishment logo",false,),
             'phone'=>fake()->phoneNumber(),
             'email'=>fake()->companyEmail(),
@@ -41,7 +41,6 @@ class EstablishmentFactory extends Factory
                 'Samedi' => '17h00 - 01h00',
                 'Dimanche' => '17h00 - 01h00',
             ],
-            'checked'=>true,
             'owner_id'=>$owner_id->owner_id,
             'status_id'=>$ESTABL_VALID->status_id,
         ];

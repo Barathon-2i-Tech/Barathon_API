@@ -35,7 +35,6 @@ class Event_update extends Model
         'poster',
         'price',
         'capacity',
-        'rejected',
         'establishment_id',
         'status_id',
         'user_id',

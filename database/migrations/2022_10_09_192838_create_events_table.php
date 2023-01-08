@@ -22,7 +22,6 @@ return new class extends Migration
             $table->string('poster')->nullable();
             $table->decimal('price')->nullable();
             $table->integer('capacity')->nullable();
-            $table->boolean('rejected')->default(false);
             $table->foreignId('establishment_id');
             $table->foreign('establishment_id')->references('establishment_id')->on('establishments');
             $table->foreignId('status_id');

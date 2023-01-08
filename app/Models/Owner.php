@@ -28,12 +28,12 @@ class Owner extends Model
      */
     protected $fillable = [
         'siren',
-        'avatar',
         'kbis',
-        'active',
-        'deleted_at',
         'status_id'
     ];
+
+    public $timestamps = false;
+
 
     /**
      * Get the status associated with the user
