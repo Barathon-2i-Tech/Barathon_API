@@ -20,7 +20,7 @@ return new class extends Migration
             $table->foreignId('event_id');
             $table->foreign('event_id')->references('event_id')->on('events');
             $table->boolean("isFav")->default(false);
-            $table->timestamp('created_at');
+
         });
     }
 
