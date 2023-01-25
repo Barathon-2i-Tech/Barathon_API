@@ -58,7 +58,6 @@ class LoginTest extends TestCase
     {
         $user = $this->createBarathonienUser();
 
-
         $structure = [
             "status",
             "message",

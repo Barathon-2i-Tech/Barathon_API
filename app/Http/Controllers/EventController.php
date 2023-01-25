@@ -96,11 +96,16 @@ class EventController extends Controller
         $user = User::find($id);
 
         // Get the user city
-        $city = $user->barathoniens->city;
+        if($user->barathoniens == null){        
+            return $this->error("error", "the User is not a barathonien", 500);
+        }else{
+            $city = $user->barathoniens->city;
+        }
+        
 
         // Get all establishment id in the city
         $establishments = Establishment::all()->where("city", "=", $city)->modelKeys();
-
+        
         // Get 4th first event from the establishments by date now
         $date_now = date("Y-m-j H:i:s");
         
@@ -116,6 +121,11 @@ class EventController extends Controller
     public function getEventBookingByUser($id){
         // Get the event booking by user
         $user = User::find($id);
+        
+        if($user->barathoniens == null){
+            return $this->error("error", "the User is not a barathonien", 500);
+        }
+
         $bookings = Booking::with('event')->where('user_id', '=', $user->user_id)->get()->groupBy(function ($val){
             return Carbon::parse($val->event->start_event)->format('d-m-Y');
         });
