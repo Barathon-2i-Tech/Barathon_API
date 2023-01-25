@@ -89,7 +89,7 @@ class CategoryController extends Controller
     }
 
     public function getTopTenCategories(){
-
+        //get top ten categories used by events 
         $categories = DB::table('categories_events')
             ->join('categories', 'categories_events.category_id', '=', 'categories.category_id')
             ->select('categories.category_id', 'categories.label', DB::raw('COUNT(categories_events.category_id) as total_cate'))

@@ -119,13 +119,13 @@ class EventController extends Controller
     }
 
     public function getEventBookingByUser($id){
-        // Get the event booking by user
-        $user = User::find($id);
         
+        $user = User::find($id);
+        //Check if the user is a barathonien
         if($user->barathoniens == null){
             return $this->error("error", "the User is not a barathonien", 500);
         }
-
+        // Get the event booking by user
         $bookings = Booking::with('event')->where('user_id', '=', $user->user_id)->get()->groupBy(function ($val){
             return Carbon::parse($val->event->start_event)->format('d-m-Y');
         });
