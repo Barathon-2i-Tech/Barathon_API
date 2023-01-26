@@ -4,15 +4,15 @@ namespace App\Http\Controllers;
 
 use App\Models\Tag;
 use App\Models\Tag_Event;
-use Illuminate\Http\Request;
 use App\Traits\HttpResponses;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Collection;
 
 class TagController extends Controller
 {
     use HttpResponses;
-    
+
     /**
      * Display a listing of the resource.
      *
@@ -89,6 +89,11 @@ class TagController extends Controller
         //
     }
 
+    /**
+     * Get top ten tags
+     *
+     * @return JsonResponse
+     */
     public function getTopTenTags(){
 
         $tags = DB::table('tags_events')
@@ -99,8 +104,8 @@ class TagController extends Controller
             ->skip(0)
             ->take(10)
             ->get();
-        
-        
+
+
         return $this->success([
             'tags' => $tags,
         ]);

@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Establishment_Employee extends Model
 {
@@ -34,12 +35,12 @@ class Establishment_Employee extends Model
 
     protected $hidden = ['pivot'];
 
-    public function establishments()
+    public function establishments(): BelongsTo
     {
         return $this->belongsTo(Establishment::class, 'establishment_id');
     }
 
-    public function employees()
+    public function employees(): BelongsTo
     {
         return $this->belongsTo(Employee::class, 'employee_id');
     }

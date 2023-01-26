@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Category extends Model
 {
@@ -36,11 +37,13 @@ class Category extends Model
     /**
      * Get the establishment associated with the category
      */
-    public function establishments(){
+    public function establishments(): BelongsToMany
+    {
         return $this->belongsToMany(Establishment::class, "categories_establishments", "categoryid", "establishment_id" );
     }
 
-    public function events(){
+    public function events(): BelongsToMany
+    {
         return $this->belongsToMany(Event::class, "categories_establishments", "category_id", "establishment_id" );
     }
 

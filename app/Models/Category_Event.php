@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Category_Event extends Model
 {
@@ -34,12 +35,12 @@ class Category_Event extends Model
 
     protected $hidden = ['pivot'];
 
-    public function categories()
+    public function categories(): BelongsTo
     {
         return $this->belongsTo(Category::class, 'category_id');
     }
 
-    public function events()
+    public function events(): BelongsTo
     {
         return $this->belongsTo(Event::class, 'event_id');
     }

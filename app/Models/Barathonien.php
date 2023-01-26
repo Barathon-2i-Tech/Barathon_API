@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Barathonien extends Model
 {
@@ -36,7 +38,7 @@ class Barathonien extends Model
     /**
      * Get the user associated with the profile
      */
-    public function users()
+    public function users(): HasMany
     {
         return $this->hasMany(User::class, "user_id");
     }
@@ -44,7 +46,7 @@ class Barathonien extends Model
     /**
      * Get the Address associated with the Barathonien
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return HasOne
      */
     public function Address(): HasOne
     {

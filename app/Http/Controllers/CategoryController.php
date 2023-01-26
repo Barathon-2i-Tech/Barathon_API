@@ -3,9 +3,10 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Traits\HttpResponses;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Traits\HttpResponses;
 
 class CategoryController extends Controller
 {
@@ -88,8 +89,13 @@ class CategoryController extends Controller
         //
     }
 
+    /**
+     * Get top ten categories
+     *
+     * @return JsonResponse
+     */
     public function getTopTenCategories(){
-        //get top ten categories used by events 
+        //get top ten categories used by events
         $categories = DB::table('categories_events')
             ->join('categories', 'categories_events.category_id', '=', 'categories.category_id')
             ->select('categories.category_id', 'categories.label', DB::raw('COUNT(categories_events.category_id) as total_cate'))
@@ -98,8 +104,8 @@ class CategoryController extends Controller
             ->skip(0)
             ->take(10)
             ->get();
-        
-        
+
+
         return $this->success([
             'categories' => $categories,
         ]);

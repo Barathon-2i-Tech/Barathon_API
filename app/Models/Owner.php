@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Owner extends Model
 {
@@ -38,14 +40,15 @@ class Owner extends Model
     /**
      * Get the status associated with the user
      */
-    public function owners_status(){
+    public function owners_status(): BelongsTo
+    {
         return $this->belongsTo(Status::class,  "status_id");
     }
 
     /**
      * Get the user associated with the profile
      */
-    public function users()
+    public function users(): HasMany
     {
         return $this->hasMany(User::class, "user_id");
     }

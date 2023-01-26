@@ -12,9 +12,8 @@ class EventControllerTest extends TestCase
     /**
      * A basic unit test example.
      *
-     * @return void
      */
-    public function test_get_event_user_by_city()
+    public function test_get_events_user_by_city()
     {
 
         $structure = [
@@ -25,15 +24,15 @@ class EventControllerTest extends TestCase
             ]];
 
         $user = $this->createBarathonienUser();
-        
-       $response = $this->actingAs($user)->get(route('barathonien.eventByUserCity', ["id" => $user->user_id]))
+
+       $response = $this->actingAs($user)->get(route('barathonien.eventsByUserCity', ["id" => $user->user_id]))
        ->assertOk();
 
        $response->assertJsonStructure($structure);
 
     }
 
-    public function test_get_event_user_by_city_check_if_not_barathonien()
+    public function test_get_events_user_by_city_check_if_not_barathonien()
     {
 
         $structure = [
@@ -42,15 +41,15 @@ class EventControllerTest extends TestCase
             "data"];
 
         $user = $this->createAdminUser();
-        
-       $response = $this->actingAs($user)->get(route('barathonien.eventByUserCity', ["id" => $user->user_id]))
+
+       $response = $this->actingAs($user)->get(route('barathonien.eventsByUserCity', ["id" => $user->user_id]))
        ->assertStatus(500);
 
        $response->assertJsonStructure($structure);
 
     }
 
-    public function test_get_event_book_by_user()
+    public function test_get_events_book_by_user()
     {
 
         $structure = [
@@ -61,15 +60,15 @@ class EventControllerTest extends TestCase
             ]];
 
         $user = $this->createBarathonienUser();
-        
-       $response = $this->actingAs($user)->get(route('barathonien.eventBookByUser', ["id" => $user->user_id]))
+
+       $response = $this->actingAs($user)->get(route('barathonien.eventsBookByUser', ["id" => $user->user_id]))
        ->assertOk();
 
        $response->assertJsonStructure($structure);
 
     }
 
-    public function test_get_event_book_by_user_check_if_not_barathonien()
+    public function test_get_events_book_by_user_check_if_not_barathonien()
     {
 
         $structure = [
@@ -78,8 +77,8 @@ class EventControllerTest extends TestCase
             "data"];
 
         $user = $this->createAdminUser();
-        
-       $response = $this->actingAs($user)->get(route('barathonien.eventBookByUser', ["id" => $user->user_id]))
+
+       $response = $this->actingAs($user)->get(route('barathonien.eventsBookByUser', ["id" => $user->user_id]))
        ->assertStatus(500);
 
        $response->assertJsonStructure($structure);

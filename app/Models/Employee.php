@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Employee extends Model
 {
@@ -38,7 +40,7 @@ class Employee extends Model
     /**
      * Get the user associated with the profile
      */
-    public function users()
+    public function users(): HasMany
     {
         return $this->hasMany(User::class, "user_id");
     }
@@ -46,7 +48,8 @@ class Employee extends Model
     /**
      * Get the establishment associated with the employee
      */
-    public function establishments(){
+    public function establishments(): BelongsToMany
+    {
         return $this->belongsToMany(Establishment::class, "establishment_employee", "employee_id", "establishment_id");
     }
 
