@@ -29,7 +29,7 @@ return new class extends Migration
             $table->foreignId('user_id');
             $table->foreign('user_id')->references('user_id')->on('users');
             $table->timestamp('deleted_at')->nullable();
-            $table->foreignId('event_update_id');
+            $table->foreignId('event_update_id')->nullable();
             $table->foreign('event_update_id')->references('event_id')->on('events');
             $table->timestamps();
         });
