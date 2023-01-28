@@ -64,7 +64,7 @@ class User extends Authenticatable
     /**
      * Get the owner profile associated with the user
      */
-    public function owners()
+    public function owner()
     {
         return $this->belongsTo(Owner::class, "owner_id");
     }
@@ -72,7 +72,7 @@ class User extends Authenticatable
     /**
      * Get the employee profile associated with the user
      */
-    public function employees()
+    public function employee()
     {
         return $this->belongsTo(Employee::class, "employee_id");
     }
@@ -80,7 +80,7 @@ class User extends Authenticatable
     /**
      * Get the administrator profile associated with the user
      */
-    public function administrators()
+    public function administrator()
     {
         return $this->belongsTo(Administrator::class, "administrator_id");
     }
@@ -88,7 +88,7 @@ class User extends Authenticatable
     /**
      * Get the barathonien profile associated with the user
      */
-    public function barathoniens()
+    public function barathonien()
     {
         return $this->belongsTo(Barathonien::class, "barathonien_id");
     }
