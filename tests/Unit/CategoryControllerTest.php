@@ -11,7 +11,7 @@ class CategoryControllerTest extends TestCase
 
 
     /**
-     * A basic unit test example.
+     * A test to check if we can have the top 10 categories used by events.
      *
      * @return void
      */

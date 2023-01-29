@@ -10,7 +10,7 @@ class EventControllerTest extends TestCase
     use RefreshDatabase;
 
     /**
-     * A basic unit test example.
+     * A Test for check if we can have the events with the same city than the user in parametter
      *
      */
     public function test_get_events_user_by_city()
@@ -32,6 +32,10 @@ class EventControllerTest extends TestCase
 
     }
 
+    /**
+     * A Test for check if a user other than an Barathonien can execute this route
+     *
+     */
     public function test_get_events_user_by_city_check_if_not_barathonien()
     {
 
@@ -49,6 +53,11 @@ class EventControllerTest extends TestCase
 
     }
 
+
+    /**
+     * A Test for check if we can have the events books by the user in parametter
+     *
+     */
     public function test_get_events_book_by_user()
     {
 
@@ -85,4 +94,3 @@ class EventControllerTest extends TestCase
 
     }
 }
-
