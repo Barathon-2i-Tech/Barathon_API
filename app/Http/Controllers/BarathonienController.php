@@ -30,23 +30,15 @@ class BarathonienController extends Controller
                 ->join('addresses', 'barathoniens.address_id', '=', 'addresses.address_id')
                 ->select('users.*', 'barathoniens.*', 'addresses.*')
                 ->whereNotNull('users.barathonien_id')
+                ->where('users.deleted_at', '=', null)
                 ->get();
+
             return $this->success($barathoniens, "Barathonien List");
 
         } catch (Exception $error) {
             Log::error($error);
             return $this->error("",$error->getMessage(), 500);
         }
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return JsonResponse
-     */
-    public function create(Request $request)
-    {
-
     }
 
     /**
@@ -112,17 +104,6 @@ class BarathonienController extends Controller
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Barathonien  $barathonien
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Barathonien $barathonien)
-    {
-        //
-    }
-
-    /**
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
@@ -137,7 +118,7 @@ class BarathonienController extends Controller
     /**
      * Deleting the barathonien
      *
-     * @param  \App\Models\Barathonien  $barathonien
+     * @param $user_id
      * @return JsonResponse
      */
     public function destroy($user_id)
