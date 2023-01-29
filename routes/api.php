@@ -65,5 +65,5 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 */
 
 Route::get('/barathonien/list', [BarathonienController::class, 'getBarathonienList'])->name('barathonien.list');
-
+Route::delete('/barathonien/delete/{user_id}', [BarathonienController::class, 'destroy'])->name('barathonien.delete');
 });

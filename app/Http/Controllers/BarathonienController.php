@@ -135,13 +135,19 @@ class BarathonienController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Deleting the barathonien
      *
      * @param  \App\Models\Barathonien  $barathonien
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function destroy(Barathonien $barathonien)
+    public function destroy($user_id)
     {
-        //
+        try {
+            $barathonien= User::where('user_id',$user_id)->delete();
+            return $this->success("", "Barathonien Deleted");
+        } catch (Exception $error) {
+            Log::error($error);
+            return $this->error("",$error->getMessage(), 500);
+        }
     }
 }
