@@ -10,6 +10,7 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -37,17 +38,17 @@ class BarathonienController extends Controller
 
         } catch (Exception $error) {
             Log::error($error);
-            return $this->error("",$error->getMessage(), 500);
+            return $this->error(null,$error->getMessage(), 500);
         }
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param Request $request
      * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $today = new Carbon();
         $minor = $today->subYears(18);
@@ -93,22 +94,35 @@ class BarathonienController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified barathonien.
      *
-     * @param  \App\Models\Barathonien  $barathonien
-     * @return \Illuminate\Http\Response
+     * @param $user_id
+     * @return JsonResponse
      */
-    public function show(Barathonien $barathonien)
+    public function show($user_id): JsonResponse
     {
-        //
+        try {
+            $barathonien = DB::table('users')
+                ->join('barathoniens', 'users.barathonien_id', '=', 'barathoniens.barathonien_id')
+                ->join('addresses', 'barathoniens.address_id', '=', 'addresses.address_id')
+                ->select('users.*', 'barathoniens.*', 'addresses.*')
+                ->where('users.user_id', '=', $user_id)
+                ->first();
+
+            return $this->success($barathonien, "Barathonien");
+
+        } catch (Exception $error) {
+            Log::error($error);
+            return $this->error(null,$error->getMessage(), 500);
+        }
     }
 
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Barathonien  $barathonien
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Barathonien $barathonien
+     * @return Response
      */
     public function update(Request $request, Barathonien $barathonien)
     {
@@ -121,14 +135,14 @@ class BarathonienController extends Controller
      * @param $user_id
      * @return JsonResponse
      */
-    public function destroy($user_id)
+    public function destroy($user_id): JsonResponse
     {
         try {
-            $barathonien= User::where('user_id',$user_id)->delete();
+            User::where('user_id',$user_id)->delete();
             return $this->success("", "Barathonien Deleted");
         } catch (Exception $error) {
             Log::error($error);
-            return $this->error("",$error->getMessage(), 500);
+            return $this->error(null,$error->getMessage(), 500);
         }
     }
 }
