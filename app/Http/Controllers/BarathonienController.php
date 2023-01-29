@@ -10,7 +10,6 @@ use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
@@ -118,15 +117,14 @@ class BarathonienController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified barathonien in database.
      *
      * @param Request $request
-     * @param Barathonien $barathonien
-     * @return Response
+     * @return JsonResponse
      */
-    public function update(Request $request, Barathonien $barathonien)
+    public function update(Request $request, $user_id): JsonResponse
     {
-        //
+
     }
 
     /**

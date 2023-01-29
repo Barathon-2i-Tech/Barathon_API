@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Requests\StoreOwnerRequest;
-use App\Http\Requests\UpdateOwnerRequest;
-use Illuminate\Http\Request;
 use App\Models\Owner;
-use Illuminate\Validation\Rules;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 use App\Models\User;
 use App\Traits\HttpResponses;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rules;
 
 class OwnerController extends Controller
 {
@@ -19,19 +20,30 @@ class OwnerController extends Controller
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function index()
+    public function getOwnerList(): JsonResponse
     {
-        //
+        try {
+            $owners = User::with(['owner', 'owner.owner_status'])
+                ->whereHas('owner', function ($query) {
+                    $query->whereNotNull('owner_id');
+                })
+                ->get();
+            return $this->success($owners, "Owner List");
+        }
+        catch (Exception $error) {
+            Log::error($error);
+            return $this->error(null,$error->getMessage(), 500);
+        }
     }
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @return JsonResponse
      */
-    public function create(Request $request)
+    public function create(Request $request): JsonResponse
     {
 
     }
@@ -39,8 +51,8 @@ class OwnerController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \App\Http\Requests\Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @param Request $request
+     * @return JsonResponse
      */
     public function store(Request $request)
     {
@@ -79,8 +91,8 @@ class OwnerController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Owner  $owner
-     * @return \Illuminate\Http\Response
+     * @param Owner $owner
+     * @return void
      */
     public function show(Owner $owner)
     {
@@ -90,10 +102,10 @@ class OwnerController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Owner  $owner
-     * @return \Illuminate\Http\Response
+     * @param Owner $owner
+     * @return Response
      */
-    public function edit(Owner $owner)
+    public function edit(Owner $owner): Response
     {
         //
     }
@@ -101,11 +113,11 @@ class OwnerController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \App\Http\Requests\UpdateOwnerRequest  $request
-     * @param  \App\Models\Owner  $owner
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @param Owner $owner
+     * @return Response
      */
-    public function update(UpdateOwnerRequest $request, Owner $owner)
+    public function update(Request $request, Owner $owner): Response
     {
         //
     }
@@ -113,11 +125,17 @@ class OwnerController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Owner  $owner
-     * @return \Illuminate\Http\Response
+     * @param Owner $owner
+     * @return JsonResponse
      */
-    public function destroy(Owner $owner)
+    public function destroy($user_id): JsonResponse
     {
-        //
+        try {
+            User::where('user_id',$user_id)->delete();
+            return $this->success("", "Owner Deleted");
+        } catch (Exception $error) {
+            Log::error($error);
+            return $this->error(null,$error->getMessage(), 500);
+        }
     }
 }

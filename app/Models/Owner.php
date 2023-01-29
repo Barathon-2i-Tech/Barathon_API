@@ -38,7 +38,7 @@ class Owner extends Model
     /**
      * Get the status associated with the user
      */
-    public function owners_status(){
+    public function owner_status(){
         return $this->belongsTo(Status::class,  "status_id");
     }
 
