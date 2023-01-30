@@ -122,7 +122,29 @@ class BarathonienController extends Controller
      */
     public function update(Request $request, $user_id): JsonResponse
     {
+        try {
+            $user = User::where('user_id',$user_id)->first();
+            $user->first_name = $request->first_name;
+            $user->last_name = $request->last_name;
+            $user->email = $request->email;
+            $user->save();
 
+            $barathonien = Barathonien::where('barathonien_id',$user->barathonien_id)->first();
+            $barathonien->birthday = $request->birthday;
+            $barathonien->save();
+
+            $address = Address::where('address_id',$barathonien->address_id)->first();
+            $address->address = $request->address;
+            $address->postal_code = $request->postal_code;
+            $address->city = $request->city;
+            $address->save();
+
+            return $this->success($user, "Barathonien Updated");
+
+        } catch (Exception $error) {
+            Log::error($error);
+            return $this->error(null,$error->getMessage(), 500);
+        }
     }
 
     /**
