@@ -13,11 +13,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 
 class BarathonienController extends Controller
 {
     use HttpResponses;
+
     /**
      * Display all barathonien.
      * @return JsonResponse
@@ -25,7 +27,7 @@ class BarathonienController extends Controller
     public function getBarathonienList(): JsonResponse
     {
         try {
-                $barathoniens = User::with(['barathonien', 'barathonien.address'])
+            $barathoniens = User::with(['barathonien', 'barathonien.address'])
                 ->whereHas('barathonien', function ($query) {
                     $query->whereNotNull('barathonien_id');
                 })
@@ -35,7 +37,7 @@ class BarathonienController extends Controller
 
         } catch (Exception $error) {
             Log::error($error);
-            return $this->error(null,$error->getMessage(), 500);
+            return $this->error(null, $error->getMessage(), 500);
         }
     }
 
@@ -53,9 +55,9 @@ class BarathonienController extends Controller
         $request->validate([
             'first_name' => 'required|string|max:255',
             'last_name' => 'required|string|max:255',
-            'email' => 'required|string|email|max:255|unique:users',
+            'email' => 'required|string|email|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'birthday' => 'required|date|before:'.$minor,
+            'birthday' => 'required|date|before:' . $minor,
             'address' => 'min:5|required|string|max:255',
             'postal_code' => 'required|string|size:5',
             'city' => 'required|string|max:255',
@@ -110,7 +112,7 @@ class BarathonienController extends Controller
 
         } catch (Exception $error) {
             Log::error($error);
-            return $this->error(null,$error->getMessage(), 500);
+            return $this->error(null, $error->getMessage(), 500);
         }
     }
 
@@ -118,32 +120,59 @@ class BarathonienController extends Controller
      * Update the specified barathonien in database.
      *
      * @param Request $request
+     * @param $user_id
      * @return JsonResponse
      */
     public function update(Request $request, $user_id): JsonResponse
     {
         try {
-            $user = User::where('user_id',$user_id)->first();
-            $user->first_name = $request->first_name;
-            $user->last_name = $request->last_name;
-            $user->email = $request->email;
+            // Get the user given in parameter
+            $user = User::findOrFail($user_id);
+
+            $request->validate([
+                'first_name' => 'required|string|max:255',
+                'last_name' => 'required|string|max:255',
+                'email' => [
+                    'required',
+                    'string',
+                    'email',
+                    Rule::unique('users')->ignore($user), // Ignore the user given in parameter
+                ],
+                'address' => 'min:5|required|string|max:255',
+                'postal_code' => 'required|string|size:5',
+                'city' => 'required|string|max:255',
+            ]);
+
+            $dataBarathonien = $request->only(['first_name', 'last_name', 'email']);
+            // Check if the data given in parameter are different from the data in database
+            foreach ($dataBarathonien as $field => $value) {
+                if ($user->{$field} !== $value) {
+                    $user->{$field} = $value;
+                }
+            }
             $user->save();
 
-            $barathonien = Barathonien::where('barathonien_id',$user->barathonien_id)->first();
-            $barathonien->birthday = $request->birthday;
-            $barathonien->save();
+            // Get the barathonien profile linked to the user
+            $barathonien = Barathonien::where('barathonien_id', $user->barathonien_id)->first();
 
-            $address = Address::where('address_id',$barathonien->address_id)->first();
-            $address->address = $request->address;
-            $address->postal_code = $request->postal_code;
-            $address->city = $request->city;
+            // Get the address linked to the barathonien profile
+            $address = Address::where('address_id', $barathonien->address_id)->first();
+
+            $dataAddress = $request->only(['address', 'postal_code', 'city']);
+            // Check if the data given in parameter are different from the data in database
+            foreach ($dataAddress as $field => $value) {
+                if ($address->{$field} !== $value) {
+                    $address->{$field} = $value;
+                }
+            }
             $address->save();
 
-            return $this->success($user, "Barathonien Updated");
+            // Return the updated user and address
+            return $this->success([$user, $address], "Barathonien Updated");
 
         } catch (Exception $error) {
             Log::error($error);
-            return $this->error(null,$error->getMessage(), 500);
+            return $this->error(null, $error->getMessage(), 500);
         }
     }
 
@@ -156,11 +185,11 @@ class BarathonienController extends Controller
     public function destroy($user_id): JsonResponse
     {
         try {
-            User::where('user_id',$user_id)->delete();
+            User::where('user_id', $user_id)->delete();
             return $this->success("", "Barathonien Deleted");
         } catch (Exception $error) {
             Log::error($error);
-            return $this->error(null,$error->getMessage(), 500);
+            return $this->error(null, $error->getMessage(), 500);
         }
     }
 }
