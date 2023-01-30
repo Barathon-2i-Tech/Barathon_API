@@ -68,6 +68,8 @@ Route::get('/barathonien/list', [BarathonienController::class, 'getBarathonienLi
 Route::get('/barathonien/{user_id}', [BarathonienController::class, 'show'])->name('barathonien.show');
 Route::post('/barathonien/update/{user_id}', [BarathonienController::class, 'update'])->name('barathonien.update');
 Route::delete('/barathonien/delete/{user_id}', [BarathonienController::class, 'destroy'])->name('barathonien.delete');
+Route::get('/barathonien/restore/{user_id}', [BarathonienController::class, 'restore'])->name('barathonien.restore');
+
 
 Route::get('/pro/list', [OwnerController::class, 'getOwnerList'])->name('owner.list');
 Route::get('/pro/{user_id}', [OwnerController::class, 'show'])->name('owner.show');

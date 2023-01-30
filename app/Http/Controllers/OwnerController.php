@@ -38,15 +38,6 @@ class OwnerController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return JsonResponse
-     */
-    public function create(Request $request): JsonResponse
-    {
-
-    }
 
     /**
      * Store a newly created resource in storage.
