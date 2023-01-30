@@ -25,7 +25,7 @@ class BarathonienController extends Controller
     public function getBarathonienList(): JsonResponse
     {
         try {
-                $barathoniens = User::with(['barathonien'])
+                $barathoniens = User::with(['barathonien', 'barathonien.address'])
                 ->whereHas('barathonien', function ($query) {
                     $query->whereNotNull('barathonien_id');
                 })
