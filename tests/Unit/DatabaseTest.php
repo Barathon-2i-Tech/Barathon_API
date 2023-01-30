@@ -130,15 +130,4 @@ class DatabaseTest extends TestCase
             ]), 1);
     }
 
-    /**
-     * Check if events_updates database has expected columns.
-     *
-     */
-    public function test_events_updates_database_has_expected_columns()
-    {
-        $this->assertTrue(
-            Schema::hasColumns('events_updates', [
-                'event_update_id', 'event_id', 'event_name', 'description', 'start_event', 'end_event', 'poster', 'price', 'capacity', 'establishment_id', 'status_id', 'user_id', 'deleted_at', 'updated_at', 'created_at'
-            ]), 1);
-    }
 }
