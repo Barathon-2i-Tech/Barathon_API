@@ -143,8 +143,9 @@ class BarathonienController extends Controller
             $user = User::findOrFail($user_id);
 
             // Check if the user is a barathonien
-            if ($user->barathonien_id === null)
+            if ($user->barathonien_id === null) {
                 return $this->error(null, "Barathonien not found", 404);
+            }
 
             $request->validate([
                 'first_name' => 'required|string|max:255',
@@ -189,11 +190,10 @@ class BarathonienController extends Controller
             $userChanges = $user->getChanges();
             $addressChanges = $address->getChanges();
 
-
-            // Check if the user has changed
-           // if (empty($userChanges) && empty($addressChanges))
-             //   return $this->success([$user, $address], "Barathonien not updated");
-
+            // Check if the user data has changed
+            if (empty($userChanges) && empty($addressChanges)) {
+                return $this->success([$user, $address], "Barathonien not updated");
+            }
 
             // Return the updated user and address
             return $this->success([$user, $address], "Barathonien Updated");
