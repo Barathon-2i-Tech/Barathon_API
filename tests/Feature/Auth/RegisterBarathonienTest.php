@@ -49,7 +49,7 @@ class RegisterBarathonienTest extends TestCase
             'Accept' => 'application/json',
             'Content-Type' => 'application/json'
         ])
-            ->assertOk();
+            ->assertStatus(201);
 
         $response->assertJsonStructure($structure);
     }
@@ -74,7 +74,7 @@ class RegisterBarathonienTest extends TestCase
             'avatar' => "myavatar.jpg"
         ])
             ->assertStatus(422)
-            ->assertInvalid(['birthday' => 'validation.required']);
+           ->assertJsonFragment(['message' => 'validation.required']);
     }
 
     /**
@@ -98,7 +98,7 @@ class RegisterBarathonienTest extends TestCase
             'avatar' => "myavatar.jpg"
         ])
             ->assertStatus(422)
-            ->assertInvalid(['birthday' => 'validation.date']);
+            ->assertJsonFragment(['message' => 'validation.date']);
     }
 
     /**
@@ -125,7 +125,7 @@ class RegisterBarathonienTest extends TestCase
             'Content-Type' => 'application/json'
         ])
             ->assertStatus(422)
-            ->assertInvalid(['birthday' => 'validation.before']);
+            ->assertJsonFragment(['message' => 'validation.before']);
     }
 
     /**
@@ -149,7 +149,7 @@ class RegisterBarathonienTest extends TestCase
             'Content-Type' => 'application/json'
         ])
             ->assertStatus(422)
-            ->assertInvalid(['address' => 'validation.required']);
+            ->assertJsonFragment(['message' => 'validation.required']);
     }
 
     /**
@@ -173,7 +173,7 @@ class RegisterBarathonienTest extends TestCase
             'Content-Type' => 'application/json'
         ])
             ->assertStatus(422)
-            ->assertInvalid(['address' => 'validation.min.string']);
+            ->assertJsonFragment(['message' => 'validation.min.string']);
     }
 
     /**
@@ -188,6 +188,7 @@ class RegisterBarathonienTest extends TestCase
             'password' => 'azertyuiop',
             'password_confirmation' => 'azertyuiop',
             'birthday' => '1989-04-05',
+            'address' => fake()->address,
             'city' => fake()->city,
             'avatar' => "myavatar.jpg"
         ], [
@@ -195,7 +196,7 @@ class RegisterBarathonienTest extends TestCase
             'Content-Type' => 'application/json'
         ])
             ->assertStatus(422)
-            ->assertInvalid(['postal_code' => 'validation.required']);
+            ->assertJsonFragment(['message' => 'validation.required']);
     }
 
     /**
@@ -219,7 +220,7 @@ class RegisterBarathonienTest extends TestCase
             'Content-Type' => 'application/json'
         ])
             ->assertStatus(422)
-            ->assertInvalid(['postal_code' => 'validation.size.string']);
+            ->assertJsonFragment(['message' => 'validation.size.string']);
     }
 
     /**
@@ -235,6 +236,7 @@ class RegisterBarathonienTest extends TestCase
             'password' => 'azertyuiop',
             'password_confirmation' => 'azertyuiop',
             'birthday' => '1989-04-05',
+            'address' => fake()->address,
             'postal_code' => '69000',
             'avatar' => "myavatar.jpg"
         ], [
@@ -242,7 +244,7 @@ class RegisterBarathonienTest extends TestCase
             'Content-Type' => 'application/json'
         ])
             ->assertStatus(422)
-            ->assertInvalid(['city' => 'validation.required']);
+            ->assertJsonFragment(['message' => 'validation.required']);
     }
 
 }

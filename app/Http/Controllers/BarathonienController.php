@@ -99,7 +99,7 @@ class BarathonienController extends Controller
 
         } catch (Exception $error) {
             Log::error($error);
-            return $this->error(null, $error->getMessage(), 500);
+            return $this->error(null, $error->getMessage(), 422);
         }
     }
 
