@@ -2,28 +2,41 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Barathonien;
 use App\Models\Address;
-use Carbon\Carbon;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
+use App\Models\Barathonien;
 use App\Models\User;
 use App\Traits\HttpResponses;
-use Illuminate\Validation\Rules;
-use Illuminate\Support\Facades\Auth;
+use Carbon\Carbon;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rules;
 
 class BarathonienController extends Controller
 {
     use HttpResponses;
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Display all barathonien.
+     * @return JsonResponse
      */
-    public function index()
+    public function getBarathonienList(): JsonResponse
     {
-        //
+        try {
+            $barathoniens = DB::table('users')
+                ->join('barathoniens', 'users.barathonien_id', '=', 'barathoniens.barathonien_id')
+                ->join('addresses', 'barathoniens.address_id', '=', 'addresses.address_id')
+                ->select('users.*', 'barathoniens.*', 'addresses.*')
+                ->whereNotNull('users.barathonien_id')
+                ->get();
+            return $this->success($barathoniens, "Barathonien List");
+
+        } catch (Exception $error) {
+            Log::error($error);
+            return $this->error("",$error->getMessage(), 500);
+        }
     }
 
     /**
@@ -40,7 +53,7 @@ class BarathonienController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
     public function store(Request $request)
     {

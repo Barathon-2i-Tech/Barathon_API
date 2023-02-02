@@ -41,6 +41,7 @@ class Event extends Model
         'status_id',
         'user_id',
         'deleted_at',
+        'event_update_id'
     ];
 
     /**
@@ -68,11 +69,11 @@ class Event extends Model
     }
 
     /**
-     * Get the event update associated with the event
+     * Get the event associated with the event update
      */
-    public function eventsUpdate(): HasMany
+    public function eventParent()
     {
-        return $this->hasMany(Event_update::class, "event_update_id");
+        return $this->belongsTo(Event::class, "event_update_id");
     }
 
     /**
@@ -83,6 +84,16 @@ class Event extends Model
         return $this->belongsToMany(Category::class, "category_event", "event_id", "category_id");
     }
     /*
+     * Get the event associated with the event update
+     */
+    public function eventChild()
+    {
+        return $this->hasMany(Event::class, "event_id");
+    }
+
+
+
+    /**
      * Get the booking associated with the event
      */
     public function bookings(): BelongsToMany
