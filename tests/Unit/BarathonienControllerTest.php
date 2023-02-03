@@ -2,6 +2,8 @@
 
 namespace Tests\Unit;
 
+use App\Models\User;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -54,6 +56,29 @@ class BarathonienControllerTest extends TestCase
             ->dump()
             ->assertOk();
         $response->assertJsonStructure($structure);
+
+    }
+
+    /**
+     * A test to get a 404 no found on empty response all barathoniens
+     *
+     * @return void
+     */
+    public function test_get_all_barathoniens_with_empty_response()
+    {
+
+        $user = $this->createAdminUser();
+        $barathoniens = new Collection();
+
+
+
+        $response = $this->actingAs($user)->get(route('barathonien.list'));
+        $response->assertStatus(404);
+        $response->assertJsonFragment([
+            'status' => 'An error has occurred...',
+            'message' => "No barathonien found",
+            'data' => null
+        ]);
 
     }
 }
