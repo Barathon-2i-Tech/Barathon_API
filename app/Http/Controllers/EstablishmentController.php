@@ -47,7 +47,6 @@ public function getEstablishmentList($owner_id): JsonResponse
     }
 }
 
-
     /**
      * Store a newly created resource in storage.
      *
@@ -140,11 +139,70 @@ public function show($owner_id, $establishment_id): JsonResponse
  * @param Request $request
  * @param $owner_id
  * @param $establishment_id
- * @return Response
+ * @return JsonResponse
  */
 public function update(Request $request, $owner_id, $establishment_id)
 {
-    //
+    try {
+        // Get the establishment given in parameter
+        $establishment = Establishment::where('owner_id', $owner_id)
+        ->findOrFail($establishment_id);
+
+        $request->validate([
+            'trade_name' => 'required|string|max:255',
+            'siret' => 'required|string|max:14', // 14 characters for a SIRET
+            'logo' => File::image(),
+            'phone' => 'required|string' ,
+            'email' => 'email|string',
+            'website' => 'string',
+            'opening' => 'json',
+            'address' => 'min:5|required|string|max:255',
+            'postal_code' => 'required|string|size:5',
+            'city' => 'required|string|max:255',
+           // 'status_id' =>'required|integer'
+        ]);
+
+
+        $dataEstablishment = $request->only(['trade_name', 'siret', 'logo', 'phone', 'email', 'website', 'opening']);
+
+        // Check if the data given in parameter are different from the data in database
+        foreach ($dataEstablishment as $field => $value) {
+            if ($establishment->{$field} !== $value) {
+                $establishment->{$field} = $value;
+            }
+        }
+        $establishment->save();
+
+        // Get the address linked to the establishment
+        $address = Address::where('address_id', $establishment->address_id)->first();
+
+        $dataAddress = $request->only(['address', 'postal_code', 'city']);
+
+        // Check if the data given in parameter are different from the data in database
+        foreach ($dataAddress as $field => $value) {
+            if ($address->{$field} !== $value) {
+                $address->{$field} = $value;
+            }
+        }
+        $address->save();
+
+        $establishmentChanges = $establishment->getChanges();
+        $addressChanges = $address->getChanges();
+        dump($establishmentChanges);
+        dump($addressChanges);
+
+        // Check if the establishment data has changed
+        if (empty($establishmentChanges) && empty($addressChanges)) {
+            return $this->success([$establishment, $address], "Establishment not updated");
+        }
+
+        // Return the updated establishment and address
+        return $this->success([$establishment, $address], "Establishment Updated");
+
+    } catch (Exception $error) {
+        Log::error($error);
+        return $this->error(null, $error->getMessage(), 500);
+    }
 }
 
     /**

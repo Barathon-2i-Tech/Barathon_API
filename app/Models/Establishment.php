@@ -54,10 +54,9 @@ class Establishment extends Model
         'email',
         'website',
         'opening',
-        'checked',
-        'deleted_at',
         'owner_id',
-        'status_id'
+        'status_id',
+        'deleted_at',
     ];
 
     /**
