@@ -4,6 +4,8 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
@@ -96,7 +98,7 @@ class User extends Authenticatable
     /**
      * Get the event associated with the user
      */
-    public function events()
+    public function events(): BelongsTo
     {
         return $this->belongsTo(Event::class, "event_id");
     }
@@ -104,8 +106,9 @@ class User extends Authenticatable
     /**
      * Get the booking associated with the user
      */
-    public function bookings(){
-        return $this->belongsToMany(Booking::class, "bookings", "user_id", "booking_id" );
+    public function bookings(): BelongsToMany
+    {
+        return $this->belongsToMany(Booking::class, "bookings", "user_id", "event_id" );
     }
 
 }

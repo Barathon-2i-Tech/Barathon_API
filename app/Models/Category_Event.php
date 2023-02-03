@@ -6,7 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class Booking extends Model
+class Category_Event extends Model
 {
     use HasFactory;
 
@@ -15,12 +15,12 @@ class Booking extends Model
      *
      * @var string
      */
-    protected $table = 'bookings';
+    protected $table = 'categories_events';
 
     /**
      * The primary key associated with the model
      */
-    protected $primaryKey = 'booking_id';
+    protected $primaryKey = 'category_event_id';
 
 
     /**
@@ -29,22 +29,20 @@ class Booking extends Model
      * @var string[]
      */
     protected $fillable = [
-        'user_id',
-        'event_id',
-        'isFav'
+        'category_id',
+        'event_id'
     ];
 
     protected $hidden = ['pivot'];
 
-    public $timestamps = false;
-
-    public function user(): BelongsTo
+    public function categories(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'user_id');
+        return $this->belongsTo(Category::class, 'category_id');
     }
 
-    public function event(): BelongsTo
+    public function events(): BelongsTo
     {
         return $this->belongsTo(Event::class, 'event_id');
     }
+
 }

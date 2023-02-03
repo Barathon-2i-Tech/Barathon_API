@@ -27,6 +27,7 @@ class EventFactory extends Factory
 
         $establishment = Establishment::where('trade_name','Fait Foif')->first();
         $EVENT_VALID = Status::where('comment->code', 'EVENT_VALID')->first();
+        $nb = rand(1, 30);
 
         $user = DB::table('users')
             ->join('employees', 'users.employee_id', "=", "employees.employee_id" )
@@ -35,12 +36,13 @@ class EventFactory extends Factory
             ->where('establishments.trade_name', $establishment->trade_name)
             ->get();
 
+
         return [
             'event_name' => fake()->words(3, true),
             'description'=> fake()->text(),
-            'start_event'=> Carbon::now()->addDays(15),
-            'end_event'=> Carbon::now()->addDays(15)->addRealHours(3),
-            'poster'=>fake()->imageUrl(1920,540,"barathon poster event",false,),
+            'start_event'=> Carbon::now()->addDays($nb),
+            'end_event'=> Carbon::now()->addDays($nb)->addRealHours(3),
+            'poster'=>"https://picsum.photos/500/250",
             'price'=>fake()->numberBetween(0,50),
             'capacity'=>fake()->numberBetween(1, 200),
             'establishment_id'=>$establishment->establishment_id,

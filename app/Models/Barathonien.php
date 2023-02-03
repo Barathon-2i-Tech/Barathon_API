@@ -38,7 +38,7 @@ class Barathonien extends Model
     /**
      * Get the user associated with the profile
      */
-    public function user(): HasMany
+    public function users(): HasMany
     {
         return $this->hasMany(User::class, "user_id");
     }

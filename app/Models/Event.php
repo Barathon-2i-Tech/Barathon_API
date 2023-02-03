@@ -4,6 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Event extends Model
 {
@@ -44,7 +47,7 @@ class Event extends Model
     /**
      * Get the establishment associated with the event
      */
-    public function establishments()
+    public function establishments(): BelongsTo
     {
         return $this->belongsTo(Establishment::class, "establishment_id");
     }
@@ -52,7 +55,7 @@ class Event extends Model
     /**
      * Get the status associated with the event
      */
-    public function status()
+    public function status(): BelongsTo
     {
         return $this->belongsTo(Status::class, "status_id");
     }
@@ -60,7 +63,7 @@ class Event extends Model
     /**
      * Get the user associated with the event creation / modification
      */
-    public function users()
+    public function users(): BelongsTo
     {
         return $this->belongsTo(User::class, "user_id");
     }
@@ -74,6 +77,13 @@ class Event extends Model
     }
 
     /**
+     * Get the tag  associated with the event
+     */
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class, "category_event", "event_id", "category_id");
+    }
+    /*
      * Get the event associated with the event update
      */
     public function eventChild()
@@ -86,7 +96,8 @@ class Event extends Model
     /**
      * Get the booking associated with the event
      */
-    public function bookings(){
-        return $this->belongsToMany(Booking::class, "bookings", "event_id", "booking_id" );
+    public function bookings(): BelongsToMany
+    {
+        return $this->belongsToMany(Booking::class, "bookings", "event_id", "user_id" );
     }
 }

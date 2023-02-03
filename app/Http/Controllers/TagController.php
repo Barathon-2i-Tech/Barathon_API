@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category;
+use App\Models\Tag;
+use App\Models\Tag_Event;
 use App\Traits\HttpResponses;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
-class CategoryController extends Controller
+class TagController extends Controller
 {
-
     use HttpResponses;
 
     /**
@@ -47,10 +47,10 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Category  $category
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Http\Response
      */
-    public function show(Category $category)
+    public function show(Tag $tag)
     {
         //
     }
@@ -58,10 +58,10 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Category  $category
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Http\Response
      */
-    public function edit(Category $category)
+    public function edit(Tag $tag)
     {
         //
     }
@@ -70,10 +70,10 @@ class CategoryController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Category  $category
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Category $category)
+    public function update(Request $request, Tag $tag)
     {
         //
     }
@@ -81,33 +81,33 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Category  $category
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+    public function destroy(Tag $tag)
     {
         //
     }
 
     /**
-     * Get top ten categories
+     * Get top ten tags
      *
      * @return JsonResponse
      */
-    public function getTopTenCategories(){
-        //get top ten categories used by events
-        $categories = DB::table('categories_events')
-            ->join('categories', 'categories_events.category_id', '=', 'categories.category_id')
-            ->select('categories.category_id', 'categories.label', DB::raw('COUNT(categories_events.category_id) as total_cate'))
-            ->groupBy('categories.category_id')
-            ->orderBy('total_cate', 'desc')
+    public function getTopTenTags(){
+
+        $tags = DB::table('tags_events')
+            ->join('tags', 'tags_events.tag_id', '=', 'tags.tag_id')
+            ->select('tags.tag_id', 'tags.label', DB::raw('COUNT(tags_events.tag_id) as total_tag'))
+            ->groupBy('tags.tag_id')
+            ->orderBy('total_tag', 'desc')
             ->skip(0)
             ->take(10)
             ->get();
 
 
         return $this->success([
-            'categories' => $categories,
+            'tags' => $tags,
         ]);
     }
 }
