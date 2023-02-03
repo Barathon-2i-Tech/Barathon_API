@@ -1,26 +1,52 @@
 <?php
 
 namespace App\Http\Controllers;
-
+use App\Traits\HttpResponses;
 use App\Models\Establishment;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Log;
+
 
 class EstablishmentController extends Controller
 {
+    use HttpResponses;
     /**
      * Display a listing of the resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function index()
+    public function getEstablishmentList(): JsonResponse
     {
         //
+        try {
+            $user_id = 3;
+            $owner_id = 1;
+            $establishments = Establishment::with(['owner', 'address', 'establishmentStatus'])
+                ->whereHas('establishment', function ($query) use ($owner_id) {
+                    $query->where('establishment.owner_id', $owner_id);
+                })
+                ->get();
+
+            if ($establishments->isEmpty())
+                return $this->error(null, "Establishment not found", 404);
+
+            return $this->success($establishments, "Establishment List");
+
+        } catch (Exception $error) {
+            Log::error($error);
+            return $this->error(null, $error->getMessage(), 500);
+        }
     }
+
+
 
     /**
      * Show the form for creating a new resource.
      *
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function create()
     {
@@ -31,7 +57,7 @@ class EstablishmentController extends Controller
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function store(Request $request)
     {
@@ -42,7 +68,7 @@ class EstablishmentController extends Controller
      * Display the specified resource.
      *
      * @param  \App\Models\Establishment  $establishment
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function show(Establishment $establishment)
     {
@@ -53,7 +79,7 @@ class EstablishmentController extends Controller
      * Show the form for editing the specified resource.
      *
      * @param  \App\Models\Establishment  $establishment
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function edit(Establishment $establishment)
     {
@@ -65,7 +91,7 @@ class EstablishmentController extends Controller
      *
      * @param  \Illuminate\Http\Request  $request
      * @param  \App\Models\Establishment  $establishment
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function update(Request $request, Establishment $establishment)
     {
@@ -76,10 +102,33 @@ class EstablishmentController extends Controller
      * Remove the specified resource from storage.
      *
      * @param  \App\Models\Establishment  $establishment
-     * @return \Illuminate\Http\Response
+     * @return Response
      */
     public function destroy(Establishment $establishment)
     {
         //
     }
+
+    /*public function getEstablishementsByOwnerEstablishment($id){
+        // Get the user
+        $user = User::find($id);
+
+        //get owner
+        $owner = Owner::find($id);
+
+
+        // Get the user establishment
+        if($user->owner == null){
+            return $this->error("error", "the User is not a owner", 500);
+        }
+
+        $establishments = Establishment::where('$owner', $id)->get();
+
+
+        // Return all events
+        return $this->success([
+            'establishments' => $establishments,
+        ]);
+
+    }*/
 }

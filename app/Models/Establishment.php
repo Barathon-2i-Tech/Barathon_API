@@ -7,6 +7,10 @@ use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Establishment extends Model
 {
@@ -58,45 +62,49 @@ class Establishment extends Model
     /**
      * Get the owner associated with the establishment
      */
-    public function owners()
+    public function owner(): BelongsTo
     {
-        return $this->hasMany(Owner::class, "owner_id");
+        return $this->belongsTo(Owner::class, "owner_id");
     }
 
     /**
      * Get the employee associated with the establishment
      */
-    public function employees(){
+    public function employees(): BelongsToMany
+    {
         return $this->belongsToMany(Employee::class, "establishment_employee", "establishment_id", "employee_id");
     }
 
     /**
      * Get the event associated with the establishment
      */
-    public function events(){
+    public function events(): HasMany
+    {
         return $this->hasMany(Event::class, "event_id",);
     }
 
     /**
      * Get the category associated with the establishment
      */
-    public function categories(){
+    public function categories(): BelongsToMany
+    {
         return $this->belongsToMany(Category::class, "category_establishment", "establishment_id", "category_id");
     }
 
     /**
      * Get the status associated with the establishment
      */
-    public function establishmentsStatus(){
+    public function establishmentStatus(): BelongsTo
+    {
         return $this->belongsTo(Status::class, "status_id");
     }
 
     /**
      * Get the Address associated with the Establishment
      *
-     * @return \Illuminate\Database\Eloquent\Relations\HasOne
+     * @return HasOne
      */
-    public function Address(): HasOne
+    public function address(): HasOne
     {
         return $this->hasOne(Address::class);
     }

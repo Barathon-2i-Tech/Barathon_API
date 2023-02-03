@@ -1,11 +1,14 @@
 <?php
 
+use App\Http\Controllers\EstablishmentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiAuthController;
 use App\Http\Controllers\BarathonienController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\AdministratorController;
+
+
 
 
 /*
@@ -31,6 +34,16 @@ Route::post('/register/barathonien', [BarathonienController::class, 'store'])->n
 Route::post('/register/owner', [OwnerController::class, 'store'])->name('user.register.owner');
 Route::post('/register/admin', [AdministratorController::class, 'store'])->name('user.register.admin');
 
+/*
+|--------------------------------------------------------------------------
+| Establishment
+|--------------------------------------------------------------------------
+*/
+Route::get('/pro/establishment', [EstablishmentController::class, 'getEstablishmentList'])->name('establishment.list');
+Route::get('/XXXXX/{user_id}', [EstablishmentController::class, 'show'])->name('establishment.show');
+Route::post('/XXXXX/update/{user_id}', [EstablishmentController::class, 'update'])->name('establishment.update');
+Route::delete('/XXXXX/delete/{user_id}', [EstablishmentController::class, 'destroy'])->name('establishment.delete');
+Route::get('/XXXXX/restore/{user_id}', [EstablishmentController::class, 'restore'])->name('establishment.restore');
 /*
 |--------------------------------------------------------------------------
 | Common Routes
