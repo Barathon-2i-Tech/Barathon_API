@@ -42,7 +42,7 @@ class Address extends Model
      */
     public function barathonien(): BelongsTo
     {
-        return $this->belongsTo(barathonien::class, 'address_id');
+        return $this->belongsTo(barathonien::class, 'barathonien_id');
     }
 
     /**
@@ -52,6 +52,6 @@ class Address extends Model
      */
     public function establishment(): BelongsTo
     {
-        return $this->belongsTo(establishment::class, 'address_id');
+        return $this->belongsTo(establishment::class, 'establishment_id');
     }
 }

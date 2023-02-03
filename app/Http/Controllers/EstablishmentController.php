@@ -1,12 +1,14 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Owner;
 use App\Traits\HttpResponses;
 use App\Models\Establishment;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Log;
 
 
@@ -17,22 +19,22 @@ class EstablishmentController extends Controller
      * Display a listing of the resource.
      *
      * @return JsonResponse
+     *
+     * @Middleware("auth:sanctum")
      */
-    public function getEstablishmentList(): JsonResponse
+    public function getEstablishmentList($owner_id): JsonResponse
     {
-        //
         try {
-            $user_id = 3;
-            $owner_id = 1;
+            // get all establishments from the owner
             $establishments = Establishment::with(['owner', 'address', 'establishmentStatus'])
-                ->whereHas('establishment', function ($query) use ($owner_id) {
-                    $query->where('establishment.owner_id', $owner_id);
-                })
+                ->where('owner_id', $owner_id)
                 ->get();
 
+            // if the establishments list is empty
             if ($establishments->isEmpty())
                 return $this->error(null, "Establishment not found", 404);
 
+            // return the establishments list
             return $this->success($establishments, "Establishment List");
 
         } catch (Exception $error) {
@@ -40,7 +42,6 @@ class EstablishmentController extends Controller
             return $this->error(null, $error->getMessage(), 500);
         }
     }
-
 
 
     /**

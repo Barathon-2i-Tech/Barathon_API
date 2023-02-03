@@ -106,6 +106,6 @@ class Establishment extends Model
      */
     public function address(): HasOne
     {
-        return $this->hasOne(Address::class);
+        return $this->hasOne(Address::class, 'address_id');
     }
 }

@@ -22,33 +22,35 @@ use App\Http\Controllers\AdministratorController;
 |
 */
 
+    /*
+    |--------------------------------------------------------------------------
+    | Register and Login Methods
+    |--------------------------------------------------------------------------
+    */
+    Route::post('/login', [ApiAuthController::class, 'login'])->name('user.login');
+    Route::post('/register', [ApiAuthController::class, 'register'])->name('user.register');
+    Route::post('/register/barathonien', [BarathonienController::class, 'store'])->name('user.register.barathonien');
+    Route::post('/register/owner', [OwnerController::class, 'store'])->name('user.register.owner');
+    Route::post('/register/admin', [AdministratorController::class, 'store'])->name('user.register.admin');
 
-/*
-|--------------------------------------------------------------------------
-| Register and Login Methods
-|--------------------------------------------------------------------------
-*/
-Route::post('/login', [ApiAuthController::class, 'login'])->name('user.login');
-Route::post('/register', [ApiAuthController::class, 'register'])->name('user.register');
-Route::post('/register/barathonien', [BarathonienController::class, 'store'])->name('user.register.barathonien');
-Route::post('/register/owner', [OwnerController::class, 'store'])->name('user.register.owner');
-Route::post('/register/admin', [AdministratorController::class, 'store'])->name('user.register.admin');
+Route::group(['middleware' => ['auth:sanctum']], function () {
+    /*
+    |--------------------------------------------------------------------------
+    | Establishment
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/pro/{owner_id}/establishment', [EstablishmentController::class, 'getEstablishmentList'])->name('establishment.list');
+    Route::get('/XXXXX/{user_id}', [EstablishmentController::class, 'show'])->name('establishment.show');
+    Route::post('/XXXXX/update/{user_id}', [EstablishmentController::class, 'update'])->name('establishment.update');
+    Route::delete('/XXXXX/delete/{user_id}', [EstablishmentController::class, 'destroy'])->name('establishment.delete');
+    Route::get('/XXXXX/restore/{user_id}', [EstablishmentController::class, 'restore'])->name('establishment.restore');
+    /*
+    |--------------------------------------------------------------------------
+    | Common Routes
+    |--------------------------------------------------------------------------
+    */
+});
 
-/*
-|--------------------------------------------------------------------------
-| Establishment
-|--------------------------------------------------------------------------
-*/
-Route::get('/pro/establishment', [EstablishmentController::class, 'getEstablishmentList'])->name('establishment.list');
-Route::get('/XXXXX/{user_id}', [EstablishmentController::class, 'show'])->name('establishment.show');
-Route::post('/XXXXX/update/{user_id}', [EstablishmentController::class, 'update'])->name('establishment.update');
-Route::delete('/XXXXX/delete/{user_id}', [EstablishmentController::class, 'destroy'])->name('establishment.delete');
-Route::get('/XXXXX/restore/{user_id}', [EstablishmentController::class, 'restore'])->name('establishment.restore');
-/*
-|--------------------------------------------------------------------------
-| Common Routes
-|--------------------------------------------------------------------------
-*/
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [ApiAuthController::class, 'logout'])->name('user.logout');
     Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
