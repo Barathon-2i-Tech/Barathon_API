@@ -95,7 +95,7 @@ class Establishment extends Model
     /**
      * Get the status associated with the establishment
      */
-    public function establishmentStatus(): BelongsTo
+    public function status(): BelongsTo
     {
         return $this->belongsTo(Status::class, "status_id");
     }

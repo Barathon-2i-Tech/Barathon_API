@@ -17,18 +17,21 @@ class EstablishmentController extends Controller
 {
 use HttpResponses;
 /**
- * Display a listing of the resource.
+ * Display a listing of establishment.
  *
  * @return JsonResponse
  *
- * @Middleware("auth:sanctum")
  */
 public function getEstablishmentList($owner_id): JsonResponse
 {
     try {
         // get all establishments from the owner
-        $establishments = Establishment::with(['owner', 'address', 'establishmentStatus'])
-            ->where('owner_id', $owner_id)
+
+      $establishments = Establishment::select('establishments.*', 'addresses.*', 'owners.*', 'status.*')
+            ->join('addresses', 'addresses.address_id', '=', 'establishments.address_id')
+            ->join('owners', 'owners.owner_id', '=', 'establishments.owner_id')
+            ->join('status', 'status.status_id', '=', 'establishments.status_id')
+            ->where('owners.owner_id', '=', $owner_id)
             ->get();
 
         // if the establishments list is empty
