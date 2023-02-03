@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Http\Controllers;
+use App\Models\Address;
+use App\Models\Status;
 use App\Traits\HttpResponses;
 use App\Models\Establishment;
 use Exception;
@@ -8,6 +10,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rules\File;
 
 
 class EstablishmentController extends Controller
@@ -42,16 +45,60 @@ public function getEstablishmentList($owner_id): JsonResponse
 }
 
 
-/**
- * Store a newly created resource in storage.
- *
- * @param Request $request
- * @return Response
- */
-public function store(Request $request)
-{
-    //
-}
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function store(Request $request, $owner_id)
+    {
+        try {
+            $request->validate([
+                'trade_name' => 'required|string|max:255',
+                'siret' => 'required|string|max:14', // 14 characters for a SIRET
+                'logo' => File::image(),
+                'phone' => 'required|string' ,
+                'email' => 'email|string',
+                'website' => 'string',
+                'opening' => 'json',
+                'address' => 'min:5|required|string|max:255',
+                'postal_code' => 'required|string|size:5',
+                'city' => 'required|string|max:255',
+            ]);
+
+            $ESTABL_PENDING = Status::where('comment->code', 'ESTABL_PENDING')->first()->status_id;
+            $address = Address::create([
+                'address' => $request->address,
+                'postal_code' => $request->postal_code,
+                'city' => $request->city
+            ]);
+
+            $establishment = Establishment::create([
+                'trade_name' => $request->trade_name,
+                'siret' => $request->siret,
+                'logo' => 'https://picsum.photos/180',
+                'phone' => $request->phone,
+                'email' => $request->email,
+                'website' => $request->website,
+                'opening' => $request->opening,
+                'owner_id' => $owner_id,
+                'address_id' => $address->address_id,
+                'status_id' => $ESTABL_PENDING
+            ]);
+
+
+            $establishment->save();
+
+            return $this->success([
+                $establishment
+            ], "Establishment created", 201);
+
+        } catch (Exception $error) {
+            Log::error($error);
+            return $this->error(null, $error->getMessage(), 422);
+        }
+    }
 
 /**
  * Display the specified resource.
