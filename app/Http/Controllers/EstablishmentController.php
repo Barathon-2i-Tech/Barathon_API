@@ -58,11 +58,29 @@ public function store(Request $request)
  *
  * @param $owner_id
  * @param $establishment_id
- * @return Response
+ * @return JsonResponse
  */
-public function show($owner_id, $establishment_id)
+public function show($owner_id, $establishment_id): JsonResponse
 {
-    //
+
+    try {
+        // get all establishments from the owner
+        $establishments = Establishment::with(['owner', 'address', 'establishmentStatus'])
+            ->where('owner_id', $owner_id)
+            ->where('establishment_id', $establishment_id)
+            ->get();
+
+        // if the establishments list is empty
+        if ($establishments->isEmpty())
+            return $this->error(null, "Establishment not found", 404);
+
+        // return the establishments list
+        return $this->success($establishments, "Establishment");
+
+    } catch (Exception $error) {
+        Log::error($error);
+        return $this->error(null, $error->getMessage(), 500);
+    }
 }
 
 
