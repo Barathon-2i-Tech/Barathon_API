@@ -8,6 +8,7 @@ use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\AdministratorController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\BookingController;
 
 
 /*
@@ -50,6 +51,15 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
         // get top 10 tags
         Route::get('/barathonien/top/categories', [CategoryController::class, 'getTopTenCategories'])->name('barathonien.topCateg');
+
+        // get an event by user choice
+        Route::get('/barathonien/event/{idevent}/user/{iduser}', [EventController::class, 'getEventByUserChoice'])->name('barathonien.eventByUserChoice');
+
+        // POST booking
+        Route::post('/barathonien/booking', [BookingController::class, 'store'])->name('barathonien.postBooking');
+
+        // DELETE booking
+        Route::delete('/barathonien/booking/{id}', [BookingController::class, 'destroy'])->name('barathonien.deleteBooking');
 
 
     Route::post('/logout', [ApiAuthController::class, 'logout'])->name('user.logout');

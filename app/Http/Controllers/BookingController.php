@@ -4,9 +4,12 @@ namespace App\Http\Controllers;
 
 use App\Models\Booking;
 use Illuminate\Http\Request;
+use App\Traits\HttpResponses;
 
 class BookingController extends Controller
 {
+    use HttpResponses;
+
     /**
      * Display a listing of the resource.
      *
@@ -35,7 +38,21 @@ class BookingController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'user_id' => 'required|integer',
+            'event_id' => 'required|integer',
+            'isFav' => 'required|boolean',
+        ]);
+
+        $book = Booking::create([
+            'user_id' => $request->user_id,
+            'event_id' => $request->event_id,
+            'isFav' => $request->isFav,
+        ]);
+
+        return $this->success([
+            'booking' => $book,
+        ], "Booking created");
     }
 
     /**
@@ -75,11 +92,19 @@ class BookingController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Booking  $booking
+     * @param  $id
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Booking $booking)
+    public function destroy($id)
     {
-        //
+        $book = Booking::find($id);
+
+        if($book == null){
+            return $this->error("error", "Booking doesn't exist", 500);
+        }else{
+            $book->delete();
+            return $this->success([], "Booking deleted");
+        }
+
     }
 }
