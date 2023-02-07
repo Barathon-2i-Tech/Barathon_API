@@ -77,6 +77,10 @@ class EventControllerTest extends TestCase
 
     }
 
+    /**
+     * A Test for check if a user other than an Barathonien can execute this route
+     *
+     */
     public function test_get_events_book_by_user_check_if_not_barathonien()
     {
 
@@ -93,4 +97,50 @@ class EventControllerTest extends TestCase
        $response->assertJsonStructure($structure);
 
     }
+
+    /**
+     * A Test for check if we can have the event by the user's choice
+     *
+     */
+    public function test_get_event_by_user_choice()
+    {
+
+        $structure = [
+            "status",
+            "message",
+            "data" => [
+                "booking",
+                "event"
+            ]];
+
+        $user = $this->createBarathonienUser();
+
+       $response = $this->actingAs($user)->get(route('barathonien.eventByUserChoice', ["idevent" => 1, "iduser" => $user->user_id]))
+       ->assertOk();
+
+       $response->assertJsonStructure($structure);
+
+    }
+    
+    /**
+     * A Test for check if a user other than an Barathonien can execute this route
+     *
+     */
+    public function test_get_event_by_user_choice_check_if_not_barathonien()
+    {
+
+        $structure = [
+            "status",
+            "message",
+            "data"];
+
+        $user = $this->createAdminUser();
+
+       $response = $this->actingAs($user)->get(route('barathonien.eventByUserChoice', ["idevent" => 1, "iduser" => $user->user_id]))
+       ->assertStatus(500);
+
+       $response->assertJsonStructure($structure);
+
+    }
+
 }

@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Booking;
 use App\Models\Establishment;
 use App\Models\Event;
+use App\Models\Address;
 use App\Models\User;
 use App\Traits\HttpResponses;
 use Carbon\Carbon;
@@ -99,15 +100,16 @@ class EventController extends Controller
      * @param $id
      * @return JsonResponse
      */
-    public function getEventsByUserCity($id){
+    public function getEventsByUserCity($id): JsonResponse
+    {
         // Get the user
         $user = User::find($id);
 
         // Get the user city
-        if($user->barathoniens == null){
+        if($user->barathonien_id == null){
             return $this->error("error", "the User is not a barathonien", 500);
         }else{
-            $city = $user->barathoniens->city;
+            $city = $user->barathonien->city;
         }
 
         // Get all establishment id in the city
@@ -131,11 +133,12 @@ class EventController extends Controller
      * @param $id
      * @return JsonResponse
      */
-    public function getEventsBookingByUser($id){
-
+    public function getEventsBookingByUser($id): JsonResponse
+    {
         $user = User::find($id);
+
         //Check if the user is a barathonien
-        if($user->barathoniens == null){
+        if($user->barathonien_id == null){
             return $this->error("error", "the User is not a barathonien", 500);
         }
         // Get the event booking by user
@@ -145,6 +148,41 @@ class EventController extends Controller
 
         return $this->success([
             'bookings' => $bookings,
+        ]);
+
+    }
+
+    /**
+     * Get an event by the user's choice
+     *
+     * @param $idevent
+     * @param $iduser
+     * @return JsonResponse
+     */
+    public function getEventByUserChoice($idevent, $iduser): JsonResponse
+    {
+
+        $user = User::find($iduser);
+
+        //Check if the user is a barathonien
+        if($user->barathonien_id == null){
+            return $this->error("error", "the User is not a barathonien", 500);
+        }
+
+        // Get the event booking by user
+        $booking = Booking::where('user_id', '=', $user->user_id)->Where('event_id', '=', $idevent)->get();
+
+        // get the event with his establishment
+        $event = Event::with('establishments')->where('event_id', '=', $idevent)->get();
+
+        //get the address of event
+        $address = Address::find($event[0]->establishments->address_id);
+
+        $event[0]->establishments->address = $address;
+
+        return $this->success([
+            'booking' => $booking,
+            'event' => $event,
         ]);
 
     }

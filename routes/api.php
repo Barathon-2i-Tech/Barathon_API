@@ -8,6 +8,7 @@ use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\AdministratorController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\BookingController;
 
 
 /*
@@ -39,8 +40,13 @@ Route::post('/register/admin', [AdministratorController::class, 'store'])->name(
 |--------------------------------------------------------------------------
 */
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('/logout', [ApiAuthController::class, 'logout'])->name('user.logout');
 
-    //Route Barathonien
+/*
+|--------------------------------------------------------------------------
+| Barathonien Routes
+|--------------------------------------------------------------------------
+*/
 
         //get Event by user's city
         Route::get('/barathonien/{id}/city/events', [EventController::class, 'getEventsByUserCity'])->name('barathonien.eventsByUserCity');
@@ -51,19 +57,14 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         // get top 10 tags
         Route::get('/barathonien/top/categories', [CategoryController::class, 'getTopTenCategories'])->name('barathonien.topCateg');
 
+        // get an event by user choice
+        Route::get('/barathonien/event/{idevent}/user/{iduser}', [EventController::class, 'getEventByUserChoice'])->name('barathonien.eventByUserChoice');
 
-    Route::post('/logout', [ApiAuthController::class, 'logout'])->name('user.logout');
-    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-        return $request->user();
-    });
+        // POST booking
+        Route::post('/barathonien/booking', [BookingController::class, 'store'])->name('barathonien.postBooking');
 
-/*
-|--------------------------------------------------------------------------
-| Barathonien Routes
-|--------------------------------------------------------------------------
-*/
-
-
+        // DELETE booking
+        Route::delete('/barathonien/booking/{id}', [BookingController::class, 'destroy'])->name('barathonien.deleteBooking');
 
 /*
 |--------------------------------------------------------------------------
@@ -79,6 +80,17 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/barathonien/list', [BarathonienController::class, 'getBarathonienList'])->name('barathonien.list');
+    Route::get('/barathonien/list', [BarathonienController::class, 'getBarathonienList'])->name('barathonien.list');
+
+
+
+    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+
+
+
+
 
 });
