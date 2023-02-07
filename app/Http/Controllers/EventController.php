@@ -100,7 +100,8 @@ class EventController extends Controller
      * @param $id
      * @return JsonResponse
      */
-    public function getEventsByUserCity($id){
+    public function getEventsByUserCity($id): JsonResponse
+    {
         // Get the user
         $user = User::find($id);
 
@@ -132,8 +133,8 @@ class EventController extends Controller
      * @param $id
      * @return JsonResponse
      */
-    public function getEventsBookingByUser($id){
-
+    public function getEventsBookingByUser($id): JsonResponse
+    {
         $user = User::find($id);
 
         //Check if the user is a barathonien
@@ -154,10 +155,12 @@ class EventController extends Controller
     /**
      * Get an event by the user's choice
      *
-     * @param $idevent, $iduser
+     * @param $idevent
+     * @param $iduser
      * @return JsonResponse
      */
-    public function getEventByUserChoice($idevent, $iduser){
+    public function getEventByUserChoice($idevent, $iduser): JsonResponse
+    {
 
         $user = User::find($iduser);
 

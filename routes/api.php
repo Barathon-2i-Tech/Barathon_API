@@ -40,8 +40,13 @@ Route::post('/register/admin', [AdministratorController::class, 'store'])->name(
 |--------------------------------------------------------------------------
 */
 Route::group(['middleware' => ['auth:sanctum']], function () {
+    Route::post('/logout', [ApiAuthController::class, 'logout'])->name('user.logout');
 
-    //Route Barathonien
+/*
+|--------------------------------------------------------------------------
+| Barathonien Routes
+|--------------------------------------------------------------------------
+*/
 
         //get Event by user's city
         Route::get('/barathonien/{id}/city/events', [EventController::class, 'getEventsByUserCity'])->name('barathonien.eventsByUserCity');
@@ -61,20 +66,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         // DELETE booking
         Route::delete('/barathonien/booking/{id}', [BookingController::class, 'destroy'])->name('barathonien.deleteBooking');
 
-
-    Route::post('/logout', [ApiAuthController::class, 'logout'])->name('user.logout');
-    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-        return $request->user();
-    });
-
-/*
-|--------------------------------------------------------------------------
-| Barathonien Routes
-|--------------------------------------------------------------------------
-*/
-
-
-
 /*
 |--------------------------------------------------------------------------
 | Pro Routes
@@ -89,6 +80,17 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 |--------------------------------------------------------------------------
 */
 
-Route::get('/barathonien/list', [BarathonienController::class, 'getBarathonienList'])->name('barathonien.list');
+    Route::get('/barathonien/list', [BarathonienController::class, 'getBarathonienList'])->name('barathonien.list');
+
+
+
+    Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
+        return $request->user();
+    });
+
+
+
+
+
 
 });
