@@ -27,10 +27,10 @@ class BarathonienController extends Controller
     public function getBarathonienList(): JsonResponse
     {
         try {
-            $barathoniens = User::with(['barathonien', 'barathonien.address'])
-                ->whereHas('barathonien', function ($query) {
-                    $query->whereNotNull('barathonien_id');
-                })
+            $barathoniens = DB::table('users')
+                ->join('barathoniens', 'users.user_id', '=', 'barathoniens.barathonien_id')
+                ->join('addresses', 'barathoniens.address_id', '=', 'addresses.address_id')
+                ->select('users.*', 'barathoniens.*', 'addresses.*')
                 ->get();
 
             if ($barathoniens->isEmpty()) {
@@ -112,10 +112,11 @@ class BarathonienController extends Controller
     public function show($user_id): JsonResponse
     {
         try {
-            $barathonien = User::with(['barathonien', 'barathonien.address'])
-                ->whereHas('barathonien', function ($query) use ($user_id) {
-                    $query->where('users.user_id', $user_id);
-                })
+            $barathonien = DB::table('users')
+                ->join('barathoniens', 'users.user_id', '=', 'barathoniens.barathonien_id')
+                ->join('addresses', 'barathoniens.address_id', '=', 'addresses.address_id')
+                ->select('users.*', 'barathoniens.*', 'addresses.*')
+                ->where('users.user_id', $user_id)
                 ->get();
 
             if ($barathonien->isEmpty())
