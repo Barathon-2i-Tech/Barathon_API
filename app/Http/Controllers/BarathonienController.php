@@ -109,18 +109,19 @@ class BarathonienController extends Controller
      * @param $user_id
      * @return JsonResponse
      */
-    public function show($user_id): JsonResponse
+    public function show($userId): JsonResponse
     {
         try {
             $barathonien = DB::table('users')
-                ->join('barathoniens', 'users.user_id', '=', 'barathoniens.barathonien_id')
+                ->join('barathoniens', 'users.barathonien_id', '=', 'barathoniens.barathonien_id')
                 ->join('addresses', 'barathoniens.address_id', '=', 'addresses.address_id')
                 ->select('users.*', 'barathoniens.*', 'addresses.*')
-                ->where('users.user_id', $user_id)
+                ->where('users.user_id', $userId)
                 ->get();
 
-            if ($barathonien->isEmpty())
+            if ($barathonien->isEmpty()) {
                 return $this->error(null, "Barathonien not found", 404);
+            }
 
             return $this->success($barathonien, "Barathonien");
 
@@ -137,11 +138,11 @@ class BarathonienController extends Controller
      * @param $user_id
      * @return JsonResponse
      */
-    public function update(Request $request, $user_id): JsonResponse
+    public function update(Request $request, $userId): JsonResponse
     {
         try {
             // Get the user given in parameter
-            $user = User::findOrFail($user_id);
+            $user = User::findOrFail($userId);
 
             // Check if the user is a barathonien
             if ($user->barathonien_id === null) {
@@ -211,25 +212,25 @@ class BarathonienController extends Controller
      * @param $user_id
      * @return JsonResponse
      */
-    public function destroy($user_id): JsonResponse
+    public function destroy($userId): JsonResponse
     {
         try {
 
             //check if the user exist
-            $user = User::withTrashed()->where('user_id', $user_id)->first();
-            if ($user === null)
+            $user = User::withTrashed()->where('user_id', $userId)->first();
+            if ($user === null) {
                 return $this->error(null, "User not found", 404);
-
+            }
             //check if the user is a barathonien
-            if ($user->barathonien_id === null)
+            if ($user->barathonien_id === null) {
                 return $this->error(null, "Barathonien not found", 404);
-
+            }
             //check if the user is already deleted
-            if ($user->deleted_at !== null)
+            if ($user->deleted_at !== null) {
                 return $this->error(null, "Barathonien already deleted", 404);
-
+            }
             //delete the user
-            User::where('user_id', $user_id)->delete();
+            User::where('user_id', $userId)->delete();
             return $this->success(null, "Barathonien Deleted");
 
         } catch (Exception $error) {
@@ -244,23 +245,23 @@ class BarathonienController extends Controller
      * @param $user_id
      * @return JsonResponse
      */
-    public function restore($user_id): JsonResponse
+    public function restore($userId): JsonResponse
     {
         try {
             //check if the user exist
-            $user = User::withTrashed()->where('user_id', $user_id)->first();
-            if ($user === null)
+            $user = User::withTrashed()->where('user_id', $userId)->first();
+            if ($user === null) {
                 return $this->error(null, "User not found", 404);
-
+            }
             //check if the user is a barathonien
-            if ($user->barathonien_id === null)
+            if ($user->barathonien_id === null ) {
                 return $this->error(null, "Barathonien not found", 404);
-
+            }
             //check if the user is already restored
-            if ($user->deleted_at === null)
+            if ($user->deleted_at === null ) {
                 return $this->error(null, "Barathonien already restored", 404);
-
-            User::withTrashed()->where('user_id', $user_id)->restore();
+            }
+            User::withTrashed()->where('user_id', $userId)->restore();
             return $this->success(null, "Barathonien Restored");
 
         } catch (Exception $error) {
