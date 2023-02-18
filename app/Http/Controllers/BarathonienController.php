@@ -198,7 +198,7 @@ class BarathonienController extends Controller
             }
 
             // Return the updated user and address
-            return $this->success([$user, $address], "Barathonien Updated");
+            return $this->success([$user, $address], "Barathonien updated");
 
         } catch (Exception $error) {
             Log::error($error);
