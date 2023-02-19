@@ -31,10 +31,9 @@ class OwnerController extends Controller
                 })
                 ->get();
             return $this->success($owners, "Owner List");
-        }
-        catch (Exception $error) {
+        } catch (Exception $error) {
             Log::error($error);
-            return $this->error(null,$error->getMessage(), 500);
+            return $this->error(null, $error->getMessage(), 500);
         }
     }
 
@@ -45,7 +44,7 @@ class OwnerController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function store(Request $request)
+    public function store(Request $request): JsonResponse
     {
         $request->validate([
             'first_name' => 'required|string|max:255',
@@ -116,17 +115,17 @@ class OwnerController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Owner $owner
+     * @param $userId
      * @return JsonResponse
      */
-    public function destroy($user_id): JsonResponse
+    public function destroy($userId): JsonResponse
     {
         try {
-            User::where('user_id',$user_id)->delete();
+            User::where('user_id', $userId)->delete();
             return $this->success("", "Owner Deleted");
         } catch (Exception $error) {
             Log::error($error);
-            return $this->error(null,$error->getMessage(), 500);
+            return $this->error(null, $error->getMessage(), 500);
         }
     }
 }

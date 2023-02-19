@@ -19,7 +19,7 @@ class EstablishmentEmployeeSeeder extends Seeder
     {
 
         $employee = Employee::all('employee_id')->first();
-        $establishment = Establishment::where('trade_name','Fait Foif')->first();
+        $establishment = Establishment::where('trade_name', 'Fait Foif')->first();
 
 
         $datas = [

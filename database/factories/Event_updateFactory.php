@@ -19,7 +19,7 @@ class Event_updateFactory extends Factory
      */
     public function definition(): array
     {
-        $EVENT_PENDING = Status::where('comment->code', 'EVENT_PENDING')->first();
+        $eventPending = Status::where('comment->code', 'EVENT_PENDING')->first();
         $event = Event::factory()->create();
 
         return [
@@ -32,7 +32,7 @@ class Event_updateFactory extends Factory
             'price'=>$event->price,
             'capacity'=>$event->capacity,
             'establishment_id'=>$event->establishment_id,
-            'status_id'=> $EVENT_PENDING,
+            'status_id'=> $eventPending,
             'user_id'=> $event->user_id,
         ];
     }

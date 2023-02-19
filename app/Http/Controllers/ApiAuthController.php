@@ -22,7 +22,7 @@ class ApiAuthController extends Controller
     {
         $request->validated($request->only(['email', 'password']));
 
-        if(!Auth::attempt($request->only(['email', 'password']))) {
+        if (!Auth::attempt($request->only(['email', 'password']))) {
             return $this->error('', 'Credentials do not match', 401);
         }
 
@@ -63,6 +63,6 @@ class ApiAuthController extends Controller
     {
         Auth::user()->tokens()->delete();
         $message = "You have successfully been logged out and your tokens has been removed";
-        return $this->success([],$message );
+        return $this->success([], $message);
     }
 }

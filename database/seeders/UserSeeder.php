@@ -20,11 +20,11 @@ class UserSeeder extends Seeder
     public function run()
     {
 
-        $barathonien_id = Barathonien::all('barathonien_id')->first();
-        $administrator_id = Administrator::all('administrator_id')->first();
-        $owner_id = Owner::all('owner_id')->first();
-        $employee_id = Employee::all('employee_id')->first();
-
+        $barathonienId = Barathonien::all('barathonien_id')->first();
+        $administratorId = Administrator::all('administrator_id')->first();
+        $ownerId = Owner::all('owner_id')->first();
+        $employeeId = Employee::all('employee_id')->first();
+        $avatar= "https://picsum.photos/180";
 
 
         $datas = [
@@ -33,9 +33,9 @@ class UserSeeder extends Seeder
                 'last_name' => 'Doe',
                 'email' => 'barathonien@mail.fr',
                 'password' => Hash::make('azertyuiop'),
-                'avatar' => "https://picsum.photos/180",
+                'avatar' => $avatar,
                 'owner_id' => null,
-                'barathonien_id' => $barathonien_id->barathonien_id,
+                'barathonien_id' => $barathonienId->barathonien_id,
                 'administrator_id' => null,
                 'employee_id' => null
             ],
@@ -44,10 +44,10 @@ class UserSeeder extends Seeder
                 'first_name' => 'Elon',
                 'email' => 'admin@mail.fr',
                 'password' => Hash::make('azertyuiop'),
-                'avatar' => "https://picsum.photos/180",
+                'avatar' => $avatar,
                 'owner_id' => null,
                 'barathonien_id' => null,
-                'administrator_id' => $administrator_id->administrator_id,
+                'administrator_id' => $administratorId->administrator_id,
                 'employee_id' => null
             ],
             [
@@ -55,8 +55,8 @@ class UserSeeder extends Seeder
                 'first_name' => 'Benjamin',
                 'email' => 'owner@mail.fr',
                 'password' => Hash::make('azertyuiop'),
-                'avatar' => "https://picsum.photos/180",
-                'owner_id' => $owner_id->owner_id,
+                'avatar' => $avatar,
+                'owner_id' => $ownerId->owner_id,
                 'barathonien_id' => null,
                 'administrator_id' => null,
                 'employee_id' => null
@@ -66,11 +66,11 @@ class UserSeeder extends Seeder
                 'first_name' => 'Jane',
                 'email' => 'employee@mail.fr',
                 'password' => Hash::make('azertyuiop'),
-                'avatar' => "https://picsum.photos/180",
+                'avatar' => $avatar,
                 'owner_id' => null,
                 'barathonien_id' => null,
                 'administrator_id' => null,
-                'employee_id' => $employee_id->employee_id
+                'employee_id' => $employeeId->employee_id
             ],
 
         ];

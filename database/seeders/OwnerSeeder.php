@@ -16,13 +16,13 @@ class OwnerSeeder extends Seeder
      */
     public function run()
     {
-        $OWNER_VALID = Status::where('comment->code', 'OWNER_VALID')->first();
+        $ownerValid = Status::where('comment->code', 'OWNER_VALID')->first();
 
         $datas = [
             [
                 'siren' => fake()->siren(),
                 'kbis' => 'chemin/kbis.pdf',
-                'status_id' => $OWNER_VALID->status_id
+                'status_id' => $ownerValid->status_id
             ]
         ];
         Owner::create($datas[0]);

@@ -19,11 +19,11 @@ class BarathonienFactory extends Factory
     public function definition()
     {
 
-        $address_id = Address::all('address_id')->first();
+        $addressId = Address::all('address_id')->first();
 
         return [
             'birthday' => fake()->dateTimeBetween('-30 years', '-18 years'),
-            'address_id'=>$address_id->address_id
+            'address_id'=>$addressId->address_id
         ];
     }
 }

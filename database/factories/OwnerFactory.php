@@ -18,12 +18,12 @@ class OwnerFactory extends Factory
      */
     public function definition()
     {
-        $OWNER_VALID = Status::where('comment->code', 'OWNER_VALID')->first();
+        $ownerValid = Status::where('comment->code', 'OWNER_VALID')->first();
 
         return [
             'siren' => fake()->siren(),
             'kbis' => 'chemin/kbis.pdf',
-            'status_id' => $OWNER_VALID->status_id
+            'status_id' => $ownerValid->status_id
         ];
     }
 }

@@ -36,8 +36,14 @@ class Category extends Model
     /**
      * Get the establishment associated with the category
      */
-    public function establishments(){
-        return $this->belongsToMany(Establishment::class, "categories_establishments", "category_id", "establishment_id" );
+    public function establishments(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    {
+        return $this->belongsToMany(
+            Establishment::class,
+            "categories_establishments",
+            "category_id",
+            "establishment_id"
+        );
     }
 
 }

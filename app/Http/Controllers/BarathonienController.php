@@ -254,11 +254,11 @@ class BarathonienController extends Controller
                 return $this->error(null, "User not found", 404);
             }
             //check if the user is a barathonien
-            if ($user->barathonien_id === null ) {
+            if ($user->barathonien_id === null) {
                 return $this->error(null, "Barathonien not found", 404);
             }
             //check if the user is already restored
-            if ($user->deleted_at === null ) {
+            if ($user->deleted_at === null) {
                 return $this->error(null, "Barathonien already restored", 404);
             }
             User::withTrashed()->where('user_id', $userId)->restore();

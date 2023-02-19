@@ -18,8 +18,8 @@ class EstablishmentSeeder extends Seeder
      */
     public function run()
     {
-        $owner_id = Owner::all('owner_id')->first();
-        $ESTABL_VALID = Status::where('comment->code', 'ESTABL_VALID')->first();
+        $ownerId = Owner::all('owner_id')->first();
+        $establValid = Status::where('comment->code', 'ESTABL_VALID')->first();
         $address2 = Address::where('address_id', 2)->first();
         $address3 = Address::where('address_id', 3)->first();
 
@@ -29,7 +29,7 @@ class EstablishmentSeeder extends Seeder
                 'trade_name'=>'Fait Foif',
                 'siret'=>fake()->siret(),
                 'address_id' => $address2->address_id ,
-                'logo'=> fake()->imageUrl(180,180,"Establishment logo",false,),
+                'logo'=> fake()->imageUrl(180, 180, "Establishment logo", false),
                 'phone'=>fake()->phoneNumber(),
                 'email'=>'etablissement@mail.fr',
                 'website'=>'www.google.fr',
@@ -42,14 +42,14 @@ class EstablishmentSeeder extends Seeder
                     'Samedi' => '17h00 - 01h00',
                     'Dimanche' => '17h00 - 01h00',
                 ],
-                'owner_id'=>$owner_id->owner_id,
-                'status_id'=>$ESTABL_VALID->status_id,
+                'owner_id'=>$ownerId->owner_id,
+                'status_id'=>$establValid->status_id,
             ],
             [
                 'trade_name'=>'Le Fantôme de l\'Opéra',
                 'siret'=>fake()->siret(),
                 'address_id' => $address3->address_id ,
-                'logo'=> fake()->imageUrl(180,180,"Establishment logo",false,),
+                'logo'=> fake()->imageUrl(180, 180, "Establishment logo", false),
                 'phone'=>fake()->phoneNumber(),
                 'email'=>'fantome.opera@mail.fr',
                 'website'=>'www.lefantomedelopera.fr',
@@ -62,8 +62,8 @@ class EstablishmentSeeder extends Seeder
                     'Samedi' => '17h00 - 01h00',
                     'Dimanche' => '17h00 - 01h00',
                 ],
-                'owner_id'=>$owner_id->owner_id,
-                'status_id'=>$ESTABL_VALID->status_id,
+                'owner_id'=>$ownerId->owner_id,
+                'status_id'=>$establValid->status_id,
             ]
         ];
         foreach ($datas as $data) {
