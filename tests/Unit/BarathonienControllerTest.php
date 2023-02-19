@@ -179,6 +179,31 @@ class BarathonienControllerTest extends TestCase
     }
 
     /**
+     * A test to check if the update is really on a barathonien
+     *
+     * @return void
+     */
+    public function test_to_check_on_update_if_really_a_barathonien(): void
+    {
+        $user = $this->createAdminUser();
+        $employee = $this->createEmployeeUser();
+        $response = $this->actingAs($user)->post(route('barathonien.update', $employee->user_id), [
+            'first_name' => 'test',
+            'last_name' => 'test',
+            'email' => 'test@test.fr',
+            'address' => 'address test',
+            'postal_code' => '75000',
+            'city' => 'Paris'])
+            ->assertNotFound();
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+        $response->assertJson(['message' => 'Barathonien not found']);
+    }
+
+    /**
      * A test to check if the barathonien is updated
      *
      * @return void
@@ -280,5 +305,103 @@ class BarathonienControllerTest extends TestCase
             'data'
         ]);
         $response->assertJson(['message' => 'User not found']);
+    }
+
+    /**
+     * A test to check if a barathonien is already deleted
+     *
+     * @return void
+     */
+    public function test_to_check_if_barathonien_already_deleted(): void
+    {
+        $user = $this->createAdminUser();
+        $barathonien = $this->createBarathonienUser();
+        $barathonien->delete();
+        $response = $this->actingAs($user)->delete(route('barathonien.delete', $barathonien->user_id))
+            ->assertNotFound();
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+        $response->assertJson(['message' => 'Barathonien already deleted']);
+    }
+
+    /**
+     * A test to restore a user who doesn't exist
+     *
+     * @return void
+     */
+    public function test_to_restore_a_user_who_does_not_exist(): void
+    {
+        $user = $this->createAdminUser();
+        $response = $this->actingAs($user)->get(route('barathonien.restore', 450))
+            ->assertNotFound();
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+        $response->assertJson(['message' => 'User not found']);
+    }
+
+    /**
+     * A test to restore a barathonien who doesn't exist
+     *
+     * @return void
+     */
+    public function test_to_restore_a_barathonien_who_does_not_exist(): void
+    {
+        $user = $this->createAdminUser();
+        $employee = $this->createEmployeeUser();
+        $response = $this->actingAs($user)->get(route('barathonien.restore', $employee->user_id))
+            ->assertNotFound();
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+        $response->assertJson(['message' => 'Barathonien not found']);
+    }
+
+    /**
+     * A test to check if a barathonien is already restored
+     *
+     * @return void
+     */
+    public function test_to_check_if_barathonien_already_restored(): void
+    {
+        $user = $this->createAdminUser();
+        $barathonien = $this->createBarathonienUser();
+
+        $response = $this->actingAs($user)->get(route('barathonien.restore', $barathonien->user_id))
+            ->assertNotFound();
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+        $response->assertJson(['message' => 'Barathonien already restored']);
+    }
+
+    /**
+     * A test to restore a barathonien
+     *
+     * @return void
+     */
+    public function test_to_restore_a_barathonien(): void
+    {
+        $user = $this->createAdminUser();
+        $barathonien = $this->createBarathonienUser();
+        $barathonien->delete();
+
+        $response = $this->actingAs($user)->get(route('barathonien.restore', $barathonien->user_id))
+            ->assertOk();
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+        $response->assertJson(['message' => 'Barathonien Restored']);
     }
 }

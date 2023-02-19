@@ -106,7 +106,7 @@ class BarathonienController extends Controller
     /**
      * Display the specified barathonien.
      *
-     * @param $user_id
+     * @param $userId
      * @return JsonResponse
      */
     public function show($userId): JsonResponse
@@ -135,7 +135,7 @@ class BarathonienController extends Controller
      * Update the specified barathonien in database.
      *
      * @param Request $request
-     * @param $user_id
+     * @param $userId
      * @return JsonResponse
      */
     public function update(Request $request, $userId): JsonResponse
@@ -209,7 +209,7 @@ class BarathonienController extends Controller
     /**
      * Deleting the barathonien ( softDelete )
      *
-     * @param $user_id
+     * @param $userId
      * @return JsonResponse
      */
     public function destroy($userId): JsonResponse
@@ -242,7 +242,7 @@ class BarathonienController extends Controller
     /**
      * Restoring the barathonien
      *
-     * @param $user_id
+     * @param $userId
      * @return JsonResponse
      */
     public function restore($userId): JsonResponse
