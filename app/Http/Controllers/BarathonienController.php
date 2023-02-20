@@ -142,7 +142,10 @@ class BarathonienController extends Controller
     {
         try {
             // Get the user given in parameter
-            $user = User::findOrFail($userId);
+            $user = User::find($userId);
+            if ($user === null) {
+                return $this->error(null, "User not found", 404);
+            }
 
             // Check if the user is a barathonien
             if ($user->barathonien_id === null) {
@@ -163,10 +166,10 @@ class BarathonienController extends Controller
                 'city' => 'required|string|max:255',
             ]);
 
-            $dataBarathonien = $request->only(['first_name', 'last_name', 'email']);
+            $userData = $request->only(['first_name', 'last_name', 'email']);
 
             // Check if the data given in parameter are different from the data in database
-            foreach ($dataBarathonien as $field => $value) {
+            foreach ($userData as $field => $value) {
                 if ($user->{$field} !== $value) {
                     $user->{$field} = $value;
                 }

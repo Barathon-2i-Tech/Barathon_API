@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id('owner_id');
             $table->string('siren');
             $table->string('kbis');
+            $table->string('phone')->nullable();
             $table->foreignId('status_id');
             $table->foreign('status_id')->references('status_id')->on('status');
         });

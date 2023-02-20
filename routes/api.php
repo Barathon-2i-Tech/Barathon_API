@@ -75,4 +75,5 @@ Route::get('/pro/list', [OwnerController::class, 'getOwnerList'])->name('owner.l
 Route::get('/pro/{user_id}', [OwnerController::class, 'show'])->name('owner.show');
 Route::post('/pro/update/{user_id}', [OwnerController::class, 'update'])->name('owner.update');
 Route::delete('/pro/delete/{user_id}', [OwnerController::class, 'destroy'])->name('owner.delete');
+Route::get('/pro/restore/{user_id}', [OwnerController::class, 'restore'])->name('owner.restore');
 });

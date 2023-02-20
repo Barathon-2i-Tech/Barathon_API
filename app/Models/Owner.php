@@ -31,7 +31,8 @@ class Owner extends Model
     protected $fillable = [
         'siren',
         'kbis',
-        'status_id'
+        'status_id',
+        'phone'
     ];
 
     public $timestamps = false;
