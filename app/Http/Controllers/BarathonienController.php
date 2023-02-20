@@ -20,6 +20,10 @@ class BarathonienController extends Controller
 {
     use HttpResponses;
 
+    private const STRINGVALIDATION = 'required|string|max:255';
+    private const BARATHONIENNOTFOUND = "Barathonien not found";
+    private const USERNOTFOUND = "User not found";
+
     /**
      * Display all barathonien.
      * @return JsonResponse
@@ -59,14 +63,14 @@ class BarathonienController extends Controller
             $minor = $today->subYears(18);
 
             $request->validate([
-                'first_name' => 'required|string|max:255',
-                'last_name' => 'required|string|max:255',
+                'first_name' => self::STRINGVALIDATION,
+                'last_name' => self::STRINGVALIDATION,
                 'email' => 'required|string|email|unique:users',
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
                 'birthday' => 'required|date|before:' . $minor,
                 'address' => 'min:5|required|string|max:255',
                 'postal_code' => 'required|string|size:5',
-                'city' => 'required|string|max:255',
+                'city' => self::STRINGVALIDATION,
             ]);
 
             $user = User::create([
@@ -120,7 +124,7 @@ class BarathonienController extends Controller
                 ->get();
 
             if ($barathonien->isEmpty()) {
-                return $this->error(null, "Barathonien not found", 404);
+                return $this->error(null, self::BARATHONIENNOTFOUND, 404);
             }
 
             return $this->success($barathonien, "Barathonien");
@@ -144,17 +148,17 @@ class BarathonienController extends Controller
             // Get the user given in parameter
             $user = User::find($userId);
             if ($user === null) {
-                return $this->error(null, "User not found", 404);
+                return $this->error(null, self::USERNOTFOUND, 404);
             }
 
             // Check if the user is a barathonien
             if ($user->barathonien_id === null) {
-                return $this->error(null, "Barathonien not found", 404);
+                return $this->error(null, self::BARATHONIENNOTFOUND, 404);
             }
 
             $request->validate([
-                'first_name' => 'required|string|max:255',
-                'last_name' => 'required|string|max:255',
+                'first_name' => self::STRINGVALIDATION,
+                'last_name' => self::STRINGVALIDATION,
                 'email' => [
                     'required',
                     'string',
@@ -163,7 +167,7 @@ class BarathonienController extends Controller
                 ],
                 'address' => 'min:5|required|string|max:255',
                 'postal_code' => 'required|string|size:5',
-                'city' => 'required|string|max:255',
+                'city' => self::STRINGVALIDATION,
             ]);
 
             $userData = $request->only(['first_name', 'last_name', 'email']);
@@ -222,11 +226,11 @@ class BarathonienController extends Controller
             //check if the user exist
             $user = User::withTrashed()->where('user_id', $userId)->first();
             if ($user === null) {
-                return $this->error(null, "User not found", 404);
+                return $this->error(null, self::USERNOTFOUND, 404);
             }
             //check if the user is a barathonien
             if ($user->barathonien_id === null) {
-                return $this->error(null, "Barathonien not found", 404);
+                return $this->error(null, self::BARATHONIENNOTFOUND, 404);
             }
             //check if the user is already deleted
             if ($user->deleted_at !== null) {
@@ -258,7 +262,7 @@ class BarathonienController extends Controller
             }
             //check if the user is a barathonien
             if ($user->barathonien_id === null) {
-                return $this->error(null, "Barathonien not found", 404);
+                return $this->error(null, self::BARATHONIENNOTFOUND, 404);
             }
             //check if the user is already restored
             if ($user->deleted_at === null) {

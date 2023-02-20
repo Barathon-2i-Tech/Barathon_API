@@ -19,6 +19,9 @@ class OwnerController extends Controller
 {
     use HttpResponses;
 
+    private const STRINGVALIDATION = 'required|string|max:255';
+    private const OWNERNOTFOUND = "Owner not found";
+
     /**
      * Display a listing of all owners
      *
@@ -54,9 +57,10 @@ class OwnerController extends Controller
      */
     public function store(Request $request): JsonResponse
     {
+
         $request->validate([
-            'first_name' => 'required|string|max:255',
-            'last_name' => 'required|string|max:255',
+            'first_name' => self::STRINGVALIDATION,
+            'last_name' => self::STRINGVALIDATION,
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'siren' => 'required|string|size:9',
@@ -103,7 +107,7 @@ class OwnerController extends Controller
                 ->get();
 
             if ($owner->isEmpty()) {
-                return $this->error(null, "Owner not found", 404);
+                return $this->error(null, self::OWNERNOTFOUND, 404);
             }
             return $this->success($owner, "Owner Details");
 
@@ -127,7 +131,7 @@ class OwnerController extends Controller
             //get the user given in parameter
             $user = User::find($userId);
             if ($user === null) {
-                return $this->error(null, "User not found", 404);
+                return $this->error(null, self::OWNERNOTFOUND, 404);
             }
 
             // check if the user is an owner
@@ -138,8 +142,8 @@ class OwnerController extends Controller
 
             // validate the request
             $request->validate([
-                'first_name' => 'required|string|max:255',
-                'last_name' => 'required|string|max:255',
+                'first_name' => self::STRINGVALIDATION,
+                'last_name' => self::STRINGVALIDATION,
                 'email' => [
                     'required',
                     'string',
@@ -203,7 +207,7 @@ class OwnerController extends Controller
             }
             //check if the user is an owner
             if ($user->owner_id === null) {
-                return $this->error(null, "Owner not found", 404);
+                return $this->error(null, self::OWNERNOTFOUND, 404);
             }
             //check if the user is already deleted
             if ($user->deleted_at !== null) {
@@ -235,7 +239,7 @@ class OwnerController extends Controller
             }
             //check if the user is an owner
             if ($user->owner_id === null) {
-                return $this->error(null, "Owner not found", 404);
+                return $this->error(null, self::OWNERNOTFOUND, 404);
             }
             //check if the user is already restored
             if ($user->deleted_at === null) {
