@@ -5,15 +5,15 @@ namespace App\Http\Controllers;
 use App\Models\Owner;
 use App\Models\User;
 use App\Traits\HttpResponses;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
+use Exception;
+
 
 class OwnerController extends Controller
 {
