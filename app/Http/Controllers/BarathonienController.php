@@ -38,7 +38,7 @@ class BarathonienController extends Controller
                 ->get();
 
             if ($barathoniens->isEmpty()) {
-                return $this->error(null, "No barathonien found", 404);
+                return $this->error(null, self::BARATHONIENNOTFOUND, 404);
             }
 
             return $this->success($barathoniens, "Barathonien List");

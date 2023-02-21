@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\EmployeeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiAuthController;
@@ -76,4 +77,11 @@ Route::get('/pro/{user_id}', [OwnerController::class, 'show'])->name('owner.show
 Route::post('/pro/update/{user_id}', [OwnerController::class, 'update'])->name('owner.update');
 Route::delete('/pro/delete/{user_id}', [OwnerController::class, 'destroy'])->name('owner.delete');
 Route::get('/pro/restore/{user_id}', [OwnerController::class, 'restore'])->name('owner.restore');
+
+Route::get('/employee/list', [EmployeeController::class, 'getEmployeeList'])->name('employee.list');
+Route::get('/employee/{user_id}', [EmployeeController::class, 'show'])->name('employee.show');
+Route::post('/employee/update/{user_id}', [EmployeeController::class, 'update'])->name('employee.update');
+Route::delete('/employee/delete/{user_id}', [EmployeeController::class, 'destroy'])->name('employee.delete');
+Route::get('/employee/restore/{user_id}', [EmployeeController::class, 'restore'])->name('employee.restore');
+
 });
