@@ -258,7 +258,7 @@ class BarathonienController extends Controller
             //check if the user exist
             $user = User::withTrashed()->where('user_id', $userId)->first();
             if ($user === null) {
-                return $this->error(null, "User not found", 404);
+                return $this->error(null, self::USERNOTFOUND, 404);
             }
             //check if the user is a barathonien
             if ($user->barathonien_id === null) {
