@@ -51,19 +51,10 @@ class EmployeeController extends Controller
         }
     }
 
-    /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
-     */
-    public
-    function create()
-    {
-        //
-    }
+
 
     /**
-     * Store a newly created resource in storage.
+     * Store a newly created employee in storage.
      *
      * @param \Illuminate\Http\Request $request
      * @return Response
@@ -75,34 +66,47 @@ class EmployeeController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified employee.
      *
-     * @param \App\Models\Employee $employee
-     * @return Response
+     * @param  $userId
+     * @return JsonResponse
      */
     public
-    function show(Employee $employee)
+    function show($userId): JsonResponse
     {
-        //
+        try {
+            $employee = DB::table('establishments_employees')
+                ->join('employees', 'employees.employee_id', '=', 'establishments_employees.employee_id')
+                ->join(
+                    'establishments',
+                    'establishments.establishment_id',
+                    '=',
+                    'establishments_employees.establishment_id'
+                )
+                ->join('users', 'users.employee_id', '=', 'employees.employee_id')
+                ->select('users.*', 'employees.*', 'establishments.trade_name as establishment_name')
+                ->where('users.user_id', $userId)
+                ->get();
+
+            if ($employee->isEmpty()) {
+                return $this->error(null, self::NO_EMPLOYEE_FOUND, 404);
+            }
+
+            return $this->success($employee, "Employee List");
+
+        }catch (Exception $error) {
+            Log::error($error);
+            return $this->error(null, $error->getMessage(), 500);
+        }
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param \App\Models\Employee $employee
-     * @return Response
-     */
-    public
-    function edit(Employee $employee)
-    {
-        //
-    }
+
 
     /**
-     * Update the specified resource in storage.
+     * Update the specified employee in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @param \App\Models\Employee $employee
+     * @param Employee $employee
      * @return Response
      */
     public

@@ -21,6 +21,7 @@ class OwnerController extends Controller
 
     private const STRINGVALIDATION = 'required|string|max:255';
     private const OWNERNOTFOUND = "Owner not found";
+    private const USERNOTFOUND = "User not found";
 
     /**
      * Display a listing of all owners
@@ -203,7 +204,7 @@ class OwnerController extends Controller
             //check if the user exist
             $user = User::withTrashed()->where('user_id', $userId)->first();
             if ($user === null) {
-                return $this->error(null, "User not found", 404);
+                return $this->error(null, self::USERNOTFOUND, 404);
             }
             //check if the user is an owner
             if ($user->owner_id === null) {
@@ -235,7 +236,7 @@ class OwnerController extends Controller
             //check if the user exist
             $user = User::withTrashed()->where('user_id', $userId)->first();
             if ($user === null) {
-                return $this->error(null, "User not found", 404);
+                return $this->error(null, self::USERNOTFOUND, 404);
             }
             //check if the user is an owner
             if ($user->owner_id === null) {
