@@ -31,6 +31,7 @@ Route::post('/register', [ApiAuthController::class, 'register'])->name('user.reg
 Route::post('/register/barathonien', [BarathonienController::class, 'store'])->name('user.register.barathonien');
 Route::post('/register/owner', [OwnerController::class, 'store'])->name('user.register.owner');
 Route::post('/register/admin', [AdministratorController::class, 'store'])->name('user.register.admin');
+Route::post('/register/employee', [EmployeeController::class, 'store'])->name('user.register.employee');
 
 /*
 |--------------------------------------------------------------------------

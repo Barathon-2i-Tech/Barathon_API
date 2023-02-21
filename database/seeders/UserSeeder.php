@@ -72,6 +72,17 @@ class UserSeeder extends Seeder
                 'administrator_id' => null,
                 'employee_id' => $employeeId->employee_id
             ],
+            [
+                'last_name' => 'Smith',
+                'first_name' => 'John',
+                'email' => 'j.smith@mail.fr',
+                'password' => Hash::make('azertyuiop'),
+                'avatar' => $avatar,
+                'owner_id' => null,
+                'barathonien_id' => null,
+                'administrator_id' => null,
+                'employee_id' => 2
+            ],
 
         ];
 

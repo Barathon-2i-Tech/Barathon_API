@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Employee;
+use App\Models\Establishment;
 use App\Models\User;
 use App\Traits\HttpResponses;
 use Exception;
@@ -10,7 +11,9 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rules;
 
 class EmployeeController extends Controller
 {
@@ -18,6 +21,7 @@ class EmployeeController extends Controller
 
     private const NO_EMPLOYEE_FOUND = "No employee found";
     private const USER_NOT_FOUND = "User not found";
+    private const STRINGVALIDATION = 'required|string|max:255';
 
     /**
      * Display a listing of all employee.
@@ -27,15 +31,15 @@ class EmployeeController extends Controller
     public function getEmployeeList(): JsonResponse
     {
         try {
-            $employees = DB::table('establishments_employees')
-                ->join('employees', 'employees.employee_id', '=', 'establishments_employees.employee_id')
+            $employees = DB::table('users')
+                ->join('employees', 'users.employee_id', '=', 'employees.employee_id')
+                ->join('establishments_employees', 'employees.employee_id', '=', 'establishments_employees.employee_id')
                 ->join(
                     'establishments',
-                    'establishments.establishment_id',
+                    'establishments_employees.establishment_id',
                     '=',
-                    'establishments_employees.establishment_id'
+                    'establishments.establishment_id'
                 )
-                ->join('users', 'users.employee_id', '=', 'employees.employee_id')
                 ->select('users.*', 'employees.*', 'establishments.trade_name as establishment_name')
                 ->get();
 
@@ -52,17 +56,57 @@ class EmployeeController extends Controller
     }
 
 
-
     /**
      * Store a newly created employee in storage.
      *
      * @param \Illuminate\Http\Request $request
-     * @return Response
+     * @return JsonResponse
      */
     public
     function store(Request $request)
     {
-        //
+        try {
+            $request->validate([
+                'first_name' => self::STRINGVALIDATION,
+                'last_name' => self::STRINGVALIDATION,
+                'email' => 'required|string|email|unique:users',
+                'password' => ['required', 'confirmed', Rules\Password::defaults()],
+                'hiring_date' => 'required|date',
+            ]);
+
+            //create the user
+            $user = User::create([
+                'first_name' => $request->first_name,
+                'last_name' => $request->last_name,
+                'email' => $request->email,
+                'password' => Hash::make($request->password),
+                'avatar' => "https://picsum.photos/180",
+            ]);
+            //create the employee
+            $employee = Employee::create([
+                'hiring_date' => $request->hiring_date,
+            ]);
+            //link the user to the employee
+            $user->employee_id = $employee->employee_id;
+
+            /**
+            @TODO: link the employee to the establishment
+             */
+           // $establishment = Establishment::where('establishment_id', $request->establishment_id)->first();
+           // $establishment->employees()->attach($employee->employee_id);
+
+            //save the user
+            $user->save();
+
+            return $this->success([
+                'userLogged' => $user,
+                'token' => $user->createToken('API Token')->plainTextToken
+            ], "Employee Created", 201);
+
+        } catch (Exception $error) {
+            Log::error($error);
+            return $this->error(null, $error->getMessage(), 500);
+        }
     }
 
     /**
@@ -94,12 +138,11 @@ class EmployeeController extends Controller
 
             return $this->success($employee, "Employee List");
 
-        }catch (Exception $error) {
+        } catch (Exception $error) {
             Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }
-
 
 
     /**

@@ -15,8 +15,8 @@ return new class extends Migration
     {
         Schema::create('employees', function (Blueprint $table) {
             $table->id('employee_id');
-            $table->string('hiring_date');
-            $table->string('dismissal_date')->nullable();
+            $table->date('hiring_date');
+            $table->date('dismissal_date')->nullable();
         });
     }
 
