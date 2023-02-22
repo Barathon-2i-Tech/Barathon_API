@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\Establishment;
+use App\Models\Establishment_Employee;
 use App\Models\User;
 use App\Traits\HttpResponses;
 use Exception;
@@ -89,11 +90,14 @@ class EmployeeController extends Controller
             //link the user to the employee
             $user->employee_id = $employee->employee_id;
 
-            /**
-            @TODO: link the employee to the establishment
-             */
-           // $establishment = Establishment::where('establishment_id', $request->establishment_id)->first();
-           // $establishment->employees()->attach($employee->employee_id);
+            //check if the establishment exists
+            $establishment = Establishment::find($request->establishment_id);
+            if (!$establishment) {
+                return $this->error(null, "Establishment not found", 404);
+            }
+
+            // attach the employee to the establishment with the belonging table
+            $establishment->employees()->attach($employee->employee_id);
 
             //save the user
             $user->save();
