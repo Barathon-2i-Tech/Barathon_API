@@ -68,7 +68,7 @@ class BarathonienControllerTest extends TestCase
             'message',
             'data',
         ]);
-        $response->assertJson(['message' => 'No barathonien found']);
+        $response->assertJson(['message' => 'Barathonien not found']);
     }
 
     /**

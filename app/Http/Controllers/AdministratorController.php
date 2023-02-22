@@ -174,7 +174,7 @@ class AdministratorController extends Controller
             if (empty($userChanges) && empty($administratorChanges)) {
                 return $this->success($user, "Administrator not updated");
             }
-            // Return the updated user and address
+            // Return the updated user
             return $this->success($user, "Administrator updated");
 
 

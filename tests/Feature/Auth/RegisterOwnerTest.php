@@ -39,7 +39,7 @@ class RegisterOwnerTest extends TestCase
             'email' => 'toto@gmail.com',
             'password' => 'azertyuiop',
             'password_confirmation' => 'azertyuiop',
-            'siren' => fake()->siren(),
+            'siren' => '010203040',
             'kbis' => 'myKbis',
             'active' => false,
             'avatar' => "myavatar.jpg"
