@@ -32,7 +32,7 @@ class BarathonienController extends Controller
     {
         try {
             $barathoniens = DB::table('users')
-                ->join('barathoniens', 'users.user_id', '=', 'barathoniens.barathonien_id')
+                ->join('barathoniens', 'users.barathonien_id', '=', 'barathoniens.barathonien_id')
                 ->join('addresses', 'barathoniens.address_id', '=', 'addresses.address_id')
                 ->select('users.*', 'barathoniens.*', 'addresses.*')
                 ->get();

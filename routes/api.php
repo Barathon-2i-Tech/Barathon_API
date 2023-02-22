@@ -85,4 +85,9 @@ Route::post('/employee/update/{user_id}', [EmployeeController::class, 'update'])
 Route::delete('/employee/delete/{user_id}', [EmployeeController::class, 'destroy'])->name('employee.delete');
 Route::get('/employee/restore/{user_id}', [EmployeeController::class, 'restore'])->name('employee.restore');
 
+Route::get('/administrator/list', [AdministratorController::class, 'getAdministratorList'])->name('administrator.list');
+Route::get('/administrator/{user_id}', [AdministratorController::class, 'show'])->name('administrator.show');
+Route::post('/administrator/update/{user_id}', [AdministratorController::class, 'update'])->name('administrator.update');
+Route::delete('/administrator/delete/{user_id}', [AdministratorController::class, 'destroy'])->name('administrator.delete');
+Route::get('/administrator/restore/{user_id}', [AdministratorController::class, 'restore'])->name('administrator.restore');
 });
