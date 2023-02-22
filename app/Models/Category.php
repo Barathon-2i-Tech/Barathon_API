@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 
 class Category extends Model
 {
@@ -36,7 +37,7 @@ class Category extends Model
     /**
      * Get the establishment associated with the category
      */
-    public function establishments(): \Illuminate\Database\Eloquent\Relations\BelongsToMany
+    public function establishments(): BelongsToMany
     {
         return $this->belongsToMany(
             Establishment::class,

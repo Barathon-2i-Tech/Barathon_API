@@ -50,7 +50,7 @@ class Employee extends Model
      */
     public function establishments(): BelongsToMany
     {
-        return $this->belongsToMany(Establishment::class, "establishment_employee", "employee_id", "establishment_id");
+        return $this->belongsToMany(Establishment::class, "establishments_employees", "employee_id", "establishment_id");
     }
 
 }
