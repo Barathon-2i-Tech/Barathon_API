@@ -64,7 +64,7 @@ class EstablishmentController extends Controller
             $request->validate([
                 'trade_name' => self::STRING_VALIDATION,
                 'siret' => 'required|string|max:14', // 14 characters for a SIRET
-                'logo' => File::image(),
+                'logo' => 'string', //modify later
                 'phone' => 'required|string',
                 'email' => 'email|string',
                 'website' => 'string',
@@ -93,8 +93,8 @@ class EstablishmentController extends Controller
                 'address_id' => $address->address_id,
                 'status_id' => $establPending
             ]);
-
-
+            $establishmentPending = Status::where('comment->code', 'ESTABL_PENDING')->first();
+            $establishment->status_id = $establishmentPending->status_id;
             $establishment->save();
 
             return $this->success([
@@ -178,6 +178,8 @@ class EstablishmentController extends Controller
                     $establishment->{$field} = $value;
                 }
             }
+            $establishmentPending = Status::where('comment->code', 'ESTABL_PENDING')->first();
+            $establishment->status_id = $establishmentPending->status_id;
             $establishment->save();
 
             // Get the address linked to the establishment
