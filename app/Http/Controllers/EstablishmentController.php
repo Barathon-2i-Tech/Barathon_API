@@ -158,8 +158,7 @@ class EstablishmentController extends Controller
 
             $request->validate([
                 'trade_name' => self::STRING_VALIDATION,
-                'siret' => 'required|string|max:14', // 14 characters for a SIRET
-                'logo' => File::image(),
+                'logo' => 'string', // modify later
                 'phone' => 'required|string',
                 'email' => 'email|string',
                 'website' => 'string',
@@ -196,8 +195,7 @@ class EstablishmentController extends Controller
 
             $establishmentChanges = $establishment->getChanges();
             $addressChanges = $address->getChanges();
-            dump($establishmentChanges);
-            dump($addressChanges);
+
 
             // Check if the establishment data has changed
             if (empty($establishmentChanges) && empty($addressChanges)) {
