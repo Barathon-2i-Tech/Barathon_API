@@ -14,6 +14,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 
 class EmployeeController extends Controller
@@ -60,11 +61,11 @@ class EmployeeController extends Controller
     /**
      * Store a newly created employee in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      * @return JsonResponse
      */
     public
-    function store(Request $request)
+    function store(Request $request): JsonResponse
     {
         try {
             $request->validate([
@@ -83,6 +84,7 @@ class EmployeeController extends Controller
                 'password' => Hash::make($request->password),
                 'avatar' => "https://picsum.photos/180",
             ]);
+
             //create the employee
             $employee = Employee::create([
                 'hiring_date' => $request->hiring_date,
@@ -140,7 +142,7 @@ class EmployeeController extends Controller
                 return $this->error(null, self::NO_EMPLOYEE_FOUND, 404);
             }
 
-            return $this->success($employee, "Employee List");
+            return $this->success($employee, "Employee");
 
         } catch (Exception $error) {
             Log::error($error);
@@ -152,14 +154,58 @@ class EmployeeController extends Controller
     /**
      * Update the specified employee in storage.
      *
-     * @param \Illuminate\Http\Request $request
+     * @param Request $request
      * @param Employee $employee
      * @return Response
      */
     public
-    function update(Request $request, Employee $employee)
+    function update(Request $request, $userId): JsonResponse
     {
-        //
+        try {
+            // Get the user given in parameter
+            $user = User::find($userId);
+            if ($user === null) {
+                return $this->error(null, self::USER_NOT_FOUND, 404);
+            }
+
+            // Check if the user is a employee
+            if ($user->employee_id === null) {
+                return $this->error(null, self::NO_EMPLOYEE_FOUND, 404);
+            }
+
+            $request->validate([
+                'first_name' => self::STRINGVALIDATION,
+                'last_name' => self::STRINGVALIDATION,
+                'email' => [
+                    'required',
+                    'string',
+                    'email',
+                    Rule::unique('users')->ignore($user), // Ignore the user given in parameter
+                ],
+            ]);
+
+            $userData = $request->only(['first_name', 'last_name', 'email']);
+            // Check if the data given in parameter are different from the data in database
+            foreach ($userData as $field => $value) {
+                if ($user->{$field} !== $value) {
+                    $user->{$field} = $value;
+                }
+            }
+            $user->save();
+
+            $userChanges = $user->getChanges();
+
+            // Check if the user data has changed
+            if (empty($userChanges)) {
+                return $this->success($user, "Employee not updated");
+            }
+            return $this->success($user, "Employee Updated", 200);
+
+        } catch (Exception $error) {
+            Log::error($error);
+            return $this->error(null, $error->getMessage(), 500);
+        }
+
     }
 
     /**
