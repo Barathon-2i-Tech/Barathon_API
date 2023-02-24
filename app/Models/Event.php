@@ -77,6 +77,13 @@ class Event extends Model
     }
 
     /**
+     * Get the tag  associated with the event
+     */
+    public function categories(): BelongsToMany
+    {
+        return $this->belongsToMany(Category::class, "category_event", "event_id", "category_id");
+    }
+    /*
      * Get the event associated with the event update
      */
     public function eventChild(): HasMany
@@ -91,6 +98,6 @@ class Event extends Model
      */
     public function bookings(): BelongsToMany
     {
-        return $this->belongsToMany(Booking::class, "bookings", "event_id", "booking_id");
+        return $this->belongsToMany(Booking::class, "bookings", "event_id", "user_id");
     }
 }

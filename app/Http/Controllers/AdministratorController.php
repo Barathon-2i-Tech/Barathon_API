@@ -54,8 +54,7 @@ class AdministratorController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public
-    function store(Request $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
 
         $request->validate([
@@ -122,8 +121,7 @@ class AdministratorController extends Controller
      * @param $userId
      * @return JsonResponse
      */
-    public
-    function update(Request $request, $userId): JsonResponse
+    public function update(Request $request, $userId): JsonResponse
     {
         try {
             // Get the user given in parameter

@@ -47,4 +47,9 @@ class Category extends Model
         );
     }
 
+    public function events(): BelongsToMany
+    {
+        return $this->belongsToMany(Event::class, "categories_establishments", "category_id", "establishment_id");
+    }
+
 }

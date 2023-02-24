@@ -26,7 +26,9 @@ class DatabaseSeeder extends Seeder
             EstablishmentSeeder::class,
             CategoryEstablishmentSeeder::class,
             EstablishmentEmployeeSeeder::class,
-            EventSeeder::class
+            EventSeeder::class,
+            CategoryEventSeeder::class,
+            BookingSeeder::class
         ]);
     }
 }

@@ -49,7 +49,7 @@ class EmployeeController extends Controller
                 return $this->error(null, self::NO_EMPLOYEE_FOUND, 404);
             }
 
-            return $this->success($employees, "Employee List");
+            return $this->success($employees, "Employees List");
 
         } catch (Exception $error) {
             Log::error($error);

@@ -72,7 +72,7 @@ class AdministratorControllerTest extends TestCase
     }
 
     /**
-     * A test to get a administrator by id
+     * A test to get an administrator by id
      *
      * @return void
      */
@@ -88,7 +88,7 @@ class AdministratorControllerTest extends TestCase
     }
 
     /**
-     * A test to get a 404 error when barathonien not found
+     * A test to get an 404 error when administrator not found
      *
      * @return void
      */
@@ -127,7 +127,7 @@ class AdministratorControllerTest extends TestCase
     }
 
     /**
-     * A test to update a administrator
+     * A test to update an administrator
      *
      * @return void
      */
@@ -150,7 +150,7 @@ class AdministratorControllerTest extends TestCase
     }
 
     /**
-     * A test to check if the update is really on a barathonien
+     * A test to check if the update is really on an administrator
      *
      * @return void
      */
@@ -217,7 +217,7 @@ class AdministratorControllerTest extends TestCase
     }
 
     /**
-     * A test to delete a administrator
+     * A test to delete an administrator
      *
      * @return void
      */
@@ -237,7 +237,7 @@ class AdministratorControllerTest extends TestCase
     }
 
     /**
-     * A test to delete a administrator who doesn't exist
+     * A test to delete an administrator who doesn't exist
      *
      * @return void
      */
@@ -274,7 +274,7 @@ class AdministratorControllerTest extends TestCase
     }
 
     /**
-     * A test to check if a administrator is already deleted
+     * A test to check if an administrator is already deleted
      *
      * @return void
      */
@@ -312,7 +312,7 @@ class AdministratorControllerTest extends TestCase
     }
 
     /**
-     * A test to restore a administrator who doesn't exist
+     * A test to restore an administrator who doesn't exist
      *
      * @return void
      */
@@ -331,7 +331,7 @@ class AdministratorControllerTest extends TestCase
     }
 
     /**
-     * A test to check if a administrator is already restored
+     * A test to check if an administrator is already restored
      *
      * @return void
      */
