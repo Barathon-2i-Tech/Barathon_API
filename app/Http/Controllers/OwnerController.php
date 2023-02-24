@@ -31,10 +31,10 @@ class OwnerController extends Controller
     public function getOwnerList(): JsonResponse
     {
         try {
-            $owners = User::with(['owner', 'owner.owner_status'])
-                ->whereHas('owner', function ($query) {
-                    $query->whereNotNull('owner_id');
-                })
+            $owners = DB::table('users')
+                ->join('owners', 'users.owner_id', '=', 'owners.owner_id')
+                ->join('status', 'owners.status_id', '=', 'status.status_id')
+                ->select('users.*', 'owners.*', 'status.status_id', 'status.comment')
                 ->get();
 
             if ($owners->isEmpty()) {

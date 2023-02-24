@@ -22,7 +22,8 @@ class OwnerSeeder extends Seeder
             [
                 'siren' => fake()->siren(),
                 'kbis' => 'chemin/kbis.pdf',
-                'status_id' => $ownerValid->status_id
+                'status_id' => $ownerValid->status_id,
+                'phone' => '0606060606',
             ]
         ];
         Owner::create($datas[0]);

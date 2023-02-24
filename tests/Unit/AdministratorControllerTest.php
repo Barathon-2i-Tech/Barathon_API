@@ -42,9 +42,9 @@ class AdministratorControllerTest extends TestCase
     {
         $structure = self::STRUCTURE;
 
-        $user = $this->createAdminUser();
+        $administrator = $this->createAdminUser();
 
-        $response = $this->actingAs($user)->get(route('administrator.list'))
+        $response = $this->actingAs($administrator)->get(route('administrator.list'))
             ->assertOk();
         $response->assertJsonStructure($structure);
         $response->assertJson(['message' => 'Admnistrators List']);
@@ -59,9 +59,9 @@ class AdministratorControllerTest extends TestCase
     public function test_get_all_administrators_with_empty_response(): void
     {
 
-        $user = $this->createAdminUser();
+        $administrator = $this->createAdminUser();
         DB::table('users')->whereNotNull('administrator_id')->delete();
-        $response = $this->actingAs($user)->get(route('administrator.list'))
+        $response = $this->actingAs($administrator)->get(route('administrator.list'))
             ->assertNotFound();
         $response->assertJsonStructure([
             'status',
@@ -95,8 +95,8 @@ class AdministratorControllerTest extends TestCase
     public function test_get_404_error_administrator_not_found(): void
     {
         $professional = $this->createOwnerUser();
-        $user = $this->createAdminUser();
-        $response = $this->actingAs($user)->get(route('administrator.show', $professional->user_id))
+        $administrator = $this->createAdminUser();
+        $response = $this->actingAs($administrator)->get(route('administrator.show', $professional->user_id))
             ->assertNotFound();
 
         $response->assertJsonStructure([
@@ -114,8 +114,8 @@ class AdministratorControllerTest extends TestCase
      */
     public function test_get_500_error_administrator_show_method(): void
     {
-        $user = $this->createAdminUser();
-        $response = $this->actingAs($user)->get(route('administrator.show', 'error'))
+        $administrator = $this->createAdminUser();
+        $response = $this->actingAs($administrator)->get(route('administrator.show', 'error'))
             ->assertStatus(500);
 
         $response->assertJsonStructure([
@@ -156,9 +156,9 @@ class AdministratorControllerTest extends TestCase
      */
     public function test_to_check_on_update_if_really_a_administrator(): void
     {
-        $user = $this->createAdminUser();
+        $administrator = $this->createAdminUser();
         $employee = $this->createEmployeeUser();
-        $response = $this->actingAs($user)->post(route('administrator.update', $employee->user_id), [
+        $response = $this->actingAs($administrator)->post(route('administrator.update', $employee->user_id), [
             'first_name' => 'test',
             'last_name' => 'test',
             'email' => 'test@test.fr',
@@ -173,7 +173,7 @@ class AdministratorControllerTest extends TestCase
     }
 
     /**
-     * A test to check if the administrator is updated
+     * A test to check if the administrator is updated with the same information as before
      *
      * @return void
      */
@@ -243,9 +243,9 @@ class AdministratorControllerTest extends TestCase
      */
     public function test_to_delete_a_administrator_who_does_not_exist(): void
     {
-        $user = $this->createAdminUser();
+        $administrator = $this->createAdminUser();
         $employee = $this->createEmployeeUser();
-        $response = $this->actingAs($user)->delete(route('administrator.delete', $employee->user_id))
+        $response = $this->actingAs($administrator)->delete(route('administrator.delete', $employee->user_id))
             ->assertNotFound();
         $response->assertJsonStructure([
             'status',
@@ -262,8 +262,8 @@ class AdministratorControllerTest extends TestCase
      */
     public function test_to_delete_a_user_who_does_not_exist(): void
     {
-        $user = $this->createAdminUser();
-        $response = $this->actingAs($user)->delete(route('administrator.delete', 450))
+        $administrator = $this->createAdminUser();
+        $response = $this->actingAs($administrator)->delete(route('administrator.delete', 450))
             ->assertNotFound();
         $response->assertJsonStructure([
             'status',
@@ -300,8 +300,8 @@ class AdministratorControllerTest extends TestCase
      */
     public function test_to_restore_a_user_who_does_not_exist(): void
     {
-        $user = $this->createAdminUser();
-        $response = $this->actingAs($user)->get(route('administrator.restore', 450))
+        $administrator = $this->createAdminUser();
+        $response = $this->actingAs($administrator)->get(route('administrator.restore', 450))
             ->assertNotFound();
         $response->assertJsonStructure([
             'status',
@@ -318,9 +318,9 @@ class AdministratorControllerTest extends TestCase
      */
     public function test_to_restore_a_administrator_who_does_not_exist(): void
     {
-        $user = $this->createAdminUser();
+        $administrator = $this->createAdminUser();
         $employee = $this->createEmployeeUser();
-        $response = $this->actingAs($user)->get(route('administrator.restore', $employee->user_id))
+        $response = $this->actingAs($administrator)->get(route('administrator.restore', $employee->user_id))
             ->assertNotFound();
         $response->assertJsonStructure([
             'status',
