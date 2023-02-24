@@ -10,15 +10,7 @@ class BarathonienControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-
-    /**
-     * A test to get all barathoniens
-     *
-     * @return void
-     */
-    public function test_get_all_barathoniens(): void
-    {
-        $structure = [
+    private const  STRUCTURE = [
             "status",
             "message",
             "data" => [
@@ -43,6 +35,15 @@ class BarathonienControllerTest extends TestCase
                     "postal_code",
                     "city"]]
         ];
+
+    /**
+     * A test to get all barathoniens
+     *
+     * @return void
+     */
+    public function test_get_all_barathoniens(): void
+    {
+        $structure = self::STRUCTURE;
 
         $user = $this->createAdminUser();
 
@@ -84,33 +85,7 @@ class BarathonienControllerTest extends TestCase
         $response = $this->actingAs($user)->get(route('barathonien.show', $barathonien->user_id))
             ->assertOk();
 
-        $response->assertJsonStructure([
-            "status",
-            "message",
-            "data" => [
-                [
-                    "user_id",
-                    "first_name",
-                    "last_name",
-                    "email",
-                    "email_verified_at",
-                    "password",
-                    "avatar",
-                    "owner_id",
-                    "barathonien_id",
-                    "administrator_id",
-                    "employee_id",
-                    "remember_token",
-                    "deleted_at",
-                    "created_at",
-                    "updated_at",
-                    "birthday",
-                    "address_id",
-                    "address",
-                    "postal_code",
-                    "city"
-                ]]
-        ]);
+        $response->assertJsonStructure(self::STRUCTURE);
     }
 
     /**
@@ -150,7 +125,7 @@ class BarathonienControllerTest extends TestCase
             'message',
             'data',
         ]);
-      $response->assertJson(['status' => 'An error has occurred...']);
+        $response->assertJson(['status' => 'An error has occurred...']);
 
     }
 
@@ -170,7 +145,7 @@ class BarathonienControllerTest extends TestCase
             'address' => 'address test',
             'postal_code' => '75000',
             'city' => 'Paris'])
-        ->assertOk();
+            ->assertOk();
         $response->assertJsonStructure([
             'status',
             'message',
