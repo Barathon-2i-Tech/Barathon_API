@@ -1,0 +1,376 @@
+<?php
+
+namespace Tests\Unit;
+
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\DB;
+use Tests\TestCase;
+
+class EmployeeControllerTest extends TestCase
+{
+    use RefreshDatabase;
+
+    private const STRUCTURE = [
+        "status",
+        "message",
+        "data" => [[
+            "user_id",
+            "first_name",
+            "last_name",
+            "email",
+            "email_verified_at",
+            "password",
+            "avatar",
+            "owner_id",
+            "barathonien_id",
+            "administrator_id",
+            "employee_id",
+            "remember_token",
+            "deleted_at",
+            "created_at",
+            "updated_at",
+            "hiring_date",
+            "dismissal_date",
+            "establishment_name",
+        ]]
+    ];
+
+    /**
+     * A test to get all employees
+     *
+     * @return void
+     */
+    public function test_get_all_employees(): void
+    {
+        $structure = self::STRUCTURE;
+
+        $user = $this->createAdminUser();
+
+        $response = $this->actingAs($user)->get(route('employee.list'))
+            ->assertOk();
+        $response->assertJsonStructure($structure);
+        $response->assertJson(['message' => 'Employees List']);
+
+    }
+
+    /**
+     * A test to get a 404 no found on empty response all employees
+     *
+     * @return void
+     */
+//    public function test_get_all_employees_with_empty_response(): void
+//    {
+//
+//        $user = $this->createAdminUser();
+//        DB::table('users')->whereNotNull('employee_id')->delete();
+//        $response = $this->actingAs($user)->get(route('employee.list'))
+//            ->assertNotFound();
+//        $response->assertJsonStructure([
+//            'status',
+//            'message',
+//            'data',
+//        ]);
+//        $response->assertJson(['message' => 'Employee not found']);
+//    }
+
+    /**
+     * A test to get an employee by id
+     *
+     * @return void
+     */
+    public function test_get_an_employee_by_id(): void
+    {
+
+        $administrator = $this->createAdminUser();
+        $employee = $this->createEmployeeUser();
+        $response = $this->actingAs($administrator)->get(route('employee.show', $employee->user_id))
+            ->assertOk();
+
+        $response->assertJsonStructure(self::STRUCTURE);
+        $response->assertJson(['message' => 'Employee']);
+    }
+
+    /**
+     * A test to get a 404 error when employee not found
+     *
+     * @return void
+     */
+//    public function test_get_404_error_employee_not_found(): void
+//    {
+//        $professional = $this->createOwnerUser();
+//        $user = $this->createAdminUser();
+//        $response = $this->actingAs($user)->get(route('employee.show', $professional->user_id))
+//            ->assertNotFound();
+//
+//        $response->assertJsonStructure([
+//            'status',
+//            'message',
+//            'data',
+//        ]);
+//        $response->assertJson(['message' => 'Employee not found']);
+//    }
+
+    /**
+     * A test to get a 500 error on show method
+     *
+     * @return void
+     */
+    public function test_get_500_error_employee_show_method(): void
+    {
+        $user = $this->createAdminUser();
+        $response = $this->actingAs($user)->get(route('employee.show', 'error'))
+            ->assertStatus(500);
+
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data',
+        ]);
+        $response->assertJson(['status' => 'An error has occurred...']);
+    }
+
+    /**
+     * A test to update an employee
+     *
+     * @return void
+     */
+//    public function test_to_update_an_employee(): void
+//    {
+//        $employee = $this->createEmployeeUser();
+//        $administrator = $this->createAdminUser();
+//        $response = $this->actingAs($administrator)->post(route('employee.update', $employee->user_id), [
+//            'first_name' => 'test',
+//            'last_name' => 'test',
+//            'email' => 'test@test.fr',
+//            'phone' => '0101010101'])
+//            ->assertOk();
+//        $response->assertJsonStructure([
+//            'status',
+//            'message',
+//            'data'
+//        ]);
+//        $response->assertJson(['message' => 'Employee updated']);
+//    }
+
+    /**
+     * A test to check if the update is really on an employee
+     *
+     * @return void
+     */
+//    public function test_to_check_on_update_if_really_an_employee(): void
+//    {
+//        $administrator = $this->createAdminUser();
+//        $professional = $this->createOwnerUser();
+//        $response = $this->actingAs($administrator)->post(route('employee.update', $professional->user_id), [
+//            'first_name' => 'test',
+//            'last_name' => 'test',
+//            'email' => 'test@test.fr',
+//            'phone' => '0101010101'])
+//            ->assertNotFound();
+//        $response->assertJsonStructure([
+//            'status',
+//            'message',
+//            'data'
+//        ]);
+//        $response->assertJson(['message' => 'Employee not found']);
+//    }
+
+    /**
+     * A test to check if the employee is updated
+     *
+     * @return void
+     */
+//    public function test_to_check_if_employee_is_updated(): void
+//    {
+//        $employee = $this->createEmployeeUser();
+//        $administrator = $this->createAdminUser();
+//
+//        $response = $this->actingAs($administrator)->post(route('employee.update', $employee->user_id), [
+//            'first_name' => 'Jane',
+//            'last_name' => 'Doe',
+//            'email' => 'employee@mail.fr',
+//            ])
+//            ->assertOk();
+//        $response->assertJsonStructure([
+//            'status',
+//            'message',
+//            'data'
+//        ]);
+//        $response->assertJson(['message' => 'Administrator not updated']);
+//    }
+
+    /**
+     * A test to check the validation on updated
+     *
+     * @return void
+     */
+    public function test_to_check_validation_on_updated(): void
+    {
+        $employee = $this->createEmployeeUser();
+        $administrator = $this->createAdminUser();
+
+        $response = $this->actingAs($administrator)->post(route('employee.update', $employee->user_id), [])
+            ->assertStatus(500);
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+        $response->assertJson(['status' => 'An error has occurred...']);
+    }
+
+    /**
+     * A test to delete an employee
+     *
+     * @return void
+     */
+    public function test_to_delete_an_employee(): void
+    {
+        $employee = $this->createEmployeeUser();
+        $administrator = $this->createAdminUser();
+
+        $response = $this->actingAs($administrator)->delete(route('employee.delete', $employee->user_id))
+            ->assertOk();
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+        $response->assertJson(['message' => 'Employee Deleted']);
+    }
+
+    /**
+     * A test to delete an employee who doesn't exist
+     *
+     * @return void
+     */
+//    public function test_to_delete_an_employee_who_does_not_exist(): void
+//    {
+//        $administrator = $this->createAdminUser();
+//        $professional = $this->createOwnerUser();
+//        $response = $this->actingAs($administrator)->delete(route('employee.delete', $professional->user_id))
+//            ->assertNotFound();
+//        $response->assertJsonStructure([
+//            'status',
+//            'message',
+//            'data'
+//        ]);
+//        $response->assertJson(['message' => 'Employee not found']);
+//    }
+
+    /**
+     * A test to delete a user who doesn't exist
+     *
+     * @return void
+     */
+    public function test_to_delete_a_user_who_does_not_exist(): void
+    {
+        $user = $this->createAdminUser();
+        $response = $this->actingAs($user)->delete(route('employee.delete', 450))
+            ->assertNotFound();
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+        $response->assertJson(['message' => 'User not found']);
+    }
+
+    /**
+     * A test to check if an employee is already deleted
+     *
+     * @return void
+     */
+//    public function test_to_check_if_employee_already_deleted(): void
+//    {
+//        $user = $this->createAdminUser();
+//        $administrator = $this->createAdminUser();
+//        $administrator->delete();
+//        $response = $this->actingAs($user)->delete(route('employee.delete', $administrator->user_id))
+//            ->assertNotFound();
+//        $response->assertJsonStructure([
+//            'status',
+//            'message',
+//            'data'
+//        ]);
+//        $response->assertJson(['message' => 'Employee already deleted']);
+//    }
+
+    /**
+     * A test to restore a user who doesn't exist
+     *
+     * @return void
+     */
+    public function test_to_restore_a_user_who_does_not_exist(): void
+    {
+        $administrator = $this->createAdminUser();
+        $response = $this->actingAs($administrator)->get(route('employee.restore', 450))
+            ->assertNotFound();
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+        $response->assertJson(['message' => 'User not found']);
+    }
+
+    /**
+     * A test to restore an employee who doesn't exist
+     *
+     * @return void
+     */
+//    public function test_to_restore_an_employee_who_does_not_exist(): void
+//    {
+//        $administrator = $this->createAdminUser();
+//        $employee = $this->createEmployeeUser();
+//        $response = $this->actingAs($administrator)->get(route('employee.restore', $employee->user_id))
+//            ->assertNotFound();
+//        $response->assertJsonStructure([
+//            'status',
+//            'message',
+//            'data'
+//        ]);
+//        $response->assertJson(['message' => 'Employee not found']);
+//    }
+
+    /**
+     * A test to check if an employee is already restored
+     *
+     * @return void
+     */
+    public function test_to_check_if_employee_already_restored(): void
+    {
+        $administrator = $this->createAdminUser();
+        $employee = $this->createEmployeeUser();
+
+        $response = $this->actingAs($administrator)->get(route('employee.restore', $employee->user_id))
+            ->assertNotFound();
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+        $response->assertJson(['message' => 'Employee already restored']);
+    }
+
+    /**
+     * A test to restore an employee
+     *
+     * @return void
+     */
+    public function test_to_restore_a_employee(): void
+    {
+        $administrator = $this->createAdminUser();
+        $employee = $this->createEmployeeUser();
+        $employee->delete();
+
+        $response = $this->actingAs($administrator)->get(route('employee.restore', $employee->user_id))
+            ->assertOk();
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+        $response->assertJson(['message' => 'Employee Restored']);
+    }
+}
