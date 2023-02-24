@@ -49,6 +49,7 @@ class BarathonienControllerTest extends TestCase
         $response = $this->actingAs($user)->get(route('barathonien.list'))
             ->assertOk();
         $response->assertJsonStructure($structure);
+        $response->assertJson(['message' => 'Barathonien List']);
 
     }
     /**
@@ -119,9 +120,9 @@ class BarathonienControllerTest extends TestCase
      */
     public function test_get_404_error_barathonien_not_found(): void
     {
-        $professionnal = $this->createOwnerUser();
+        $professional = $this->createOwnerUser();
         $user = $this->createAdminUser();
-        $response = $this->actingAs($user)->get(route('barathonien.show', $professionnal->user_id))
+        $response = $this->actingAs($user)->get(route('barathonien.show', $professional->user_id))
             ->assertNotFound();
 
         $response->assertJsonStructure([

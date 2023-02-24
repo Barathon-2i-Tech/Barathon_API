@@ -107,7 +107,7 @@ class AdministratorController extends Controller
                 return $this->error(null, self::ADMINISTRATOR_NOT_FOUND, 404);
             }
 
-            return $this->success($administrator, 'Admnistrator');
+            return $this->success($administrator, 'Administrator');
         } catch (Exception $error) {
             Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
