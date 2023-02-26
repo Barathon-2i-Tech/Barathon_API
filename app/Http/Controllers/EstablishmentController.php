@@ -74,6 +74,8 @@ class EstablishmentController extends Controller
                 'city' => self::STRING_VALIDATION,
             ]);
 
+
+
             $establPending = Status::where('comment->code', 'ESTABL_PENDING')->first()->status_id;
             $address = Address::create([
                 'address' => $request->address,
@@ -81,18 +83,23 @@ class EstablishmentController extends Controller
                 'city' => $request->city
             ]);
 
+            // Decodage de la valeur de la clé "opening" en JSON
+            $opening = json_decode($request->opening, true);
+
+
             $establishment = Establishment::create([
                 'trade_name' => $request->trade_name,
                 'siret' => $request->siret,
-                'logo' => 'https://picsum.photos/180',
+                'logo' => $request->logo,
                 'phone' => $request->phone,
                 'email' => $request->email,
                 'website' => $request->website,
-                'opening' => $request->opening,
+                'opening' => $opening,
                 'owner_id' => $ownerId,
                 'address_id' => $address->address_id,
                 'status_id' => $establPending
             ]);
+
             $establishmentPending = Status::where('comment->code', 'ESTABL_PENDING')->first();
             $establishment->status_id = $establishmentPending->status_id;
             $establishment->save();
@@ -171,6 +178,9 @@ class EstablishmentController extends Controller
 
             $dataEstablishment = $request->only(
                 ['trade_name', 'siret', 'logo', 'phone', 'email', 'website', 'opening']);
+
+            // Décoder la valeur de 'opening'
+            $dataEstablishment['opening'] = json_decode($dataEstablishment['opening'], true);
 
             // Check if the data given in parameter are different from the data in database
             foreach ($dataEstablishment as $field => $value) {
