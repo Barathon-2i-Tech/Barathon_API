@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Administrator;
 use App\Models\Employee;
 use App\Models\Owner;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use App\Http\Requests\LoginUserRequest;
 use App\Traits\HttpResponses;
@@ -18,7 +19,8 @@ class ApiAuthController extends Controller
 {
     use HttpResponses;
 
-    public function login(LoginUserRequest $request): \Illuminate\Http\JsonResponse
+    private const TOKEN_NAME = 'API Token';
+    public function login(LoginUserRequest $request): JsonResponse
     {
         $request->validated($request->only(['email', 'password']));
 
@@ -28,15 +30,21 @@ class ApiAuthController extends Controller
 
         $user = User::where('email', $request->email)->first();
 
-
-
+        if ($user->administrator_id !== null) {
+            $admin = Administrator::where('administrator_id', $user->administrator_id)->first();
+            return $this->success([
+                'userLogged' => $user,
+                'superAdmin' => $admin->superAdmin,
+                'token' => $user->createToken(self::TOKEN_NAME)->plainTextToken
+            ]);
+        }
         return $this->success([
             'userLogged' => $user,
-            'token' => $user->createToken('API Token')->plainTextToken
+            'token' => $user->createToken(self::TOKEN_NAME)->plainTextToken
         ]);
     }
 
-    public function register(Request $request): \Illuminate\Http\JsonResponse
+    public function register(Request $request): JsonResponse
     {
         $request->validate([
             'first_name' => 'required|string|max:255',
@@ -55,11 +63,11 @@ class ApiAuthController extends Controller
 
         return $this->success([
             'userLogged' => $user,
-            'token' => $user->createToken('API Token')->plainTextToken
+            'token' => $user->createToken(self::TOKEN_NAME)->plainTextToken
         ]);
     }
 
-    public function logout(): \Illuminate\Http\JsonResponse
+    public function logout(): JsonResponse
     {
         Auth::user()->tokens()->delete();
         $message = "You have successfully been logged out and your tokens has been removed";
