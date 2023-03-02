@@ -1,7 +1,7 @@
 <?php
 
 use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\SirenController;
+use App\Http\Controllers\InseeController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiAuthController;
@@ -133,5 +133,6 @@ Route::get(
     )->name('administrator.restore');
 
 
-Route::get('check-siren/{siren}', [SirenController::class, 'getSiren'])->name('check-siren');
+Route::get('check-siren/{siren}', [InseeController::class, 'getSiren'])->name('check-siren');
+Route::get('check-siret/{siret}', [InseeController::class, 'getSiret'])->name('check-siret');
 });

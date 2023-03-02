@@ -9,7 +9,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
-class SirenController extends Controller
+class InseeController extends Controller
 {
     use HttpResponses;
 
@@ -90,6 +90,58 @@ class SirenController extends Controller
             } else {
                 $dataFetch = json_decode($response->getBody());
                 return $this->success($dataFetch->uniteLegale, 'Siren found');
+            }
+        } catch (GuzzleException $error) {
+            Log::error($error);
+            return $this->error(null, $error->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Retrieve information about a company using its SIRET number.
+     *
+     * @param string $siret enterprise SIRET number
+     * @return JsonResponse
+     */
+    public function getSiret(string $siret): JsonResponse
+    {
+        try {
+            // format siren
+            $siretToCheck = str_replace(' ', '', $siret);
+
+            $validator = Validator::make(['siret' => $siretToCheck], [
+                'siret' => 'required|numeric|digits:14',
+            ]);
+
+            if ($validator->fails()) {
+                return $this->error(null, $validator->errors()->first(), 400);
+            }
+
+            //generate token
+            $tokenGenerated = $this->generateToken();
+
+            $client = new Client();
+            $response = $client->get('https://api.insee.fr/entreprises/sirene/V3/siret/' . $siretToCheck, [
+                'headers' => [
+                    'Accept' => "application/json",
+                    'Authorization' => 'Bearer ' . $tokenGenerated,
+                ],
+                'http_errors' => false,
+            ]);
+
+            // Check errors return by INSEE API SIRENE
+            if ($response->getStatusCode() !== 200) {
+                return match ($response->getStatusCode()) {
+                    401 => $this->error(null, 'Unauthorized', 401),
+                    403 => $this->error(null, 'Access forbidden', 403),
+                    404 => $this->error(null, 'Siret not found', 404),
+                    429 => $this->error(null, 'Too many requests', 429),
+                    500 => $this->error(null, 'Internal server error', 500),
+                    default => $this->error(null, 'Unknown error', 500),
+                };
+            } else {
+                $dataFetch = json_decode($response->getBody());
+                return $this->success($dataFetch, 'Siret found');
             }
         } catch (GuzzleException $error) {
             Log::error($error);
