@@ -14,6 +14,13 @@ class InseeController extends Controller
     use HttpResponses;
 
     protected string $apiKey;
+    private const BASE_URL = 'https://api.insee.fr/entreprises/sirene/V3/';
+    private const ERROR_MESSAGE_401 = 'Unauthorized';
+    private const ERROR_MESSAGE_403 = 'Access forbidden';
+    private const ERROR_MESSAGE_429 = 'Too many requests';
+    private const ERROR_MESSAGE_500 = 'Internal server error';
+
+
 
     public function __construct()
     {
@@ -69,7 +76,7 @@ class InseeController extends Controller
             $tokenGenerated = $this->generateToken();
 
             $client = new Client();
-            $response = $client->get('https://api.insee.fr/entreprises/sirene/V3/siren/' . $sirenToCheck, [
+            $response = $client->get(self::BASE_URL. 'siren/' . $sirenToCheck, [
                 'headers' => [
                     'Accept' => "application/json",
                     'Authorization' => 'Bearer ' . $tokenGenerated,
@@ -80,12 +87,12 @@ class InseeController extends Controller
             // Check errors return by INSEE API SIRENE
             if ($response->getStatusCode() !== 200) {
                 return match ($response->getStatusCode()) {
-                    401 => $this->error(null, 'Unauthorized', 401),
-                    403 => $this->error(null, 'Access forbidden', 403),
+                    401 => $this->error(null, self::ERROR_MESSAGE_401, 401),
+                    403 => $this->error(null, self::ERROR_MESSAGE_403, 403),
                     404 => $this->error(null, 'Siren not found', 404),
-                    429 => $this->error(null, 'Too many requests', 429),
-                    500 => $this->error(null, 'Internal server error', 500),
-                    default => $this->error(null, 'Unknown error', 500),
+                    429 => $this->error(null, self::ERROR_MESSAGE_429, 429),
+                    500 => $this->error(null, self::ERROR_MESSAGE_500, 500),
+                    default => $this->error(null, 'Unknown error', $response->getStatusCode()),
                 };
             } else {
                 $dataFetch = json_decode($response->getBody());
@@ -121,7 +128,7 @@ class InseeController extends Controller
             $tokenGenerated = $this->generateToken();
 
             $client = new Client();
-            $response = $client->get('https://api.insee.fr/entreprises/sirene/V3/siret/' . $siretToCheck, [
+            $response = $client->get(self::BASE_URL.'siret/' . $siretToCheck, [
                 'headers' => [
                     'Accept' => "application/json",
                     'Authorization' => 'Bearer ' . $tokenGenerated,
@@ -132,12 +139,12 @@ class InseeController extends Controller
             // Check errors return by INSEE API SIRENE
             if ($response->getStatusCode() !== 200) {
                 return match ($response->getStatusCode()) {
-                    401 => $this->error(null, 'Unauthorized', 401),
-                    403 => $this->error(null, 'Access forbidden', 403),
+                    401 => $this->error(null, self::ERROR_MESSAGE_401, 401),
+                    403 => $this->error(null, self::ERROR_MESSAGE_403, 403),
                     404 => $this->error(null, 'Siret not found', 404),
-                    429 => $this->error(null, 'Too many requests', 429),
-                    500 => $this->error(null, 'Internal server error', 500),
-                    default => $this->error(null, 'Unknown error', 500),
+                    429 => $this->error(null, self::ERROR_MESSAGE_429, 429),
+                    500 => $this->error(null, self::ERROR_MESSAGE_500, 500),
+                    default => $this->error(null, 'Unknown error', $response->getStatusCode()),
                 };
             } else {
                 $dataFetch = json_decode($response->getBody());
