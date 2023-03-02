@@ -148,8 +148,6 @@ class InseeController extends Controller
             return $this->error(null, $error->getMessage(), 500);
         }
     }
-
-
 }
 
 
