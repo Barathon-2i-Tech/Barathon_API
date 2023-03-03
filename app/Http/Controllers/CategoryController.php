@@ -3,39 +3,80 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category;
+use App\Traits\HttpResponses;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use Exception;
 
 class CategoryController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
 
+    use HttpResponses;
+
+    private const CATEGORIES_NOT_FOUND = "Categories not found";
     /**
-     * Show the form for creating a new resource.
+     * Display a listing of establishment.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
+     *
      */
-    public function create()
+
+    public function getCategoriesList(): JsonResponse
     {
-        //
+        try {
+            // get all categories
+            $categories = Category::all();
+
+
+            // if the categories list is empty
+            if ($categories->isEmpty()) {
+                return $this->error(null, self::CATEGORIES_NOT_FOUND, 404);
+            }
+
+            // return the categories list
+            return $this->success($categories, "Category List");
+
+        } catch (Exception $error) {
+            Log::error($error);
+            return $this->error(null, $error->getMessage(), 500);
+        }
     }
 
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
+     * @param Request $request
+     * @return JsonResponse
      */
+
     public function store(Request $request)
     {
-        //
+        try {
+            $request->validate([
+                'sub_category' => 'required|string',
+                'icon' => 'required|string',
+                'label' => 'required|string',
+            ]);
+
+            $label = array('sub_category' => $request->sub_category,'icon' => $request->icon, 'label' => $request->label, 'state' => 'Hold');
+
+            $label = json_encode('label');
+
+            $category = Category::create([
+                'label' => $label,
+            ]);
+
+            $category->save();
+
+            return $this->success([
+                $category
+            ], "Category created", 201);
+
+        } catch (Exception $error) {
+            Log::error($error);
+            return $this->error(null, $error->getMessage(), 422);
+        }
     }
 
     /**

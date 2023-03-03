@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\EstablishmentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -45,6 +46,14 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/pro/{owner_id}/establishment/create', [EstablishmentController::class, 'store'])->name('establishment.store');
     Route::delete('/pro/{owner_id}/establishment/{establishment_id}/delete', [EstablishmentController::class, 'destroy'])->name('establishment.delete');
     Route::get('/pro/{owner_id}/establishment/{establishment_id}/restore', [EstablishmentController::class, 'restore'])->name('establishment.restore');
+    /*
+    |--------------------------------------------------------------------------
+    | Categories for professional
+    |--------------------------------------------------------------------------
+    */
+    Route::get('/pro/category', [CategoryController::class, 'getCategoriesList'])->name('categories.list');
+    Route::post('/pro/category/create', [CategoryController::class, 'store'])->name('categories.store');
+
     /*
     |--------------------------------------------------------------------------
     | Common Routes
