@@ -23,6 +23,8 @@ class OwnerController extends Controller
     private const OWNERNOTFOUND = "Owner not found";
     private const USERNOTFOUND = "User not found";
 
+    private const PHONEVALIDATION = 'regex:/^([0-9\s\-\+\(\)]*)$/|min:10';
+
     /**
      * Display a listing of all owners
      *
@@ -66,6 +68,8 @@ class OwnerController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'siren' => 'required|string|size:9',
             'kbis' => 'required|string',
+            'company_name' => 'string|max:255',
+            'phone' => self::PHONEVALIDATION,
         ]);
 
         $user = User::create([
@@ -80,6 +84,8 @@ class OwnerController extends Controller
             'siren' => $request->siren,
             'kbis' => $request->kbis,
             'status_id' => 3, // 3 = pending
+            'phone' => $request->phone,
+            'company_name' => $request->company_name,
         ]);
 
         $user->owner_id = $owner->owner_id;
@@ -151,7 +157,7 @@ class OwnerController extends Controller
                     'email',
                     Rule::unique('users')->ignore($user), // Ignore the user given in parameter
                 ],
-                'phone' => 'string|max:13',
+                'phone' => self::PHONEVALIDATION,
             ]);
 
 

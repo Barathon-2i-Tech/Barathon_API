@@ -18,6 +18,7 @@ return new class extends Migration
             $table->string('siren');
             $table->string('kbis');
             $table->string('phone')->nullable();
+            $table->string('company_name')->nullable();
             $table->foreignId('status_id');
             $table->foreign('status_id')->references('status_id')->on('status');
         });

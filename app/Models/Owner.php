@@ -32,7 +32,8 @@ class Owner extends Model
         'siren',
         'kbis',
         'status_id',
-        'phone'
+        'phone',
+        'company_name'
     ];
 
     public $timestamps = false;
