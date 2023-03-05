@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\InseeController;
+use App\Http\Controllers\StatusController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiAuthController;
@@ -45,94 +46,109 @@ Route::post('/register/employee', [EmployeeController::class, 'store'])->name('u
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [ApiAuthController::class, 'logout'])->name('user.logout');
 
-/*
-|--------------------------------------------------------------------------
-| Barathonien Routes
-|--------------------------------------------------------------------------
-*/
+    /*
+    |--------------------------------------------------------------------------
+    | Barathonien Routes
+    |--------------------------------------------------------------------------
+    */
 
-        //get Event by user's city
-        Route::get(
-            '/barathonien/{id}/city/events',
-            [EventController::class, 'getEventsByUserCity']
-        )->name('barathonien.eventsByUserCity');
+    //get Event by user's city
+    Route::get(
+        '/barathonien/{id}/city/events',
+        [EventController::class, 'getEventsByUserCity']
+    )->name('barathonien.eventsByUserCity');
 
-        //get Events booking by the User
-        Route::get(
-            '/barathonien/{id}/booking/events',
-            [EventController::class, 'getEventsBookingByUser']
-        )->name('barathonien.eventsBookByUser');
+    //get Events booking by the User
+    Route::get(
+        '/barathonien/{id}/booking/events',
+        [EventController::class, 'getEventsBookingByUser']
+    )->name('barathonien.eventsBookByUser');
 
-        // get top 10 tags
-        Route::get(
-            '/barathonien/top/categories',
-            [CategoryController::class, 'getTopTenCategories']
-        )->name('barathonien.topCateg');
+    // get top 10 tags
+    Route::get(
+        '/barathonien/top/categories',
+        [CategoryController::class, 'getTopTenCategories']
+    )->name('barathonien.topCateg');
 
-        // get an event by user choice
-        Route::get(
-            '/barathonien/event/{idevent}/user/{iduser}',
-            [EventController::class, 'getEventByUserChoice']
-        )->name('barathonien.eventByUserChoice');
+    // get an event by user choice
+    Route::get(
+        '/barathonien/event/{idevent}/user/{iduser}',
+        [EventController::class, 'getEventByUserChoice']
+    )->name('barathonien.eventByUserChoice');
 
-        // POST booking
-        Route::post('/barathonien/booking', [BookingController::class, 'store'])->name('barathonien.postBooking');
+    // POST booking
+    Route::post('/barathonien/booking', [BookingController::class, 'store'])->name('barathonien.postBooking');
 
-        // DELETE booking
-        Route::delete(
-            '/barathonien/booking/{id}',
-            [BookingController::class, 'destroy']
-        )->name('barathonien.deleteBooking');
+    // DELETE booking
+    Route::delete(
+        '/barathonien/booking/{id}',
+        [BookingController::class, 'destroy']
+    )->name('barathonien.deleteBooking');
 
-/*
-|--------------------------------------------------------------------------
-| Pro Routes
-|--------------------------------------------------------------------------
-*/
-
-
-
-/*
-|--------------------------------------------------------------------------
-| Admin Routes
-|--------------------------------------------------------------------------
-*/
-
-Route::get('/barathonien/list', [BarathonienController::class, 'getBarathonienList'])->name('barathonien.list');
-Route::get('/barathonien/{user_id}', [BarathonienController::class, 'show'])->name('barathonien.show');
-Route::post('/barathonien/update/{user_id}', [BarathonienController::class, 'update'])->name('barathonien.update');
-Route::delete('/barathonien/delete/{user_id}', [BarathonienController::class, 'destroy'])->name('barathonien.delete');
-Route::get('/barathonien/restore/{user_id}', [BarathonienController::class, 'restore'])->name('barathonien.restore');
+    /*
+    |--------------------------------------------------------------------------
+    | Pro Routes
+    |--------------------------------------------------------------------------
+    */
 
 
-Route::get('/pro/list', [OwnerController::class, 'getOwnerList'])->name('owner.list');
-Route::get('/pro/{user_id}', [OwnerController::class, 'show'])->name('owner.show');
-Route::post('/pro/update/{user_id}', [OwnerController::class, 'update'])->name('owner.update');
-Route::delete('/pro/delete/{user_id}', [OwnerController::class, 'destroy'])->name('owner.delete');
-Route::get('/pro/restore/{user_id}', [OwnerController::class, 'restore'])->name('owner.restore');
+    /*
+    |--------------------------------------------------------------------------
+    | Admin Routes
+    |--------------------------------------------------------------------------
+    */
 
-Route::get('/employee/list', [EmployeeController::class, 'getEmployeeList'])->name('employee.list');
-Route::get('/employee/{user_id}', [EmployeeController::class, 'show'])->name('employee.show');
-Route::post('/employee/update/{user_id}', [EmployeeController::class, 'update'])->name('employee.update');
-Route::delete('/employee/delete/{user_id}', [EmployeeController::class, 'destroy'])->name('employee.delete');
-Route::get('/employee/restore/{user_id}', [EmployeeController::class, 'restore'])->name('employee.restore');
+    Route::get('/barathonien/list', [BarathonienController::class, 'getBarathonienList'])->name('barathonien.list');
+    Route::get('/barathonien/{user_id}', [BarathonienController::class, 'show'])->name('barathonien.show');
+    Route::post('/barathonien/update/{user_id}', [BarathonienController::class, 'update'])->name('barathonien.update');
+    Route::delete(
+        '/barathonien/delete/{user_id}',
+        [BarathonienController::class, 'destroy']
+    )->name('barathonien.delete');
+    Route::get(
+        '/barathonien/restore/{user_id}',
+        [BarathonienController::class, 'restore']
+    )->name('barathonien.restore');
 
-Route::get('/administrator/list', [AdministratorController::class, 'getAdministratorList'])->name('administrator.list');
-Route::get('/administrator/{user_id}', [AdministratorController::class, 'show'])->name('administrator.show');
-Route::post(
-    '/administrator/update/{user_id}',
-    [AdministratorController::class, 'update']
+
+    Route::get('/pro/list', [OwnerController::class, 'getOwnerList'])->name('owner.list');
+    Route::get('/pro/{user_id}', [OwnerController::class, 'show'])->name('owner.show');
+    Route::post('/pro/update/{user_id}', [OwnerController::class, 'update'])->name('owner.update');
+    Route::delete('/pro/delete/{user_id}', [OwnerController::class, 'destroy'])->name('owner.delete');
+    Route::get('/pro/restore/{user_id}', [OwnerController::class, 'restore'])->name('owner.restore');
+
+    Route::get('/employee/list', [EmployeeController::class, 'getEmployeeList'])->name('employee.list');
+    Route::get('/employee/{user_id}', [EmployeeController::class, 'show'])->name('employee.show');
+    Route::post('/employee/update/{user_id}', [EmployeeController::class, 'update'])->name('employee.update');
+    Route::delete('/employee/delete/{user_id}', [EmployeeController::class, 'destroy'])->name('employee.delete');
+    Route::get('/employee/restore/{user_id}', [EmployeeController::class, 'restore'])->name('employee.restore');
+
+    Route::get(
+        '/administrator/list',
+        [AdministratorController::class, 'getAdministratorList']
+    )->name('administrator.list');
+    Route::get('/administrator/{user_id}', [AdministratorController::class, 'show'])->name('administrator.show');
+    Route::post(
+        '/administrator/update/{user_id}',
+        [AdministratorController::class, 'update']
     )->name('administrator.update');
-Route::delete(
-    '/administrator/delete/{user_id}',
-    [AdministratorController::class, 'destroy']
+    Route::delete(
+        '/administrator/delete/{user_id}',
+        [AdministratorController::class, 'destroy']
     )->name('administrator.delete');
-Route::get(
-    '/administrator/restore/{user_id}',
-    [AdministratorController::class, 'restore']
+    Route::get(
+        '/administrator/restore/{user_id}',
+        [AdministratorController::class, 'restore']
     )->name('administrator.restore');
 
 
-Route::get('check-siren/{siren}', [InseeController::class, 'getSiren'])->name('check-siren');
-Route::get('check-siret/{siret}', [InseeController::class, 'getSiret'])->name('check-siret');
+    Route::get('check-siren/{siren}', [InseeController::class, 'getSiren'])->name('check-siren');
+    Route::get('check-siret/{siret}', [InseeController::class, 'getSiret'])->name('check-siret');
+
+    Route::get('owner-status', [StatusController::class, 'ownerStatus'])->name('owner-status');
+
+    Route::put(
+        'pro/{owner_id}/validation/{status_code}',
+        [AdministratorController::class, 'validateOwner']
+    )->name('pro.validation');
 });

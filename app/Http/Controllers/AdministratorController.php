@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Administrator;
+use App\Models\Owner;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -239,6 +240,39 @@ class AdministratorController extends Controller
             }
             User::withTrashed()->where('user_id', $userId)->restore();
             return $this->success(null, "Administrator Restored");
+
+        } catch (Exception $error) {
+            Log::error($error);
+            return $this->error(null, $error->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Validate the owner
+     *
+     * @param $ownerId
+     * @param $statusCode
+     * @return JsonResponse
+     */
+    public function validateOwner($ownerId, $statusCode): jsonResponse
+    {
+        try {
+            //parse the status code
+            $statusCode = intval($statusCode);
+
+            $owner = Owner::find($ownerId);
+
+            if ($owner === null) {
+                return $this->error(null, 'Owner not found', 404);
+            }
+
+            if ($owner->status_id === $statusCode) {
+                return $this->error(null, 'Owner already validated', 404);
+            }
+
+            $owner->status_id = $statusCode;
+            $owner->save();
+            return $this->success(null, "Owner validated");
 
         } catch (Exception $error) {
             Log::error($error);

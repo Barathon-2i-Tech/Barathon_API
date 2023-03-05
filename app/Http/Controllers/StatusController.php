@@ -3,18 +3,32 @@
 namespace App\Http\Controllers;
 
 use App\Models\Status;
+use App\Traits\HttpResponses;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class StatusController extends Controller
 {
+    use HttpResponses;
+
     /**
-     * Display a listing of the resource.
+     * Display a listing of all status about owners.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function index()
+    public function ownerStatus()
     {
-        //
+        try {
+            $status = Status::where('comment->code', 'LIKE', 'OWNER%')
+                ->get();
+            return $this->success($status, "Status List");
+
+        } catch (Exception $error) {
+            Log::error($error);
+            return $this->error(null, $error->getMessage(), 500);
+        }
     }
 
     /**
@@ -30,7 +44,7 @@ class StatusController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param \Illuminate\Http\Request $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -41,7 +55,7 @@ class StatusController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Status  $status
+     * @param \App\Models\Status $status
      * @return \Illuminate\Http\Response
      */
     public function show(Status $status)
@@ -52,7 +66,7 @@ class StatusController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Status  $status
+     * @param \App\Models\Status $status
      * @return \Illuminate\Http\Response
      */
     public function edit(Status $status)
@@ -63,8 +77,8 @@ class StatusController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Status  $status
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Status $status
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Status $status)
@@ -75,7 +89,7 @@ class StatusController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Status  $status
+     * @param \App\Models\Status $status
      * @return \Illuminate\Http\Response
      */
     public function destroy(Status $status)
