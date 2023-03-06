@@ -16,6 +16,7 @@ return new class extends Migration
         Schema::create('status', function (Blueprint $table) {
             $table->id('status_id');
             $table->json('comment');
+            $table->timestamps();
         });
     }
 

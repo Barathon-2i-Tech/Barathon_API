@@ -272,7 +272,7 @@ class AdministratorController extends Controller
 
             $owner->status_id = $statusCode;
             $owner->save();
-            return $this->success(null, "Owner validated");
+            return $this->success(null, "Validation updated");
 
         } catch (Exception $error) {
             Log::error($error);
