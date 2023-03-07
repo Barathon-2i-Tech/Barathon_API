@@ -279,4 +279,23 @@ class AdministratorController extends Controller
             return $this->error(null, $error->getMessage(), 500);
         }
     }
+
+    /**
+     * Get how many owner need to be validated
+     * @return JsonResponse
+     * 
+     */
+
+    public function getOwnerToValidate(): JsonResponse
+    {
+        try {
+            $ownerToValidate = Owner::where('status_id', 3)->count();
+
+            return $this->success($ownerToValidate, "Owner to validate");
+
+        } catch (Exception $error) {
+            Log::error($error);
+            return $this->error(null, $error->getMessage(), 500);
+        }
+    }
 }

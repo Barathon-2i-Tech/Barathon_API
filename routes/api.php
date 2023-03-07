@@ -151,4 +151,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         'pro/{owner_id}/validation/{status_code}',
         [AdministratorController::class, 'validateOwner']
     )->name('pro.validation');
+
+    Route::get('admin/pro-to-validate', [AdministratorController::class, 'getOwnerToValidate'])->name('admin.pro-to-validate');
 });
