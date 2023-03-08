@@ -47,15 +47,14 @@ class InseeController extends Controller
         return $result->access_token;
     }
 
-    public function checkStatusCodeFromApi($response)
+    public function checkStatusCodeFromApi($response): JsonResponse
     {
         return match ($response->getStatusCode()) {
             401 => $this->error(null, 'Unauthorized', 401),
             403 => $this->error(null, 'Access forbidden', 403),
             404 => $this->error(null, 'Not found', 404),
             429 => $this->error(null, 'Too many requests', 429),
-            500 => $this->error(null, 'Internal server error', 500),
-            default => $this->error(null, 'Unknown error', $response->getStatusCode()),
+            default => $this->error(null, 'Internal server error', 500),
         };
     }
 
