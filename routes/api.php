@@ -37,7 +37,7 @@ use App\Http\Controllers\AdministratorController;
 Route::group(['middleware' => ['auth:sanctum']], function () {
     /*
     |--------------------------------------------------------------------------
-    | Establishment
+    | Establishments
     |--------------------------------------------------------------------------
     */
     Route::get('/pro/{owner_id}/establishment', [EstablishmentController::class, 'getEstablishmentList'])->name('establishment.list');
