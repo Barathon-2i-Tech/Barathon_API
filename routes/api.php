@@ -100,9 +100,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('/barathonien/list', [BarathonienController::class, 'getBarathonienList'])->name('barathonien.list');
     Route::get('/barathonien/{user_id}', [BarathonienController::class, 'show'])->name('barathonien.show');
-    Route::post('/barathonien/update/{user_id}', [BarathonienController::class, 'update'])->name('barathonien.update');
+    Route::put('/barathonien/{user_id}', [BarathonienController::class, 'update'])->name('barathonien.update');
     Route::delete(
-        '/barathonien/delete/{user_id}',
+        '/barathonien/{user_id}',
         [BarathonienController::class, 'destroy']
     )->name('barathonien.delete');
     Route::get(
@@ -113,14 +113,14 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('/pro/list', [OwnerController::class, 'getOwnerList'])->name('owner.list');
     Route::get('/pro/{user_id}', [OwnerController::class, 'show'])->name('owner.show');
-    Route::post('/pro/update/{user_id}', [OwnerController::class, 'update'])->name('owner.update');
-    Route::delete('/pro/delete/{user_id}', [OwnerController::class, 'destroy'])->name('owner.delete');
+    Route::put('/pro/{user_id}', [OwnerController::class, 'update'])->name('owner.update');
+    Route::delete('/pro/{user_id}', [OwnerController::class, 'destroy'])->name('owner.delete');
     Route::get('/pro/restore/{user_id}', [OwnerController::class, 'restore'])->name('owner.restore');
 
     Route::get('/employee/list', [EmployeeController::class, 'getEmployeeList'])->name('employee.list');
     Route::get('/employee/{user_id}', [EmployeeController::class, 'show'])->name('employee.show');
-    Route::post('/employee/update/{user_id}', [EmployeeController::class, 'update'])->name('employee.update');
-    Route::delete('/employee/delete/{user_id}', [EmployeeController::class, 'destroy'])->name('employee.delete');
+    Route::put('/employee/{user_id}', [EmployeeController::class, 'update'])->name('employee.update');
+    Route::delete('/employee/{user_id}', [EmployeeController::class, 'destroy'])->name('employee.delete');
     Route::get('/employee/restore/{user_id}', [EmployeeController::class, 'restore'])->name('employee.restore');
 
     Route::get(
@@ -128,12 +128,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         [AdministratorController::class, 'getAdministratorList']
     )->name('administrator.list');
     Route::get('/administrator/{user_id}', [AdministratorController::class, 'show'])->name('administrator.show');
-    Route::post(
-        '/administrator/update/{user_id}',
+    Route::put(
+        '/administrator/{user_id}',
         [AdministratorController::class, 'update']
     )->name('administrator.update');
     Route::delete(
-        '/administrator/delete/{user_id}',
+        '/administrator/{user_id}',
         [AdministratorController::class, 'destroy']
     )->name('administrator.delete');
     Route::get(
@@ -152,5 +152,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         [AdministratorController::class, 'validateOwner']
     )->name('pro.validation');
 
-    Route::get('admin/pro-to-validate', [AdministratorController::class, 'getOwnerToValidate'])->name('admin.pro-to-validate');
+    Route::get(
+        'admin/pro-to-validate',
+        [AdministratorController::class, 'getOwnerToValidate']
+    )->name('admin.pro-to-validate');
 });
