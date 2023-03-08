@@ -452,4 +452,22 @@ class AdministratorControllerTest extends TestCase
             'data'
         ]);
     }
+
+    /**
+     * A test to get how many owners need to be validated
+     *
+     */
+    public function test_to_get_how_many_owners_need_to_be_validated(): void
+    {
+        $administrator = $this->createAdminUser();
+
+        $response = $this->actingAs($administrator)->get(route('admin.pro-to-validate'))
+            ->assertOk();
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+        $response->assertJson(['message' => 'Owner to validate']);
+    }
 }
