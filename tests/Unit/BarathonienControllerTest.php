@@ -53,25 +53,6 @@ class BarathonienControllerTest extends TestCase
         $response->assertJson(['message' => 'Barathonien List']);
 
     }
-    /**
-     * A test to get a 404 no found on empty response all barathoniens
-     * todo: fix this test
-     * @return void
-     */
-//    public function test_get_all_barathoniens_with_empty_response(): void
-//    {
-//
-//        $administrator = $this->createAdminUser();
-//        DB::table('users')->whereNotNull('barathonien_id')->delete();
-//        $response = $this->actingAs($administrator)->get(route('barathonien.list'))
-//            ->assertNotFound();
-//        $response->assertJsonStructure([
-//            'status',
-//            'message',
-//            'data',
-//        ]);
-//        $response->assertJson(['message' => 'Barathonien not found']);
-//    }
 
     /**
      * A test to get a barathonien by id
@@ -138,7 +119,7 @@ class BarathonienControllerTest extends TestCase
     {
         $administrator = $this->createAdminUser();
         $barathonien = $this->createBarathonienUser();
-        $response = $this->actingAs($administrator)->post(route('barathonien.update', $barathonien->user_id), [
+        $response = $this->actingAs($administrator)->put(route('barathonien.update', $barathonien->user_id), [
             'first_name' => 'test',
             'last_name' => 'test',
             'email' => 'test@test.fr',
@@ -163,7 +144,7 @@ class BarathonienControllerTest extends TestCase
     {
         $administrator = $this->createAdminUser();
         $employee = $this->createEmployeeUser();
-        $response = $this->actingAs($administrator)->post(route('barathonien.update', $employee->user_id), [
+        $response = $this->actingAs($administrator)->put(route('barathonien.update', $employee->user_id), [
             'first_name' => 'test',
             'last_name' => 'test',
             'email' => 'test@test.fr',
@@ -189,7 +170,7 @@ class BarathonienControllerTest extends TestCase
         $administrator = $this->createAdminUser();
         $barathonien = $this->createBarathonienUser();
 
-        $response = $this->actingAs($administrator)->post(route('barathonien.update', $barathonien->user_id), [
+        $response = $this->actingAs($administrator)->put(route('barathonien.update', $barathonien->user_id), [
             'first_name' => 'John',
             'last_name' => 'Doe',
             'email' => 'barathonien@mail.fr',
@@ -216,7 +197,7 @@ class BarathonienControllerTest extends TestCase
         $administrator = $this->createAdminUser();
         $barathonien = $this->createBarathonienUser();
 
-        $response = $this->actingAs($administrator)->post(route('barathonien.update', $barathonien->user_id), [])
+        $response = $this->actingAs($administrator)->put(route('barathonien.update', $barathonien->user_id), [])
             ->assertStatus(500);
         $response->assertJsonStructure([
             'status',

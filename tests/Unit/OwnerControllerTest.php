@@ -138,7 +138,7 @@ class OwnerControllerTest extends TestCase
     {
         $administrator = $this->createAdminUser();
         $owner = $this->createOwnerUser();
-        $response = $this->actingAs($administrator)->post(route('owner.update', $owner->user_id), [
+        $response = $this->actingAs($administrator)->put(route('owner.update', $owner->user_id), [
             'first_name' => 'test',
             'last_name' => 'test',
             'email' => 'test@test.fr',
@@ -161,7 +161,7 @@ class OwnerControllerTest extends TestCase
     {
         $administrator = $this->createAdminUser();
         $employee = $this->createEmployeeUser();
-        $response = $this->actingAs($administrator)->post(route('owner.update', $employee->user_id), [
+        $response = $this->actingAs($administrator)->put(route('owner.update', $employee->user_id), [
             'first_name' => 'test',
             'last_name' => 'test',
             'email' => 'test@test.fr',
@@ -185,7 +185,7 @@ class OwnerControllerTest extends TestCase
         $administrator = $this->createAdminUser();
         $owner = $this->createOwnerUser();
 
-        $response = $this->actingAs($administrator)->post(route('owner.update', $owner->user_id), [
+        $response = $this->actingAs($administrator)->put(route('owner.update', $owner->user_id), [
             'first_name' => 'Benjamin',
             'last_name' => 'Rothschild',
             'email' => 'owner@mail.fr',
@@ -209,7 +209,7 @@ class OwnerControllerTest extends TestCase
         $administrator = $this->createAdminUser();
         $owner = $this->createOwnerUser();
 
-        $response = $this->actingAs($administrator)->post(route('owner.update', $owner->user_id), [])
+        $response = $this->actingAs($administrator)->put(route('owner.update', $owner->user_id), [])
             ->assertStatus(500);
         $response->assertJsonStructure([
             'status',

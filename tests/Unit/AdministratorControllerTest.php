@@ -136,7 +136,7 @@ class AdministratorControllerTest extends TestCase
     {
         $user = $this->createAdminUser();
         $administrator = $this->createAdminUser();
-        $response = $this->actingAs($user)->post(route('administrator.update', $administrator->user_id), [
+        $response = $this->actingAs($user)->put(route('administrator.update', $administrator->user_id), [
             'first_name' => 'test',
             'last_name' => 'test',
             'email' => 'test@test.fr',
@@ -159,7 +159,7 @@ class AdministratorControllerTest extends TestCase
     {
         $administrator = $this->createAdminUser();
         $employee = $this->createEmployeeUser();
-        $response = $this->actingAs($administrator)->post(route('administrator.update', $employee->user_id), [
+        $response = $this->actingAs($administrator)->put(route('administrator.update', $employee->user_id), [
             'first_name' => 'test',
             'last_name' => 'test',
             'email' => 'test@test.fr',
@@ -183,7 +183,7 @@ class AdministratorControllerTest extends TestCase
         $user = $this->createAdminUser();
         $administrator = $this->createAdminUser();
 
-        $response = $this->actingAs($user)->post(route('administrator.update', $administrator->user_id), [
+        $response = $this->actingAs($user)->put(route('administrator.update', $administrator->user_id), [
             'first_name' => 'Elon',
             'last_name' => 'Musk',
             'email' => 'admin@mail.fr',
@@ -207,7 +207,7 @@ class AdministratorControllerTest extends TestCase
         $user = $this->createAdminUser();
         $administrator = $this->createAdminUser();
 
-        $response = $this->actingAs($user)->post(route('administrator.update', $administrator->user_id), [])
+        $response = $this->actingAs($user)->put(route('administrator.update', $administrator->user_id), [])
             ->assertStatus(500);
         $response->assertJsonStructure([
             'status',

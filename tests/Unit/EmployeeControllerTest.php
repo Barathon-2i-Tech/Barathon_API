@@ -167,7 +167,7 @@ class EmployeeControllerTest extends TestCase
     {
         $employee = $this->createEmployeeUser();
         $administrator = $this->createAdminUser();
-        $response = $this->actingAs($administrator)->post(route('employee.update', $employee->user_id), [
+        $response = $this->actingAs($administrator)->put(route('employee.update', $employee->user_id), [
             'first_name' => 'test',
             'last_name' => 'test',
             'email' => 'test@test.fr',
@@ -190,7 +190,7 @@ class EmployeeControllerTest extends TestCase
     {
         $administrator = $this->createAdminUser();
         $professional = $this->createOwnerUser();
-        $response = $this->actingAs($administrator)->post(route('employee.update', $professional->user_id), [
+        $response = $this->actingAs($administrator)->put(route('employee.update', $professional->user_id), [
             'first_name' => 'test',
             'last_name' => 'test',
             'email' => 'test@test.fr',
@@ -214,7 +214,7 @@ class EmployeeControllerTest extends TestCase
         $employee = $this->createEmployeeUser();
         $administrator = $this->createAdminUser();
 
-        $response = $this->actingAs($administrator)->post(route('employee.update', $employee->user_id), [
+        $response = $this->actingAs($administrator)->put(route('employee.update', $employee->user_id), [
             'first_name' => 'Jane',
             'last_name' => 'Doe',
             'email' => 'employee@mail.fr',
@@ -238,7 +238,7 @@ class EmployeeControllerTest extends TestCase
         $employee = $this->createEmployeeUser();
         $administrator = $this->createAdminUser();
 
-        $response = $this->actingAs($administrator)->post(route('employee.update', $employee->user_id), [])
+        $response = $this->actingAs($administrator)->put(route('employee.update', $employee->user_id), [])
             ->assertStatus(500);
         $response->assertJsonStructure([
             'status',

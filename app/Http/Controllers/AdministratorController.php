@@ -283,7 +283,7 @@ class AdministratorController extends Controller
     /**
      * Get how many owner need to be validated
      * @return JsonResponse
-     * 
+     *
      */
 
     public function getOwnerToValidate(): JsonResponse
