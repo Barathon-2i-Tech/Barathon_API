@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
-use App\Http\Controllers\InseeController;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
-use Mockery;
+
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class InseeControllerTest extends TestCase
@@ -19,21 +19,27 @@ class InseeControllerTest extends TestCase
      */
 
 
-//    /**
-//     * A test to get a 200 response with valid siren with a mock.
-//     *
-//     * @return void
-//     */
-//    public function test_Get_Siren_With_existent_Siren(): void
-//    {
-//        $administrator = $this->createAdminUser();
-//        // mock the InseeController class
-//        $this->withoutExceptionHandling();
-//        $mock = Mockery::mock(InseeController::class);
-//        $mock->allows('getSiren')->andReturns('status');
-//        $response = $this->actingAs($administrator)->get(route('check-siren', '329297097'));
-//        $response->assertStatus(200);
-//    }
+    /**
+     * A test to get a 200 response with valid siren with http fake.
+     *
+     * @return void
+     */
+    public function test_Get_Siren_With_existent_Siren(): void
+    {
+        Http::fake([
+            'http://localhost/api/check-siren/530962935' => Http::response([
+                'status' => 'success',
+                'message' => 'Siren found'
+            ], 200),
+        ]);
+
+        $response = Http::get('http://localhost/api/check-siren/530962935');
+
+        $responseJson = $response->json();
+        $this->assertSame('success', $responseJson['status']);
+        $this->assertSame('Siren found', $responseJson['message']);
+        $this->assertSame(200, $response->status());
+    }
 
     /**
      * A test to get check siren validation.

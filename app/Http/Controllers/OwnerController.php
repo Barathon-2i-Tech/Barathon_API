@@ -23,7 +23,7 @@ class OwnerController extends Controller
     private const OWNERNOTFOUND = "Owner not found";
     private const USERNOTFOUND = "User not found";
 
-    private const PHONEVALIDATION = 'regex:/^([0-9\s\-\+\(\)]*)$/|min:10';
+    private const PHONEVALIDATION = ['regex:/^([0-9\s\-\+\(\)]*)$/','min:10'];
 
     /**
      * Display a listing of all owners
