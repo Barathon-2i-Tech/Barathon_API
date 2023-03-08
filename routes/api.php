@@ -42,9 +42,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     */
     Route::get('/pro/{owner_id}/establishment', [EstablishmentController::class, 'getEstablishmentList'])->name('establishment.list');
     Route::get('/pro/{owner_id}/establishment/{establishment_id}', [EstablishmentController::class, 'show'])->name('establishment.show');
-    Route::post('/pro/{owner_id}/establishment/{establishment_id}/update', [EstablishmentController::class, 'update'])->name('establishment.update');
+    Route::put('/pro/{owner_id}/establishment/{establishment_id}', [EstablishmentController::class, 'update'])->name('establishment.update');
     Route::post('/pro/{owner_id}/establishment/create', [EstablishmentController::class, 'store'])->name('establishment.store');
-    Route::delete('/pro/{owner_id}/establishment/{establishment_id}/delete', [EstablishmentController::class, 'destroy'])->name('establishment.delete');
+    Route::delete('/pro/{owner_id}/establishment/{establishment_id}', [EstablishmentController::class, 'destroy'])->name('establishment.delete');
     Route::get('/pro/{owner_id}/establishment/{establishment_id}/restore', [EstablishmentController::class, 'restore'])->name('establishment.restore');
     /*
     |--------------------------------------------------------------------------
