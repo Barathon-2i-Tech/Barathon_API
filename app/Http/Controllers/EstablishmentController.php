@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rules\File;
+use Illuminate\Support\Facades\DB;
 
 
 class EstablishmentController extends Controller
@@ -31,11 +32,10 @@ class EstablishmentController extends Controller
         try {
             // get all establishments from the owner
 
-            $establishments = Establishment::select('establishments.*', 'addresses.*', 'owners.*', 'status.*')
-                ->join('addresses', 'addresses.address_id', '=', 'establishments.address_id')
-                ->join('owners', 'owners.owner_id', '=', 'establishments.owner_id')
-                ->join('status', 'status.status_id', '=', 'establishments.status_id')
-                ->where('owners.owner_id', '=', $ownerId)
+            $establishments = DB::table('establishments')
+                ->join('status', 'establishments.status_id', '=', 'status.status_id')
+                ->join('addresses', 'establishments.address_id', '=', 'addresses.address_id')
+                ->select('establishments.*', 'addresses.*', 'status.status_id', 'status.comment')
                 ->get();
 
             // if the establishments list is empty
