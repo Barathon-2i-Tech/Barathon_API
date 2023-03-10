@@ -1,5 +1,10 @@
 <?php
 
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\CategoryEstablishmentController;
+use App\Http\Controllers\EstablishmentController;
+use App\Http\Controllers\EventController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiAuthController;
@@ -83,7 +88,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     | Pro Routes
     |--------------------------------------------------------------------------
     */
-    Route::get('/categories/establishment/{estbalishmentId}', [CategoryEstablishmentController::class, 'getAllCategoriesByEstablishmentId'])->name('categories.establishment');
+    Route::get('/categories/establishment/{establishmentId}', [CategoryEstablishmentController::class, 'getAllCategoriesByEstablishmentId'])->name('categories.establishment');
     Route::get('/categories/establishment', [CategoryController::class, 'getAllEstablishmentCategories'])->name('categories.establishment.all');
     Route::get('/categories/event', [CategoryController::class, 'getAllEventCategories'])->name('categories.event.all');
 
