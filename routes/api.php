@@ -73,7 +73,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 |--------------------------------------------------------------------------
 */
         Route::get('/categories/establishment/{estbalishmentId}', [CategoryEstablishmentController::class, 'getAllCategoriesByEstablishmentId'])->name('categories.establishment');
-
+        Route::get('/categories/establishment', [CategoryController::class, 'getAllEstablishmentCategories'])->name('categories.establishment.all');
+        Route::get('/categories/event', [CategoryController::class, 'getAllEventCategories'])->name('categories.event.all');
 
 /*
 |--------------------------------------------------------------------------

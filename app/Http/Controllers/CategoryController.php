@@ -4,9 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Traits\HttpResponses;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CategoryController extends Controller
 {
@@ -14,13 +16,59 @@ class CategoryController extends Controller
     use HttpResponses;
 
     /**
-     * Display a listing of the resource.
+     * Get all categories with sub_category = Establishment || All
+     * and state = Approved
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function index()
+    public function getAllEstablishmentCategories(): JsonResponse
     {
-        //
+        try {
+            $allEstablishmentCategories = Category::where(function ($query) {
+                $query->where('category_details->sub_category', 'Establishment')
+                    ->orWhere('category_details->sub_category', 'All');
+            })
+                ->where('category_details->state', 'Approved')
+                ->get();
+
+            if ($allEstablishmentCategories->isEmpty()) {
+                return $this->error(null, "No establishment categories found", 404);
+            }
+
+            return $this->success($allEstablishmentCategories, "Categories List");
+
+        } catch (Exception $error) {
+            Log::error($error);
+            return $this->error(null, $error->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Get all categories with sub_category = Establishment || All
+     * and state = Approved
+     *
+     * @return JsonResponse
+     */
+    public function getAllEventCategories(): JsonResponse
+    {
+        try {
+            $allEventCategories = Category::where(function ($query) {
+                $query->where('category_details->sub_category', 'Event')
+                    ->orWhere('category_details->sub_category', 'All');
+            })
+                ->where('category_details->state', 'Approved')
+                ->get();
+
+            if ($allEventCategories->isEmpty()) {
+                return $this->error(null, "No event categories found", 404);
+            }
+
+            return $this->success($allEventCategories, "Categories List");
+
+        } catch (Exception $error) {
+            Log::error($error);
+            return $this->error(null, $error->getMessage(), 500);
+        }
     }
 
     /**
