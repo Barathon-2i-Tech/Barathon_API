@@ -2,11 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Event_update;
+use App\Models\Tag;
+use App\Models\Tag_Event;
+use App\Traits\HttpResponses;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
-class EventUpdateController extends Controller
+class TagController extends Controller
 {
+    use HttpResponses;
+
     /**
      * Display a listing of the resource.
      *
@@ -41,10 +47,10 @@ class EventUpdateController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Event_update  $event_update
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Http\Response
      */
-    public function show(Event_update $event_update)
+    public function show(Tag $tag)
     {
         //
     }
@@ -52,10 +58,10 @@ class EventUpdateController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Event_update  $event_update
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Http\Response
      */
-    public function edit(Event_update $event_update)
+    public function edit(Tag $tag)
     {
         //
     }
@@ -64,10 +70,10 @@ class EventUpdateController extends Controller
      * Update the specified resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Event_update  $event_update
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, Event_update $event_update)
+    public function update(Request $request, Tag $tag)
     {
         //
     }
@@ -75,11 +81,33 @@ class EventUpdateController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Event_update  $event_update
+     * @param  \App\Models\Tag  $tag
      * @return \Illuminate\Http\Response
      */
-    public function destroy(Event_update $event_update)
+    public function destroy(Tag $tag)
     {
         //
+    }
+
+    /**
+     * Get top ten tags
+     *
+     * @return JsonResponse
+     */
+    public function getTopTenTags(){
+
+        $tags = DB::table('tags_events')
+            ->join('tags', 'tags_events.tag_id', '=', 'tags.tag_id')
+            ->select('tags.tag_id', 'tags.label', DB::raw('COUNT(tags_events.tag_id) as total_tag'))
+            ->groupBy('tags.tag_id')
+            ->orderBy('total_tag', 'desc')
+            ->skip(0)
+            ->take(10)
+            ->get();
+
+
+        return $this->success([
+            'tags' => $tags,
+        ]);
     }
 }

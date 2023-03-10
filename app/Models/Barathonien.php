@@ -48,7 +48,7 @@ class Barathonien extends Model
      *
      * @return HasOne
      */
-    public function Address(): HasOne
+    public function address(): HasOne
     {
         return $this->hasOne(Address::class);
     }

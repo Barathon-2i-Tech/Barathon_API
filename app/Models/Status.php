@@ -4,9 +4,9 @@ namespace App\Models;
 
 
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Status extends Model
 {
@@ -47,7 +47,7 @@ class Status extends Model
     /**
      * Get the establishment associated with the status
      */
-    public function establishments()
+    public function establishments(): HasMany
     {
         return $this->hasMany(Establishment::class, "establishment_id");
     }
@@ -55,7 +55,7 @@ class Status extends Model
     /**
      * Get the owner associated with the status
      */
-    public function owners()
+    public function owners(): HasMany
     {
         return $this->hasMany(Owner::class, "owner_id");
     }
@@ -63,7 +63,7 @@ class Status extends Model
     /**
      * Get the event associated with the status
      */
-    public function events()
+    public function events(): HasMany
     {
         return $this->hasMany(Event::class, "event_id");
     }
