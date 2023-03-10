@@ -15,33 +15,64 @@ class CategoryController extends Controller
     use HttpResponses;
 
     private const CATEGORIES_NOT_FOUND = "Categories not found";
+
+
     /**
-     * Display a listing of establishment.
+     * Get all categories with sub_category = Establishment || All
+     * and state = Approved
      *
      * @return JsonResponse
-     *
      */
-
-    public function getCategoriesList(): JsonResponse
+    public function getAllEstablishmentCategories(): JsonResponse
     {
         try {
-            // get all categories
-            $categories = Category::all();
+            $allEstablishmentCategories = Category::where(function ($query) {
+                $query->where('category_details->sub_category', 'Establishment')
+                    ->orWhere('category_details->sub_category', 'All');
+            })
+                ->where('category_details->state', 'Approved')
+                ->get();
 
-
-            // if the categories list is empty
-            if ($categories->isEmpty()) {
-                return $this->error(null, self::CATEGORIES_NOT_FOUND, 404);
+            if ($allEstablishmentCategories->isEmpty()) {
+                return $this->error(null, "No establishment categories found", 404);
             }
 
-            // return the categories list
-            return $this->success($categories, "Category List");
+            return $this->success($allEstablishmentCategories, "Categories List");
 
         } catch (Exception $error) {
             Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }
+
+    /**
+     * Get all categories with sub_category = Establishment || All
+     * and state = Approved
+     *
+     * @return JsonResponse
+     */
+    public function getAllEventCategories(): JsonResponse
+    {
+        try {
+            $allEventCategories = Category::where(function ($query) {
+                $query->where('category_details->sub_category', 'Event')
+                    ->orWhere('category_details->sub_category', 'All');
+            })
+                ->where('category_details->state', 'Approved')
+                ->get();
+
+            if ($allEventCategories->isEmpty()) {
+                return $this->error(null, "No event categories found", 404);
+            }
+
+            return $this->success($allEventCategories, "Categories List");
+
+        } catch (Exception $error) {
+            Log::error($error);
+            return $this->error(null, $error->getMessage(), 500);
+        }
+    }
+
 
     /**
      * Store a newly created resource in storage.
@@ -59,7 +90,7 @@ class CategoryController extends Controller
                 'label' => 'required|string',
             ]);
 
-            $label = array('sub_category' => $request->sub_category,'icon' => $request->icon, 'label' => $request->label, 'state' => 'Hold');
+            $label = array('sub_category' => $request->sub_category, 'icon' => $request->icon, 'label' => $request->label, 'state' => 'Hold');
 
             $label = json_encode('label');
 
@@ -82,7 +113,7 @@ class CategoryController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Category  $category
+     * @param \App\Models\Category $category
      * @return \Illuminate\Http\Response
      */
     public function show(Category $category)
@@ -93,7 +124,7 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Category  $category
+     * @param \App\Models\Category $category
      * @return \Illuminate\Http\Response
      */
     public function edit(Category $category)
@@ -104,8 +135,8 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Category  $category
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Category $category
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Category $category)
@@ -116,7 +147,7 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Category  $category
+     * @param \App\Models\Category $category
      * @return \Illuminate\Http\Response
      */
     public function destroy(Category $category)
