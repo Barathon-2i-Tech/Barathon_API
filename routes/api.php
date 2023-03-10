@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryEstablishmentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiAuthController;
@@ -71,7 +72,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 | Pro Routes
 |--------------------------------------------------------------------------
 */
-
+        Route::get('/categories/establishment/{estbalishmentId}', [CategoryEstablishmentController::class, 'getAllCategoriesByEstablishmentId'])->name('categories.establishment');
 
 
 /*

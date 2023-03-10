@@ -2,84 +2,52 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Category_Establishment;
-use Illuminate\Http\Request;
+use App\Traits\HttpResponses;
+use Exception;
+use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class CategoryEstablishmentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
+    use HttpResponses;
 
     /**
-     * Show the form for creating a new resource.
+     * Display all categories associate with an establishment
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function create()
+    public function getAllCategoriesByEstablishmentId(int $estbalishmentId)
     {
-        //
+        try {
+           $establCategories = DB::table('categories_establishments')
+               ->join(
+                   'establishments',
+                   'establishments.establishment_id',
+                   '=',
+                   'categories_establishments.establishment_id'
+               )
+               ->join('categories', 'categories.category_id', '=', 'categories_establishments.category_id')
+               ->where('categories_establishments.establishment_id', $estbalishmentId)
+               ->select(
+                   'establishments.establishment_id',
+                   'establishments.trade_name as establishment_name',
+                   'categories.*'
+               )
+               ->get();
+
+           if ($establCategories->isEmpty()) {
+               return $this->error(null, "No categories found for this establishment", 404);
+           }
+
+
+            return $this->success($establCategories, "Categories List");
+
+        } catch (Exception $error) {
+            Log::error($error);
+            return $this->error(null, $error->getMessage(), 500);
+        }
     }
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
 
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Category_Establishment  $category_Establishment
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Category_Establishment $category_Establishment)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Category_Establishment  $category_Establishment
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Category_Establishment $category_Establishment)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Category_Establishment  $category_Establishment
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Category_Establishment $category_Establishment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Category_Establishment  $category_Establishment
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Category_Establishment $category_Establishment)
-    {
-        //
-    }
 }
