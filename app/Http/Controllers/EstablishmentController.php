@@ -3,16 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Address;
+use App\Models\Establishment;
 use App\Models\Status;
 use App\Traits\HttpResponses;
-use App\Models\Establishment;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\Rules\File;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 
 class EstablishmentController extends Controller
@@ -21,13 +19,15 @@ class EstablishmentController extends Controller
 
     private const ESTABLISHMENT_NOT_FOUND = "Establishment not found";
     private const STRING_VALIDATION = 'required|string|max:255';
+
+
     /**
      * Display a listing of establishment.
      *
      * @return JsonResponse
      *
      */
-    public function getEstablishmentList($ownerId): JsonResponse
+    public function getEstablishmentListByOwnerId($ownerId): JsonResponse
     {
         try {
             // get all establishments from the owner
@@ -35,6 +35,7 @@ class EstablishmentController extends Controller
             $establishments = DB::table('establishments')
                 ->join('status', 'establishments.status_id', '=', 'status.status_id')
                 ->join('addresses', 'establishments.address_id', '=', 'addresses.address_id')
+                ->where('establishments.owner_id', $ownerId)
                 ->select('establishments.*', 'addresses.*', 'status.status_id', 'status.comment')
                 ->get();
 
@@ -63,7 +64,7 @@ class EstablishmentController extends Controller
         try {
             $request->validate([
                 'trade_name' => self::STRING_VALIDATION,
-                'siret' => 'required|string|max:14', // 14 characters for a SIRET
+                'siret' => 'required|string|size:14|unique:establishments', // 14 characters for a SIRET
                 'logo' => 'string', //modify later
                 'phone' => 'required|string',
                 'email' => 'email|string',
@@ -73,8 +74,6 @@ class EstablishmentController extends Controller
                 'postal_code' => 'required|string|size:5',
                 'city' => self::STRING_VALIDATION,
             ]);
-
-
 
             $establPending = Status::where('comment->code', 'ESTABL_PENDING')->first()->status_id;
             $address = Address::create([
@@ -156,7 +155,7 @@ class EstablishmentController extends Controller
      * @param $establishmentId
      * @return JsonResponse
      */
-    public function update(Request $request, $ownerId, $establishmentId)
+    public function update(Request $request, $ownerId, $establishmentId): JsonResponse
     {
         try {
             // Get the establishment given in parameter
@@ -165,11 +164,11 @@ class EstablishmentController extends Controller
 
             $request->validate([
                 'trade_name' => self::STRING_VALIDATION,
-                'logo' => 'string', // modify later
+                'logo' => 'nullable|string', // modify later
                 'phone' => 'required|string',
-                'email' => 'email|string',
-                'website' => 'string',
-                'opening' => 'json',
+                'email' => 'nullable|email|string',
+                'website' => 'nullable|string',
+                'opening' => 'nullable|json',
                 'address' => 'min:5|required|string|max:255',
                 'postal_code' => 'required|string|size:5',
                 'city' => self::STRING_VALIDATION,
