@@ -3,16 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Models\Address;
+use App\Models\Establishment;
 use App\Models\Status;
 use App\Traits\HttpResponses;
-use App\Models\Establishment;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Log;
-use Illuminate\Validation\Rules\File;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 
 class EstablishmentController extends Controller
@@ -21,13 +19,15 @@ class EstablishmentController extends Controller
 
     private const ESTABLISHMENT_NOT_FOUND = "Establishment not found";
     private const STRING_VALIDATION = 'required|string|max:255';
+
+
     /**
      * Display a listing of establishment.
      *
      * @return JsonResponse
      *
      */
-    public function getEstablishmentList($ownerId): JsonResponse
+    public function getEstablishmentListByOwnerId($ownerId): JsonResponse
     {
         try {
             // get all establishments from the owner
@@ -35,6 +35,7 @@ class EstablishmentController extends Controller
             $establishments = DB::table('establishments')
                 ->join('status', 'establishments.status_id', '=', 'status.status_id')
                 ->join('addresses', 'establishments.address_id', '=', 'addresses.address_id')
+                ->where('establishments.owner_id', $ownerId)
                 ->select('establishments.*', 'addresses.*', 'status.status_id', 'status.comment')
                 ->get();
 
@@ -47,7 +48,6 @@ class EstablishmentController extends Controller
             return $this->success($establishments, "Establishment List");
 
         } catch (Exception $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -56,27 +56,28 @@ class EstablishmentController extends Controller
      * Store a newly created resource in storage.
      *
      * @param Request $request
+     * @param $ownerId
      * @return JsonResponse
      */
-    public function store(Request $request, $ownerId)
+    public function store(Request $request, $ownerId): JsonResponse
     {
         try {
+
             $request->validate([
                 'trade_name' => self::STRING_VALIDATION,
-                'siret' => 'required|string|max:14', // 14 characters for a SIRET
-                'logo' => 'string', //modify later
+                'siret' => 'required|string|size:14|unique:establishments', // 14 characters for a SIRET
+                'logo' => 'nullable|string', //modify later
                 'phone' => 'required|string',
-                'email' => 'email|string',
-                'website' => 'string',
-                'opening' => 'json',
+                'email' => 'nullable|email|string',
+                'website' => 'nullable|string',
+                'opening' => 'nullable|json',
                 'address' => 'min:5|required|string|max:255',
                 'postal_code' => 'required|string|size:5',
                 'city' => self::STRING_VALIDATION,
             ]);
 
-
-
             $establPending = Status::where('comment->code', 'ESTABL_PENDING')->first()->status_id;
+
             $address = Address::create([
                 'address' => $request->address,
                 'postal_code' => $request->postal_code,
@@ -109,7 +110,6 @@ class EstablishmentController extends Controller
             ], "Establishment created", 201);
 
         } catch (Exception $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 422);
         }
     }
@@ -142,7 +142,6 @@ class EstablishmentController extends Controller
             return $this->success($establishments, "Establishment");
 
         } catch (Exception $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -156,7 +155,7 @@ class EstablishmentController extends Controller
      * @param $establishmentId
      * @return JsonResponse
      */
-    public function update(Request $request, $ownerId, $establishmentId)
+    public function update(Request $request, $ownerId, $establishmentId): JsonResponse
     {
         try {
             // Get the establishment given in parameter
@@ -165,11 +164,11 @@ class EstablishmentController extends Controller
 
             $request->validate([
                 'trade_name' => self::STRING_VALIDATION,
-                'logo' => 'string', // modify later
+                'logo' => 'nullable|string', // modify later
                 'phone' => 'required|string',
-                'email' => 'email|string',
-                'website' => 'string',
-                'opening' => 'json',
+                'email' => 'nullable|email|string',
+                'website' => 'nullable|string',
+                'opening' => 'nullable|json',
                 'address' => 'min:5|required|string|max:255',
                 'postal_code' => 'required|string|size:5',
                 'city' => self::STRING_VALIDATION,
@@ -218,7 +217,6 @@ class EstablishmentController extends Controller
             return $this->success([$establishment, $address], "Establishment Updated");
 
         } catch (Exception $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -248,7 +246,6 @@ class EstablishmentController extends Controller
             return $this->success(null, "Establishment Deleted successfully");
 
         } catch (Exception $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -278,9 +275,7 @@ class EstablishmentController extends Controller
             return $this->success(null, "Establishment Restored successfully");
 
         } catch (Exception $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }
 }
-
