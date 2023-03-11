@@ -1,4 +1,5 @@
 <?php
+
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookingController;
@@ -139,6 +140,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     */
 
     Route::get('/barathonien/list', [BarathonienController::class, 'getBarathonienList'])->name('barathonien.list');
+    Route::get(
+        '/establishments',
+        [EstablishmentController::class, 'getAllEstablishments']
+    )->name('admin.establishment.list');
 
 });
 

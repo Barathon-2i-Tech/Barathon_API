@@ -278,4 +278,28 @@ class EstablishmentController extends Controller
             return $this->error(null, $error->getMessage(), 500);
         }
     }
+
+    /**
+     *Get all establishments for the admin part
+     *
+    */
+
+    public function getAllEstablishments(): JsonResponse
+    {
+        try {
+            $establishments = Establishment::select('establishments.*', 'addresses.*', 'owners.*', 'status.*')
+                ->join('addresses', 'addresses.address_id', '=', 'establishments.address_id')
+                ->join('owners', 'owners.owner_id', '=', 'establishments.owner_id')
+                ->join('status', 'status.status_id', '=', 'establishments.status_id')
+                ->get();
+
+            if ($establishments->isEmpty()) {
+                return $this->error(null, self::ESTABLISHMENT_NOT_FOUND, 404);
+            }
+            return $this->success($establishments, "Establishments");
+
+        } catch (Exception $error) {
+            return $this->error(null, $error->getMessage(), 500);
+        }
+    }
 }
