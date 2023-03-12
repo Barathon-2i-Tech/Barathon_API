@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\StatusController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookingController;
@@ -144,6 +145,19 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         '/establishments',
         [EstablishmentController::class, 'getAllEstablishments']
     )->name('admin.establishment.list');
+
+    /***** Establishment validation  ******/
+    Route::get(
+        'admin/establishment-to-validate',
+        [EstablishmentController::class, 'getEstablishmentToValidate']
+    )->name('admin.establishment-to-validate');
+
+    Route::get('establishment-status', [StatusController::class, 'establishmentStatus'])->name('establishment-status');
+
+    Route::put(
+        'establishment/{establishment_id}/validation/{status_code}',
+        [EstablishmentController::class, 'validateEstablishment']
+    )->name('establishment.validation');
 
 });
 
