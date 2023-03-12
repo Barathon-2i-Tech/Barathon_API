@@ -1,5 +1,4 @@
 <?php
-
 use App\Http\Controllers\InseeController;
 use App\Http\Controllers\StatusController;
 use Illuminate\Http\Request;
