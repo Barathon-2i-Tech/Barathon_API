@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\InseeController;
 use App\Http\Controllers\StatusController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -158,6 +159,11 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         'establishment/{establishment_id}/validation/{status_code}',
         [EstablishmentController::class, 'validateEstablishment']
     )->name('establishment.validation');
+
+
+    /*********************  Check Siren / Siret  ********************/
+    Route::get('check-siren/{siren}', [InseeController::class, 'getSiren'])->name('check-siren');
+    Route::get('check-siret/{siret}', [InseeController::class, 'getSiret'])->name('check-siret');
 
 });
 
