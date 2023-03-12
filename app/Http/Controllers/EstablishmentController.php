@@ -291,6 +291,7 @@ class EstablishmentController extends Controller
                 ->join('addresses', 'addresses.address_id', '=', 'establishments.address_id')
                 ->join('owners', 'owners.owner_id', '=', 'establishments.owner_id')
                 ->join('status', 'status.status_id', '=', 'establishments.status_id')
+                ->withTrashed() // get the establishments deleted
                 ->get();
 
             if ($establishments->isEmpty()) {

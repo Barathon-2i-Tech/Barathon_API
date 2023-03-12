@@ -142,7 +142,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('/barathonien/list', [BarathonienController::class, 'getBarathonienList'])->name('barathonien.list');
     Route::get(
-        '/establishments',
+        '/establishments/list',
         [EstablishmentController::class, 'getAllEstablishments']
     )->name('admin.establishment.list');
 
