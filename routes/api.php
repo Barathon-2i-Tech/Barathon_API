@@ -1,4 +1,6 @@
 <?php
+use App\Http\Controllers\InseeController;
+use App\Http\Controllers\StatusController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BookingController;
@@ -94,7 +96,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         [EstablishmentController::class, 'update']
     )->name('establishment.update');
     Route::post(
-        '/pro/{owner_id}/establishment/create',
+        '/pro/{owner_id}/establishment/',
         [EstablishmentController::class, 'store']
     )->name('establishment.store');
     Route::delete(
@@ -138,9 +140,31 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     |--------------------------------------------------------------------------
     */
 
-        Route::get('/barathonien/list', [BarathonienController::class, 'getBarathonienList'])->name('barathonien.list');
+    Route::get('/barathonien/list', [BarathonienController::class, 'getBarathonienList'])->name('barathonien.list');
+    Route::get(
+        '/establishments/list',
+        [EstablishmentController::class, 'getAllEstablishments']
+    )->name('admin.establishment.list');
 
-    });
+    /***** Establishment validation  ******/
+    Route::get(
+        'admin/establishment-to-validate',
+        [EstablishmentController::class, 'getEstablishmentToValidate']
+    )->name('admin.establishment-to-validate');
+
+    Route::get('establishment-status', [StatusController::class, 'establishmentStatus'])->name('establishment-status');
+
+    Route::put(
+        'establishment/{establishment_id}/validation/{status_code}',
+        [EstablishmentController::class, 'validateEstablishment']
+    )->name('establishment.validation');
+
+
+    /*********************  Check Siren / Siret  ********************/
+    Route::get('check-siren/{siren}', [InseeController::class, 'getSiren'])->name('check-siren');
+    Route::get('check-siret/{siret}', [InseeController::class, 'getSiret'])->name('check-siret');
+
+});
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [ApiAuthController::class, 'logout'])->name('user.logout');

@@ -48,7 +48,6 @@ class EstablishmentController extends Controller
             return $this->success($establishments, "Establishment List");
 
         } catch (Exception $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -57,25 +56,28 @@ class EstablishmentController extends Controller
      * Store a newly created resource in storage.
      *
      * @param Request $request
+     * @param $ownerId
      * @return JsonResponse
      */
-    public function store(Request $request, $ownerId)
+    public function store(Request $request, $ownerId): JsonResponse
     {
         try {
+
             $request->validate([
                 'trade_name' => self::STRING_VALIDATION,
                 'siret' => 'required|string|size:14|unique:establishments', // 14 characters for a SIRET
-                'logo' => 'string', //modify later
+                'logo' => 'nullable|string', //modify later
                 'phone' => 'required|string',
-                'email' => 'email|string',
-                'website' => 'string',
-                'opening' => 'json',
+                'email' => 'nullable|email|string',
+                'website' => 'nullable|string',
+                'opening' => 'nullable|json',
                 'address' => 'min:5|required|string|max:255',
                 'postal_code' => 'required|string|size:5',
                 'city' => self::STRING_VALIDATION,
             ]);
 
             $establPending = Status::where('comment->code', 'ESTABL_PENDING')->first()->status_id;
+
             $address = Address::create([
                 'address' => $request->address,
                 'postal_code' => $request->postal_code,
@@ -108,7 +110,6 @@ class EstablishmentController extends Controller
             ], "Establishment created", 201);
 
         } catch (Exception $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 422);
         }
     }
@@ -141,7 +142,6 @@ class EstablishmentController extends Controller
             return $this->success($establishments, "Establishment");
 
         } catch (Exception $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -217,7 +217,6 @@ class EstablishmentController extends Controller
             return $this->success([$establishment, $address], "Establishment Updated");
 
         } catch (Exception $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -247,7 +246,6 @@ class EstablishmentController extends Controller
             return $this->success(null, "Establishment Deleted successfully");
 
         } catch (Exception $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -267,7 +265,7 @@ class EstablishmentController extends Controller
                 ->first();
 
             if ($establishment === null) {
-                return $this->error(null, "Establishment not found", 404);
+                return $this->error(null, self::ESTABLISHMENT_NOT_FOUND, 404);
             }
 
             if ($establishment->deleted_at === null) {
@@ -277,9 +275,83 @@ class EstablishmentController extends Controller
             return $this->success(null, "Establishment Restored successfully");
 
         } catch (Exception $error) {
+            return $this->error(null, $error->getMessage(), 500);
+        }
+    }
+
+    /**
+     *Get all establishments for the admin part
+     *
+    */
+
+    public function getAllEstablishments(): JsonResponse
+    {
+        try {
+            $establishments = Establishment::select('establishments.*', 'addresses.*', 'owners.*', 'status.*')
+                ->join('addresses', 'addresses.address_id', '=', 'establishments.address_id')
+                ->join('owners', 'owners.owner_id', '=', 'establishments.owner_id')
+                ->join('status', 'status.status_id', '=', 'establishments.status_id')
+                ->withTrashed() // get the establishments deleted
+                ->get();
+
+            if ($establishments->isEmpty()) {
+                return $this->error(null, self::ESTABLISHMENT_NOT_FOUND, 404);
+            }
+            return $this->success($establishments, "Establishments");
+
+        } catch (Exception $error) {
+            return $this->error(null, $error->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Validate the establishment
+     *
+     * @param $establishmentId
+     * @param $statusCode
+     * @return JsonResponse
+     */
+    public function validateEstablishment($establishmentId, $statusCode): jsonResponse
+    {
+        try {
+            //parse the status code
+            $statusCode = intval($statusCode);
+
+            $establishment = Establishment::find($establishmentId);
+
+            if ($establishment === null) {
+                return $this->error(null, self::ESTABLISHMENT_NOT_FOUND, 404);
+            }
+
+            if ($establishment->status_id === $statusCode) {
+                return $this->error(null, 'Establishment already validated', 404);
+            }
+
+            $establishment->status_id = $statusCode;
+            $establishment->save();
+            return $this->success(null, "Validation updated");
+
+        } catch (Exception $error) {
+            Log::error($error);
+            return $this->error(null, $error->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Get how many establishment need to be validated
+     * @return JsonResponse
+     */
+
+    public function getEstablishmentToValidate(): JsonResponse
+    {
+        try {
+            $establishmentToValidate = Establishment::where('status_id', 6)->count();
+
+            return $this->success($establishmentToValidate, "Establishments to validate");
+
+        } catch (Exception $error) {
             Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }
 }
-
