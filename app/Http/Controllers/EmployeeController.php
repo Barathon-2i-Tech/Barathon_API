@@ -36,27 +36,42 @@ class EmployeeController extends Controller
                 'email' => 'required|string|email|unique:users',
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
                 'hiring_date' => 'required|date',
+            ], [
+                'first_name.required' => 'The first name is required',
+                'first_name.string' => 'The first name must be a string',
+                'first_name.max' => 'The first name must be less than 255 characters',
+                'last_name.required' => 'The last name is required',
+                'last_name.string' => 'The last name must be a string',
+                'last_name.max' => 'The last name must be less than 255 characters',
+                'email.required' => 'The email is required',
+                'email.string' => 'The email must be a string',
+                'email.email' => 'The email must be a valid email',
+                'email.unique' => 'The email must be unique',
+                'password.required' => 'The password is required',
+                'password.confirmed' => 'The password confirmation does not match',
+                'hiring_date.required' => 'The hiring date is required',
+                'hiring_date.date' => 'The hiring date must be a valid date',
             ]);
 
             //create the user
             $user = User::create([
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
+                'first_name' => $request->input('first_name'),
+                'last_name' => $request->input('last_name'),
+                'email' => $request->input('email'),
+                'password' => Hash::make($request->input('password')),
                 'avatar' => 'https://picsum.photos/180',
             ]);
 
             //create the employee
             $employee = Employee::create([
-                'hiring_date' => $request->hiring_date,
+                'hiring_date' => $request->input('hiring_date'),
             ]);
             //link the user to the employee
             $user->employee_id = $employee->employee_id;
 
             //check if the establishment exists
-            $establishment = Establishment::find($request->establishment_id);
-            if (! $establishment) {
+            $establishment = Establishment::find($request->input('establishment_id'));
+            if (!$establishment) {
                 return $this->error(null, 'Establishment not found', 404);
             }
 
@@ -71,7 +86,6 @@ class EmployeeController extends Controller
                 'token' => $user->createToken('API Token')->plainTextToken,
             ], 'Employee Created', 201);
         } catch (Exception $error) {
-            Log::error($error);
 
             return $this->error(null, $error->getMessage(), 500);
         }
@@ -80,7 +94,7 @@ class EmployeeController extends Controller
     /**
      * Display the specified employee.
      */
-    public function show($userId): JsonResponse
+    public function show(int $userId): JsonResponse
     {
         try {
             $employee = DB::table('establishments_employees')
@@ -102,7 +116,6 @@ class EmployeeController extends Controller
 
             return $this->success($employee, 'Employee');
         } catch (Exception $error) {
-            Log::error($error);
 
             return $this->error(null, $error->getMessage(), 500);
         }
@@ -110,20 +123,16 @@ class EmployeeController extends Controller
 
     /**
      * Update the specified employee in storage.
-     *
-     * @param  Employee  $employee
-     * @return Response
      */
-    public function update(Request $request, $userId): JsonResponse
+    public function update(Request $request, int $userId): JsonResponse
     {
         try {
-            // Get the user given in parameter
+
             $user = User::find($userId);
             if ($user === null) {
                 return $this->error(null, self::USER_NOT_FOUND, 404);
             }
 
-            // Check if the user is a employee
             if ($user->employee_id === null) {
                 return $this->error(null, self::NO_EMPLOYEE_FOUND, 404);
             }
@@ -137,27 +146,31 @@ class EmployeeController extends Controller
                     'email',
                     Rule::unique('users')->ignore($user), // Ignore the user given in parameter
                 ],
-            ]);
+            ], [
+                    'first_name.required' => 'The first name is required',
+                    'first_name.string' => 'The first name must be a string',
+                    'first_name.max' => 'The first name must be less than 255 characters',
+                    'last_name.required' => 'The last name is required',
+                    'last_name.string' => 'The last name must be a string',
+                    'last_name.max' => 'The last name must be less than 255 characters',
+                    'email.required' => 'The email is required',
+                    'email.string' => 'The email must be a string',
+                    'email.email' => 'The email must be a valid email',
+                    'email.unique' => 'The email must be unique',
+                ]
+            );
 
-            $userData = $request->only(['first_name', 'last_name', 'email']);
-            // Check if the data given in parameter are different from the data in database
-            foreach ($userData as $field => $value) {
-                if ($user->{$field} !== $value) {
-                    $user->{$field} = $value;
-                }
-            }
+            $user->fill($request->only(['first_name', 'last_name', 'email']));
             $user->save();
 
             $userChanges = $user->getChanges();
 
-            // Check if the user data has changed
             if (empty($userChanges)) {
                 return $this->success($user, 'Employee not updated');
             }
 
             return $this->success($user, 'Employee Updated', 200);
         } catch (Exception $error) {
-            Log::error($error);
 
             return $this->error(null, $error->getMessage(), 500);
         }
@@ -166,28 +179,54 @@ class EmployeeController extends Controller
     /**
      * Deleting the employee ( softDelete )
      */
-    public function destroy($userId): JsonResponse
+    public function destroy(int $userId): JsonResponse
     {
         try {
-            //check if the user exist
-            $user = User::withTrashed()->where('user_id', $userId)->first();
-            if ($user === null) {
+
+            $user = User::withTrashed()
+                ->where('user_id', $userId)
+                ->whereNotNull('employee_id')
+                ->first();
+
+            if (!$user) {
                 return $this->error(null, self::USER_NOT_FOUND, 404);
             }
-            //check if the user is a employee
-            if ($user->employee_id === null) {
-                return $this->error(null, self::NO_EMPLOYEE_FOUND, 404);
-            }
-            //check if the user is already deleted
+
             if ($user->deleted_at !== null) {
                 return $this->error(null, 'Employee already deleted', 404);
             }
-            //delete the user
-            User::where('user_id', $userId)->delete();
 
+            $user->delete();
             return $this->success(null, 'Employee Deleted');
+
         } catch (Exception $error) {
-            Log::error($error);
+            return $this->error(null, $error->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Restoring the employee
+     */
+    public function restore(int $userId): JsonResponse
+    {
+        try {
+            $user = User::withTrashed()
+                ->where('user_id', $userId)
+                ->whereNotNull('employee_id')
+                ->first();
+
+            if (!$user) {
+                return $this->error(null, self::USER_NOT_FOUND, 404);
+            }
+
+            if ($user->deleted_at === null) {
+                return $this->error(null, 'Employee already restored', 404);
+            }
+
+            $user->restore();
+
+            return $this->success(null, 'Employee Restored');
+        } catch (Exception $error) {
 
             return $this->error(null, $error->getMessage(), 500);
         }
@@ -217,37 +256,6 @@ class EmployeeController extends Controller
 
             return $this->success($employees, 'Employees List');
         } catch (Exception $error) {
-            Log::error($error);
-
-            return $this->error(null, $error->getMessage(), 500);
-        }
-    }
-
-    /**
-     * Restoring the employee
-     */
-    public function restore($userId): JsonResponse
-    {
-        try {
-            //check if the user exist
-            $user = User::withTrashed()->where('user_id', $userId)->first();
-            if ($user === null) {
-                return $this->error(null, self::USER_NOT_FOUND, 404);
-            }
-            //check if the user is a employee
-            if ($user->employee_id === null) {
-                return $this->error(null, self::NO_EMPLOYEE_FOUND, 404);
-            }
-            //check if the user is already restored
-            if ($user->deleted_at === null) {
-                return $this->error(null, 'Employee already restored', 404);
-            }
-            User::withTrashed()->where('user_id', $userId)->restore();
-
-            return $this->success(null, 'Employee Restored');
-        } catch (Exception $error) {
-            Log::error($error);
-
             return $this->error(null, $error->getMessage(), 500);
         }
     }

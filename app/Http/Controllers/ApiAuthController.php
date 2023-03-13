@@ -19,7 +19,7 @@ class ApiAuthController extends Controller
 
     public function login(LoginUserRequest $request): JsonResponse
     {
-        $request->validated($request->only(['email', 'password']));
+        $request->validated();
 
         if (!auth()->attempt($request->only(['email', 'password']))) {
             return $this->error('', 'Credentials do not match', 401);
