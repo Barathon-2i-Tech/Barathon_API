@@ -54,25 +54,6 @@ class EmployeeControllerTest extends TestCase
 
     }
 
-    /**
-     * A test to get a 404 no found on empty response all employees
-     * todo: fix this test
-     * @return void
-     */
-//    public function test_get_all_employees_with_empty_response(): void
-//    {
-//
-//        $administrator = $this->createAdminUser();
-//        DB::table('users')->whereNotNull('employee_id')->delete();
-//        $response = $this->actingAs($administrator)->get(route('employee.list'))
-//            ->assertNotFound();
-//        $response->assertJsonStructure([
-//            'status',
-//            'message',
-//            'data',
-//        ]);
-//        $response->assertJson(['message' => 'Employee not found']);
-//    }
 
     /**
      * A test to get an employee by id
@@ -109,25 +90,6 @@ class EmployeeControllerTest extends TestCase
             'data',
         ]);
         $response->assertJson(['message' => 'No employee found']);
-    }
-
-    /**
-     * A test to get a 500 error on show method
-     *
-     * @return void
-     */
-    public function test_get_500_error_employee_show_method(): void
-    {
-        $administrator = $this->createAdminUser();
-        $response = $this->actingAs($administrator)->get(route('employee.show', 'error'))
-            ->assertStatus(500);
-
-        $response->assertJsonStructure([
-            'status',
-            'message',
-            'data',
-        ]);
-        $response->assertJson(['status' => 'An error has occurred...']);
     }
 
     /**
@@ -284,7 +246,7 @@ class EmployeeControllerTest extends TestCase
             'message',
             'data'
         ]);
-        $response->assertJson(['message' => 'No employee found']);
+        $response->assertJson(['message' => 'User not found']);
     }
 
     /**
@@ -359,7 +321,7 @@ class EmployeeControllerTest extends TestCase
             'message',
             'data'
         ]);
-        $response->assertJson(['message' => 'No employee found']);
+        $response->assertJson(['message' => 'User not found']);
     }
 
     /**

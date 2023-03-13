@@ -74,7 +74,7 @@ class RegisterBarathonienTest extends TestCase
             'avatar' => "myavatar.jpg"
         ])
             ->assertStatus(422)
-           ->assertJsonFragment(['message' => 'validation.required']);
+           ->assertJsonFragment(['message' => 'La date de naissance est obligatoire.']);
     }
 
     /**
@@ -98,7 +98,7 @@ class RegisterBarathonienTest extends TestCase
             'avatar' => "myavatar.jpg"
         ])
             ->assertStatus(422)
-            ->assertJsonFragment(['message' => 'validation.date']);
+            ->assertJsonFragment(['message' => 'La date de naissance n\'est pas valide.']);
     }
 
     /**
@@ -125,7 +125,7 @@ class RegisterBarathonienTest extends TestCase
             'Content-Type' => 'application/json'
         ])
             ->assertStatus(422)
-            ->assertJsonFragment(['message' => 'validation.before']);
+            ->assertJsonFragment(['message' => 'Vous devez avoir plus de 18 ans pour vous inscrire']);
     }
 
     /**
@@ -149,7 +149,7 @@ class RegisterBarathonienTest extends TestCase
             'Content-Type' => 'application/json'
         ])
             ->assertStatus(422)
-            ->assertJsonFragment(['message' => 'validation.required']);
+            ->assertJsonFragment(['message' => 'L\'adresse est obligatoire.']);
     }
 
     /**
@@ -173,7 +173,7 @@ class RegisterBarathonienTest extends TestCase
             'Content-Type' => 'application/json'
         ])
             ->assertStatus(422)
-            ->assertJsonFragment(['message' => 'validation.min.string']);
+            ->assertJsonFragment(['message' => 'L\'adresse doit faire au moins 5 caractères.']);
     }
 
     /**
@@ -196,7 +196,7 @@ class RegisterBarathonienTest extends TestCase
             'Content-Type' => 'application/json'
         ])
             ->assertStatus(422)
-            ->assertJsonFragment(['message' => 'validation.required']);
+            ->assertJsonFragment(['message' => 'Le code postal est obligatoire.']);
     }
 
     /**
@@ -220,7 +220,7 @@ class RegisterBarathonienTest extends TestCase
             'Content-Type' => 'application/json'
         ])
             ->assertStatus(422)
-            ->assertJsonFragment(['message' => 'validation.size.string']);
+            ->assertJsonFragment(['message' => 'Le code postal doit faire 5 caractères.']);
     }
 
     /**
@@ -244,7 +244,7 @@ class RegisterBarathonienTest extends TestCase
             'Content-Type' => 'application/json'
         ])
             ->assertStatus(422)
-            ->assertJsonFragment(['message' => 'validation.required']);
+            ->assertJsonFragment(['message' => 'La ville est obligatoire.']);
     }
 
 }

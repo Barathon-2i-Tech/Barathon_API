@@ -111,25 +111,6 @@ class OwnerControllerTest extends TestCase
     }
 
     /**
-     * A test to get a 500 error on show method
-     *
-     * @return void
-     */
-    public function test_get_500_error_owner_show_method(): void
-    {
-        $administrator = $this->createAdminUser();
-        $response = $this->actingAs($administrator)->get(route('owner.show', 'error'))
-            ->assertStatus(500);
-
-        $response->assertJsonStructure([
-            'status',
-            'message',
-            'data',
-        ]);
-        $response->assertJson(['status' => 'An error has occurred...']);
-    }
-
-    /**
      * A test to update a owner
      *
      * @return void

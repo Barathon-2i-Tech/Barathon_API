@@ -48,7 +48,7 @@ class AdministratorControllerTest extends TestCase
         $response = $this->actingAs($administrator)->get(route('administrator.list'))
             ->assertOk();
         $response->assertJsonStructure($structure);
-        $response->assertJson(['message' => 'Admnistrators List']);
+        $response->assertJson(['message' => 'Administrators List']);
 
     }
 
@@ -253,7 +253,7 @@ class AdministratorControllerTest extends TestCase
             'message',
             'data'
         ]);
-        $response->assertJson(['message' => 'Administrator not found']);
+        $response->assertJson(['message' => 'User not found']);
     }
 
     /**
@@ -328,7 +328,7 @@ class AdministratorControllerTest extends TestCase
             'message',
             'data'
         ]);
-        $response->assertJson(['message' => 'Administrator not found']);
+        $response->assertJson(['message' => 'User not found']);
     }
 
     /**
@@ -444,7 +444,7 @@ class AdministratorControllerTest extends TestCase
         $administrator = $this->createAdminUser();
         $owner = $this->createOwnerUser();
 
-        $response = $this->actingAs($administrator)->put(route('pro.validation', [$owner->owner_id, "bad status"]))
+        $response = $this->actingAs($administrator)->put(route('pro.validation', [$owner->owner_id, 124]))
             ->assertStatus(500);
         $response->assertJsonStructure([
             'status',

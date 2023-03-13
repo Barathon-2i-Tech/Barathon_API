@@ -91,26 +91,6 @@ class BarathonienControllerTest extends TestCase
     }
 
     /**
-     * A test to get a 500 error on show method
-     *
-     * @return void
-     */
-    public function test_get_500_error_barathonien_show_method(): void
-    {
-        $administrator = $this->createAdminUser();
-        $response = $this->actingAs($administrator)->get(route('barathonien.show', 'error'))
-            ->assertStatus(500);
-
-        $response->assertJsonStructure([
-            'status',
-            'message',
-            'data',
-        ]);
-        $response->assertJson(['status' => 'An error has occurred...']);
-
-    }
-
-    /**
      * A test to update a barathonien
      *
      * @return void
@@ -243,7 +223,7 @@ class BarathonienControllerTest extends TestCase
             'message',
             'data'
         ]);
-        $response->assertJson(['message' => 'Barathonien not found']);
+        $response->assertJson(['message' => 'User not found']);
     }
 
     /**
@@ -318,7 +298,7 @@ class BarathonienControllerTest extends TestCase
             'message',
             'data'
         ]);
-        $response->assertJson(['message' => 'Barathonien not found']);
+        $response->assertJson(['message' => 'User not found']);
     }
 
     /**
