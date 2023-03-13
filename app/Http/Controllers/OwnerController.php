@@ -26,6 +26,7 @@ class OwnerController extends Controller
 
     private const PHONEVALIDATION = ['regex:/^([0-9\s\-\+\(\)]*)$/','min:10'];
 
+
     /**
      * Display a listing of all owners
      *
@@ -135,10 +136,10 @@ class OwnerController extends Controller
     /**
      * Display the specified owner.
      *
-     * @param $userId
+     * @param int $userId
      * @return JsonResponse
      */
-    public function show($userId): JsonResponse
+    public function show( int $userId): JsonResponse
     {
         try {
             $owner = DB::table('users')
@@ -154,7 +155,6 @@ class OwnerController extends Controller
             return $this->success($owner, "Owner Details");
 
         } catch (Exception $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -164,14 +164,15 @@ class OwnerController extends Controller
      * Update the specified owner in storage.
      *
      * @param Request $request
-     * @param $userId
+     * @param int $userId
      * @return JsonResponse
      */
-    public function update(Request $request, $userId): JsonResponse
+    public function update(Request $request, int $userId): JsonResponse
     {
         try {
             //get the user given in parameter
             $user = User::find($userId);
+
             if ($user === null) {
                 return $this->error(null, self::OWNERNOTFOUND, 404);
             }
@@ -180,7 +181,6 @@ class OwnerController extends Controller
             if ($user->owner_id === null) {
                 return $this->error(null, "Owner not found", 404);
             }
-
 
             // validate the request
             $request->validate([
@@ -194,27 +194,23 @@ class OwnerController extends Controller
                 ],
                 'company_name' => 'string|max:255',
                 'phone' => self::PHONEVALIDATION,
+            ], [
+                'first_name.required' => 'Le prénom est obligatoire.',
+                'last_name.required' => 'Le nom est obligatoire.',
+                'email.required' => "L'adresse e-mail est obligatoire.",
+                'email.email' => "L'adresse e-mail n'est pas valide.",
+                'email.unique' => "L'adresse e-mail est déjà utilisée.",
+                'phone.required' => 'Le numéro de téléphone est obligatoire.',
+                'phone.regex' => 'Le numéro de téléphone n\'est pas valide.',
             ]);
 
-
-            $userData = $request->only(['first_name', 'last_name', 'email']);
-            // Check if the data given in parameter are different from the data in database
-            foreach ($userData as $field => $value) {
-                if ($user->{$field} !== $value) {
-                    $user->{$field} = $value;
-                }
-            }
+            $user->fill($request->only(['first_name', 'last_name', 'email']));
             $user->save();
 
+            // Update the owner data
             $owner = Owner::find($user->owner_id);
-
-            $ownerData = $request->only(['company_name','phone']);
-            // Check if the data given in parameter are different from the data in database
-            foreach ($ownerData as $field => $value) {
-                if ($owner->{$field} !== $value) {
-                    $owner->{$field} = $value;
-                }
-            }
+            $owner->fill($request->only(['company_name', 'phone']));
+            $owner->save();
             $owner->save();
 
             $userChanges = $user->getChanges();
@@ -223,12 +219,9 @@ class OwnerController extends Controller
             if (empty($userChanges) && empty($ownerChanges)) {
                 return $this->success(null, "Owner not updated");
             }
-
             return $this->success([$user, $owner], "Owner Updated");
 
-
         } catch (Exception $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }
