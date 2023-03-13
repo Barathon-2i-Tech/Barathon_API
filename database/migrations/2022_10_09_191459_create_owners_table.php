@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('owners', function (Blueprint $table) {
             $table->id('owner_id');
             $table->string('siren');
-            $table->string('kbis');
+            $table->longText('kbis');
             $table->string('phone')->nullable();
             $table->string('company_name')->nullable();
             $table->foreignId('status_id');

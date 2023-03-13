@@ -140,7 +140,7 @@ class InseeController extends Controller
                 return $this->checkStatusCodeFromApi($response);
             } else {
                 $dataFetch = json_decode($response->getBody());
-                return $this->success($dataFetch, 'Siret found');
+                return $this->success($dataFetch->etablissement, 'Siret found');
             }
         } catch (GuzzleException $error) {
             Log::error($error);
