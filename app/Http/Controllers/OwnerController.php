@@ -157,6 +157,7 @@ class OwnerController extends Controller
                     'email',
                     Rule::unique('users')->ignore($user), // Ignore the user given in parameter
                 ],
+                'company_name' => 'string|max:255',
                 'phone' => self::PHONEVALIDATION,
             ]);
 
@@ -172,7 +173,7 @@ class OwnerController extends Controller
 
             $owner = Owner::find($user->owner_id);
 
-            $ownerData = $request->only(['phone']);
+            $ownerData = $request->only(['company_name','phone']);
             // Check if the data given in parameter are different from the data in database
             foreach ($ownerData as $field => $value) {
                 if ($owner->{$field} !== $value) {
