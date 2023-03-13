@@ -20,7 +20,7 @@ class InseeController extends Controller
     public function __construct()
     {
         // initialise the API key for the INSEE API SIRENE
-        $this->apiKey = base64_encode(env('INSEE_CONSUMER_KEY') . ':' . env('INSEE_CONSUMER_SECRET'));
+        $this->apiKey = base64_encode(config('app.INSEE_CONSUMER_KEY') . ':' . config('app.INSEE_CONSUMER_SECRET'));
     }
 
     /**
