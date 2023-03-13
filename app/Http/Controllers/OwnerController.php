@@ -67,10 +67,18 @@ class OwnerController extends Controller
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'siren' => 'required|string|size:9',
-            'kbis' => 'required|string',
+            'kbis' => 'required|file|mimes:pdf|max:2048',
             'company_name' => 'string|max:255',
             'phone' => self::PHONEVALIDATION,
         ]);
+
+        // get the pdf file
+        $kbis = $request->file('kbis');
+        $kbisContent = file_get_contents($kbis);
+
+        // encode the pdf file in base64
+        $kbisBase64 = 'data:application/pdf;base64,' .base64_encode($kbisContent);
+
 
         $user = User::create([
             'first_name' => $request->first_name,
@@ -82,7 +90,7 @@ class OwnerController extends Controller
 
         $owner = Owner::create([
             'siren' => $request->siren,
-            'kbis' => $request->kbis,
+            'kbis' =>$kbisBase64,
             'status_id' => 3, // 3 = pending
             'phone' => $request->phone,
             'company_name' => $request->company_name,
