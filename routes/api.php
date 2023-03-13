@@ -111,6 +111,15 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::put('pro/{user_id}', [OwnerController::class, 'update'])->name('owner.update');
     Route::delete('pro/{user_id}', [OwnerController::class, 'destroy'])->name('owner.delete');
     Route::get('pro/restore/{user_id}', [OwnerController::class, 'restore'])->name('owner.restore');
+    Route::put(
+        'pro/{owner_id}/validation/{status_code}',
+        [OwnerController::class, 'validateOwner']
+    )->name('pro.validation');
+
+    Route::get(
+        'admin/pro-to-validate',
+        [OwnerController::class, 'getOwnerToValidate']
+    )->name('admin.pro-to-validate');
 
     Route::get('employee/list', [EmployeeController::class, 'getEmployeeList'])->name('employee.list');
     Route::get('employee/{user_id}', [EmployeeController::class, 'show'])->name('employee.show');
@@ -140,14 +149,4 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('check-siret/{siret}', [InseeController::class, 'getSiret'])->name('check-siret');
 
     Route::get('owner-status', [StatusController::class, 'ownerStatus'])->name('owner-status');
-
-    Route::put(
-        'pro/{owner_id}/validation/{status_code}',
-        [AdministratorController::class, 'validateOwner']
-    )->name('pro.validation');
-
-    Route::get(
-        'admin/pro-to-validate',
-        [AdministratorController::class, 'getOwnerToValidate']
-    )->name('admin.pro-to-validate');
 });

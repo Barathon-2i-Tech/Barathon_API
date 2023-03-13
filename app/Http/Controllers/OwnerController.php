@@ -138,7 +138,7 @@ class OwnerController extends Controller
 
             // check if the user is an owner
             if ($user->owner_id === null) {
-                return $this->error(null, 'Owner not found', 404);
+                return $this->error(null, self::OWNERNOTFOUND, 404);
             }
 
             // validate the request
@@ -170,7 +170,6 @@ class OwnerController extends Controller
             $owner = Owner::find($user->owner_id);
             $owner->fill($request->only(['company_name', 'phone']));
             $owner->save();
-            $owner->save();
 
             $userChanges = $user->getChanges();
             $ownerChanges = $owner->getChanges();
@@ -188,7 +187,7 @@ class OwnerController extends Controller
     /**
      * Deleting the owner ( softDelete )
      */
-    public function destroy($userId): JsonResponse
+    public function destroy(int $userId): JsonResponse
     {
         try {
             //check if the user exist
@@ -208,6 +207,35 @@ class OwnerController extends Controller
             User::where('user_id', $userId)->delete();
 
             return $this->success(null, 'Owner Deleted');
+        } catch (Exception $error) {
+            Log::error($error);
+
+            return $this->error(null, $error->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Restoring the owner
+     */
+    public function restore(int $userId): JsonResponse
+    {
+        try {
+            //check if the user exist
+            $user = User::withTrashed()->where('user_id', $userId)->first();
+            if ($user === null) {
+                return $this->error(null, self::USERNOTFOUND, 404);
+            }
+            //check if the user is an owner
+            if ($user->owner_id === null) {
+                return $this->error(null, self::OWNERNOTFOUND, 404);
+            }
+            //check if the user is already restored
+            if ($user->deleted_at === null) {
+                return $this->error(null, 'Owner already restored', 404);
+            }
+            User::withTrashed()->where('user_id', $userId)->restore();
+
+            return $this->success(null, 'Owner Restored');
         } catch (Exception $error) {
             Log::error($error);
 
@@ -240,30 +268,40 @@ class OwnerController extends Controller
     }
 
     /**
-     * Restoring the owner
+     * Validate the owner
      */
-    public function restore($userId): JsonResponse
+    public function validateOwner(int $ownerId, int $statusCode): jsonResponse
     {
         try {
-            //check if the user exist
-            $user = User::withTrashed()->where('user_id', $userId)->first();
-            if ($user === null) {
-                return $this->error(null, self::USERNOTFOUND, 404);
-            }
-            //check if the user is an owner
-            if ($user->owner_id === null) {
+            $owner = Owner::find($ownerId);
+
+            if (! $owner) {
                 return $this->error(null, self::OWNERNOTFOUND, 404);
             }
-            //check if the user is already restored
-            if ($user->deleted_at === null) {
-                return $this->error(null, 'Owner already restored', 404);
+
+            if ($owner->status_id === $statusCode) {
+                return $this->error(null, 'Owner already validated', 404);
             }
-            User::withTrashed()->where('user_id', $userId)->restore();
 
-            return $this->success(null, 'Owner Restored');
+            $owner->status_id = $statusCode;
+            $owner->save();
+
+            return $this->success(null, 'Validation updated');
         } catch (Exception $error) {
-            Log::error($error);
+            return $this->error(null, $error->getMessage(), 500);
+        }
+    }
 
+    /**
+     * Get how many owner need to be validated
+     */
+    public function getOwnerToValidate(): JsonResponse
+    {
+        try {
+            $ownerToValidate = Owner::where('status_id', 3)->count();
+
+            return $this->success($ownerToValidate, 'Owner to validate');
+        } catch (Exception $error) {
             return $this->error(null, $error->getMessage(), 500);
         }
     }

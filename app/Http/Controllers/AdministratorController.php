@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\Administrator;
-use App\Models\Owner;
 use App\Models\User;
 use App\Traits\HttpResponses;
 use Exception;
@@ -11,7 +10,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 
@@ -34,6 +32,14 @@ class AdministratorController extends Controller
             'superAdmin' => 'boolean', // Accept 0 or 1 only with postman
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'first_name.required' => 'Le prénom est obligatoire.',
+            'last_name.required' => 'Le nom est obligatoire.',
+            'email.required' => "L'adresse e-mail est obligatoire.",
+            'email.email' => "L'adresse e-mail n'est pas valide.",
+            'email.unique' => "L'adresse e-mail est déjà utilisée.",
+            'password.required' => 'Le mot de passe est obligatoire.',
+            'password.confirmed' => 'Les mots de passe ne correspondent pas.',
         ]);
 
         $user = User::create([
@@ -85,13 +91,12 @@ class AdministratorController extends Controller
     public function update(Request $request, $userId): JsonResponse
     {
         try {
-            // Get the user given in parameter
+
             $user = User::find($userId);
             if ($user === null) {
                 return $this->error(null, self::USER_NOT_FOUND, 404);
             }
 
-            // Check if the user is an administrator
             if ($user->administrator_id === null) {
                 return $this->error(null, self::ADMINISTRATOR_NOT_FOUND, 404);
             }
@@ -105,34 +110,30 @@ class AdministratorController extends Controller
                     Rule::unique('users')->ignore($user), // Ignore the user given in parameter
                 ],
                 'superAdmin' => 'boolean',
-            ]);
-            $userData = $request->only(['first_name', 'last_name', 'email']);
+            ], [
+                'first_name.required' => 'Le prénom est obligatoire.',
+                'last_name.required' => 'Le nom est obligatoire.',
+                'email.required' => "L'adresse e-mail est obligatoire.",
+                'email.email' => "L'adresse e-mail n'est pas valide.",
+                'email.unique' => "L'adresse e-mail est déjà utilisée.",
+            ]
+            );
 
-            // Check if the data given in parameter are different from the data in database
-            foreach ($userData as $field => $value) {
-                if ($user->{$field} !== $value) {
-                    $user->{$field} = $value;
-                }
-            }
+            $user->fill($request->only(['first_name', 'last_name', 'email']));
             $user->save();
 
-            //Get the administrator profile linked to the user
             $administrator = Administrator::where('administrator_id', $user->administrator_id)->first();
 
-            $dataAdministrator = $request->only(['superAdmin']);
-            // Check if the data given in parameter are different from the data in database
-
-            if ($administrator->superAdmin !== $dataAdministrator['superAdmin']) {
-                $administrator->superAdmin = $dataAdministrator['superAdmin'];
-            }
-
+            $administrator->fill($request->only(['superAdmin']));
             $administrator->save();
+
             $userChanges = $user->getChanges();
             $administratorChanges = $administrator->getChanges();
 
             if (empty($userChanges) && empty($administratorChanges)) {
                 return $this->success($user, 'Administrator not updated');
             }
+
             // Return the updated user
             return $this->success($user, 'Administrator updated');
         } catch (Exception $error) {
@@ -143,26 +144,52 @@ class AdministratorController extends Controller
     /**
      * Deleting the administrator ( softDelete )
      */
-    public function destroy($userId): JsonResponse
+    public function destroy(int $userId): JsonResponse
     {
         try {
-            //check if the user exist
-            $user = User::withTrashed()->where('user_id', $userId)->first();
-            if ($user === null) {
+            $user = User::withTrashed()
+                ->where('user_id', $userId)
+                ->whereNotNull('administrator_id')
+                ->first();
+
+            if (! $user) {
                 return $this->error(null, self::USER_NOT_FOUND, 404);
             }
-            //check if the user is a barathonien
-            if ($user->administrator_id === null) {
-                return $this->error(null, self::ADMINISTRATOR_NOT_FOUND, 404);
-            }
-            //check if the user is already deleted
-            if ($user->deleted_at !== null) {
+
+            if ($user->deleted_at) {
                 return $this->error(null, 'Administrator already deleted', 404);
             }
-            //delete the user
-            User::where('user_id', $userId)->delete();
+
+            $user->delete();
 
             return $this->success(null, 'Administrator Deleted');
+        } catch (Exception $error) {
+            return $this->error(null, $error->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Restoring the administrator
+     */
+    public function restore(int $userId): JsonResponse
+    {
+        try {
+            $user = User::withTrashed()
+                ->where('user_id', $userId)
+                ->whereNotNull('administrator_id')
+                ->first();
+
+            if (! $user) {
+                return $this->error(null, self::USER_NOT_FOUND, 404);
+            }
+
+            if (! $user->deleted_at) {
+                return $this->error(null, 'Administrator already restored', 404);
+            }
+
+            $user->restore();
+
+            return $this->success(null, 'Administrator Restored');
         } catch (Exception $error) {
             return $this->error(null, $error->getMessage(), 500);
         }
@@ -183,76 +210,7 @@ class AdministratorController extends Controller
                 return $this->error(null, self::ADMINISTRATOR_NOT_FOUND, 404);
             }
 
-            return $this->success($administrators, 'Admnistrators List');
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 500);
-        }
-    }
-
-    /**
-     * Restoring the administrator
-     */
-    public function restore($userId): JsonResponse
-    {
-        try {
-            //check if the user exist
-            $user = User::withTrashed()->where('user_id', $userId)->first();
-            if ($user === null) {
-                return $this->error(null, self::USER_NOT_FOUND, 404);
-            }
-            //check if the user is a barathonien
-            if ($user->administrator_id === null) {
-                return $this->error(null, self::ADMINISTRATOR_NOT_FOUND, 404);
-            }
-            //check if the user is already restored
-            if ($user->deleted_at === null) {
-                return $this->error(null, 'Administrator already restored', 404);
-            }
-            User::withTrashed()->where('user_id', $userId)->restore();
-
-            return $this->success(null, 'Administrator Restored');
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 500);
-        }
-    }
-
-    /**
-     * Validate the owner
-     */
-    public function validateOwner($ownerId, $statusCode): jsonResponse
-    {
-        try {
-            //parse the status code
-            $statusCode = intval($statusCode);
-
-            $owner = Owner::find($ownerId);
-
-            if ($owner === null) {
-                return $this->error(null, 'Owner not found', 404);
-            }
-
-            if ($owner->status_id === $statusCode) {
-                return $this->error(null, 'Owner already validated', 404);
-            }
-
-            $owner->status_id = $statusCode;
-            $owner->save();
-
-            return $this->success(null, 'Validation updated');
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 500);
-        }
-    }
-
-    /**
-     * Get how many owner need to be validated
-     */
-    public function getOwnerToValidate(): JsonResponse
-    {
-        try {
-            $ownerToValidate = Owner::where('status_id', 3)->count();
-
-            return $this->success($ownerToValidate, 'Owner to validate');
+            return $this->success($administrators, 'Administrators List');
         } catch (Exception $error) {
             return $this->error(null, $error->getMessage(), 500);
         }
