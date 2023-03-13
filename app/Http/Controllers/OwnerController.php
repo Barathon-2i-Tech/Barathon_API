@@ -10,6 +10,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 use Exception;
@@ -66,34 +67,60 @@ class OwnerController extends Controller
             'last_name' => self::STRINGVALIDATION,
             'email' => 'required|string|email|max:255|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'siren' => 'required|string|size:9',
+            'siren' => 'required|string|size:9|unique:owners',
             'kbis' => 'required|file|mimes:pdf|max:2048',
             'company_name' => 'string|max:255',
             'phone' => self::PHONEVALIDATION,
+        ], [
+            'first_name.required' => 'Le prénom est obligatoire.',
+            'last_name.required' => 'Le nom est obligatoire.',
+            'email.required' => "L'adresse e-mail est obligatoire.",
+            'email.email' => "L'adresse e-mail n'est pas valide.",
+            'email.unique' => "L'adresse e-mail est déjà utilisée.",
+            'password.required' => 'Le mot de passe est obligatoire.',
+            'password.confirmed' => 'Les mots de passe ne correspondent pas.',
+            'siren.required' => 'Le numéro SIREN est obligatoire.',
+            'siren.size' => 'Le numéro SIREN doit être composé de 9 chiffres.',
+            'siren.unique' => 'Le numéro SIREN est déjà utilisé.',
+            'kbis.required' => 'Le KBIS est obligatoire.',
+            'kbis.file' => 'Le KBIS doit être un fichier.',
+            'kbis.mimes' => 'Le KBIS doit être un fichier PDF.',
+            'kbis.max' => 'Le KBIS ne doit pas dépasser 2 Mo.',
+            'phone.required' => 'Le numéro de téléphone est obligatoire.',
+            'phone.regex' => 'Le numéro de téléphone n\'est pas valide.',
         ]);
 
-        // get the pdf file
-        $kbis = $request->file('kbis');
-        $kbisContent = file_get_contents($kbis);
+        // Get the PDF file
+        $kbisFile = $request->file('kbis');
 
-        // encode the pdf file in base64
-        $kbisBase64 = 'data:application/pdf;base64,' .base64_encode($kbisContent);
+        // Check if the file is valid
+        if (!$kbisFile->isValid()) {
+            return $this->error(null, 'Le fichier KBIS n\'est pas valide.', 500);
+        }
 
+        // Read the contents of the PDF file
+        $kbisContent = file_get_contents($kbisFile->path());
+
+        // Encode the PDF file in base64
+        $kbisBase64 = 'data:application/pdf;base64,' . base64_encode($kbisContent);
+
+        // Delete the original file
+        Storage::delete($kbisFile->path());
 
         $user = User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'first_name' => $request->input('first_name'),
+            'last_name' => $request->input('last_name'),
+            'email' => $request->input('email'),
+            'password' => Hash::make($request->input('password')),
             'avatar' => "https://picsum.photos/180",
         ]);
 
         $owner = Owner::create([
-            'siren' => $request->siren,
-            'kbis' =>$kbisBase64,
+            'siren' => $request->input('siren'),
+            'kbis' => $kbisBase64,
             'status_id' => 3, // 3 = pending
-            'phone' => $request->phone,
-            'company_name' => $request->company_name,
+            'phone' => $request->input('phone'),
+            'company_name' => $request->input('company_name'),
         ]);
 
         $user->owner_id = $owner->owner_id;
