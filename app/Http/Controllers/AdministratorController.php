@@ -37,15 +37,15 @@ class AdministratorController extends Controller
         ]);
 
         $user = User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'first_name' => $request->input('first_name'),
+            'last_name' => $request->input('last_name'),
+            'email' => $request->input('email'),
+            'password' => Hash::make($request->input('password')),
             'avatar' => 'https://picsum.photos/180',
         ]);
 
         $admin = Administrator::create([
-            'superAdmin' => $request->superAdmin,
+            'superAdmin' => $request->input('superAdmin'),
         ]);
 
         $user->administrator_id = $admin->administrator_id;
@@ -75,8 +75,6 @@ class AdministratorController extends Controller
 
             return $this->success($administrator, 'Administrator');
         } catch (Exception $error) {
-            Log::error($error);
-
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -138,8 +136,6 @@ class AdministratorController extends Controller
             // Return the updated user
             return $this->success($user, 'Administrator updated');
         } catch (Exception $error) {
-            Log::error($error);
-
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -168,8 +164,6 @@ class AdministratorController extends Controller
 
             return $this->success(null, 'Administrator Deleted');
         } catch (Exception $error) {
-            Log::error($error);
-
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -191,8 +185,6 @@ class AdministratorController extends Controller
 
             return $this->success($administrators, 'Admnistrators List');
         } catch (Exception $error) {
-            Log::error($error);
-
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -220,8 +212,6 @@ class AdministratorController extends Controller
 
             return $this->success(null, 'Administrator Restored');
         } catch (Exception $error) {
-            Log::error($error);
-
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -250,8 +240,6 @@ class AdministratorController extends Controller
 
             return $this->success(null, 'Validation updated');
         } catch (Exception $error) {
-            Log::error($error);
-
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -266,8 +254,6 @@ class AdministratorController extends Controller
 
             return $this->success($ownerToValidate, 'Owner to validate');
         } catch (Exception $error) {
-            Log::error($error);
-
             return $this->error(null, $error->getMessage(), 500);
         }
     }
