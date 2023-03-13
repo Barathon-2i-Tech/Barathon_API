@@ -40,7 +40,6 @@ class CategoryController extends Controller
             return $this->success($allEstablishmentCategories, "Categories List");
 
         } catch (Exception $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -68,7 +67,6 @@ class CategoryController extends Controller
             return $this->success($allEventCategories, "Categories List");
 
         } catch (Exception $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -105,7 +103,6 @@ class CategoryController extends Controller
             ], "Category created", 201);
 
         } catch (Exception $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 422);
         }
     }
