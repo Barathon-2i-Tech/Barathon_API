@@ -21,11 +21,11 @@ class ApiAuthController extends Controller
     {
         $request->validated($request->only(['email', 'password']));
 
-        if (! auth()->attempt($request->only(['email', 'password']))) {
+        if (!auth()->attempt($request->only(['email', 'password']))) {
             return $this->error('', 'Credentials do not match', 401);
         }
 
-        $user = User::where('email', $request->email)->first();
+        $user = User::where('email', $request->input('email'))->first();
 
         if ($user->administrator_id !== null) {
             $admin = Administrator::where('administrator_id', $user->administrator_id)->first();
@@ -53,10 +53,10 @@ class ApiAuthController extends Controller
         ]);
 
         $user = User::create([
-            'first_name' => $request->first_name,
-            'last_name' => $request->last_name,
-            'email' => $request->email,
-            'password' => Hash::make($request->password),
+            'first_name' => $request->input('first_name'),
+            'last_name' => $request->input('last_name'),
+            'email' => $request->input('email'),
+            'password' => Hash::make($request->input('password')),
             'avatar' => 'https://picsum.photos/180',
         ]);
 
