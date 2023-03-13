@@ -23,7 +23,7 @@ class OwnerFactory extends Factory
         return [
             'siren' => fake()->siren(),
             'kbis' => 'chemin/kbis.pdf',
-            'status_id' => $ownerValid->status_id
+            'status_id' => $ownerValid->status_id,
         ];
     }
 }

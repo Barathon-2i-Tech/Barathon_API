@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-
 use App\Models\Barathonien;
 use Illuminate\Database\Seeder;
 

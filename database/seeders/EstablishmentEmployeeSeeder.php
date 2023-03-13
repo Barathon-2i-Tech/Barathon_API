@@ -2,7 +2,6 @@
 
 namespace Database\Seeders;
 
-
 use App\Models\Employee;
 use App\Models\Establishment;
 use App\Models\Establishment_Employee;
@@ -18,7 +17,6 @@ class EstablishmentEmployeeSeeder extends Seeder
      */
     public function run()
     {
-
         $employee = Employee::all('employee_id')->first();
         $estabFaitFoif = Establishment::where('trade_name', 'Fait Foif')->first();
         $estabFantome = Establishment::where('trade_name', 'Le Fantôme de l\'Opéra')->first();

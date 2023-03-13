@@ -4,18 +4,16 @@ namespace App\Http\Controllers;
 
 use App\Models\Administrator;
 use App\Models\Owner;
+use App\Models\User;
+use App\Traits\HttpResponses;
 use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Models\User;
-use App\Traits\HttpResponses;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
-use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Hash;
 
 class AdministratorController extends Controller
 {
@@ -26,38 +24,10 @@ class AdministratorController extends Controller
     private const STRINGVALIDATION = 'required|string|max:255';
 
     /**
-     * Display a listing of all administrator.
-     *
-     * @return JsonResponse
-     */
-    public function getAdministratorList(): JsonResponse
-    {
-        try {
-            $administrators = DB::table('users')
-                ->join('administrators', 'users.administrator_id', '=', 'administrators.administrator_id')
-                ->select('users.*', 'administrators.*')
-                ->get();
-
-            if ($administrators->isEmpty()) {
-                return $this->error(null, self::ADMINISTRATOR_NOT_FOUND, 404);
-            }
-
-            return $this->success($administrators, 'Admnistrators List');
-        } catch (Exception $error) {
-            Log::error($error);
-            return $this->error(null, $error->getMessage(), 500);
-        }
-    }
-
-    /**
      * Store a newly created administrator in storage.
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
     public function store(Request $request): JsonResponse
     {
-
         $request->validate([
             'first_name' => self::STRINGVALIDATION,
             'last_name' => self::STRINGVALIDATION,
@@ -71,11 +41,11 @@ class AdministratorController extends Controller
             'last_name' => $request->last_name,
             'email' => $request->email,
             'password' => Hash::make($request->password),
-            'avatar' => "https://picsum.photos/180",
+            'avatar' => 'https://picsum.photos/180',
         ]);
 
         $admin = Administrator::create([
-            "superAdmin" => $request->superAdmin
+            'superAdmin' => $request->superAdmin,
         ]);
 
         $user->administrator_id = $admin->administrator_id;
@@ -83,18 +53,14 @@ class AdministratorController extends Controller
 
         return $this->success([
             'userLogged' => $user,
-            'token' => $user->createToken('API Token')->plainTextToken
-        ], "Admin Created");
+            'token' => $user->createToken('API Token')->plainTextToken,
+        ], 'Admin Created');
     }
 
     /**
      * Display the specified resource.
-     *
-     * @param $userId
-     * @return JsonResponse
      */
-    public
-    function show($userId): JsonResponse
+    public function show($userId): JsonResponse
     {
         try {
             $administrator = DB::table('users')
@@ -110,17 +76,13 @@ class AdministratorController extends Controller
             return $this->success($administrator, 'Administrator');
         } catch (Exception $error) {
             Log::error($error);
+
             return $this->error(null, $error->getMessage(), 500);
         }
     }
 
-
     /**
      * Update the specified administrator in storage.
-     *
-     * @param Request $request
-     * @param $userId
-     * @return JsonResponse
      */
     public function update(Request $request, $userId): JsonResponse
     {
@@ -144,7 +106,7 @@ class AdministratorController extends Controller
                     'email',
                     Rule::unique('users')->ignore($user), // Ignore the user given in parameter
                 ],
-                'superAdmin' => 'boolean'
+                'superAdmin' => 'boolean',
             ]);
             $userData = $request->only(['first_name', 'last_name', 'email']);
 
@@ -171,28 +133,23 @@ class AdministratorController extends Controller
             $administratorChanges = $administrator->getChanges();
 
             if (empty($userChanges) && empty($administratorChanges)) {
-                return $this->success($user, "Administrator not updated");
+                return $this->success($user, 'Administrator not updated');
             }
             // Return the updated user
-            return $this->success($user, "Administrator updated");
-
-
+            return $this->success($user, 'Administrator updated');
         } catch (Exception $error) {
             Log::error($error);
+
             return $this->error(null, $error->getMessage(), 500);
         }
     }
 
     /**
      * Deleting the administrator ( softDelete )
-     *
-     * @param $userId
-     * @return JsonResponse
      */
     public function destroy($userId): JsonResponse
     {
         try {
-
             //check if the user exist
             $user = User::withTrashed()->where('user_id', $userId)->first();
             if ($user === null) {
@@ -204,23 +161,44 @@ class AdministratorController extends Controller
             }
             //check if the user is already deleted
             if ($user->deleted_at !== null) {
-                return $this->error(null, "Administrator already deleted", 404);
+                return $this->error(null, 'Administrator already deleted', 404);
             }
             //delete the user
             User::where('user_id', $userId)->delete();
-            return $this->success(null, "Administrator Deleted");
 
+            return $this->success(null, 'Administrator Deleted');
         } catch (Exception $error) {
             Log::error($error);
+
+            return $this->error(null, $error->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Display a listing of all administrator.
+     */
+    public function getAdministratorList(): JsonResponse
+    {
+        try {
+            $administrators = DB::table('users')
+                ->join('administrators', 'users.administrator_id', '=', 'administrators.administrator_id')
+                ->select('users.*', 'administrators.*')
+                ->get();
+
+            if ($administrators->isEmpty()) {
+                return $this->error(null, self::ADMINISTRATOR_NOT_FOUND, 404);
+            }
+
+            return $this->success($administrators, 'Admnistrators List');
+        } catch (Exception $error) {
+            Log::error($error);
+
             return $this->error(null, $error->getMessage(), 500);
         }
     }
 
     /**
      * Restoring the administrator
-     *
-     * @param $userId
-     * @return JsonResponse
      */
     public function restore($userId): JsonResponse
     {
@@ -236,23 +214,20 @@ class AdministratorController extends Controller
             }
             //check if the user is already restored
             if ($user->deleted_at === null) {
-                return $this->error(null, "Administrator already restored", 404);
+                return $this->error(null, 'Administrator already restored', 404);
             }
             User::withTrashed()->where('user_id', $userId)->restore();
-            return $this->success(null, "Administrator Restored");
 
+            return $this->success(null, 'Administrator Restored');
         } catch (Exception $error) {
             Log::error($error);
+
             return $this->error(null, $error->getMessage(), 500);
         }
     }
 
     /**
      * Validate the owner
-     *
-     * @param $ownerId
-     * @param $statusCode
-     * @return JsonResponse
      */
     public function validateOwner($ownerId, $statusCode): jsonResponse
     {
@@ -272,29 +247,27 @@ class AdministratorController extends Controller
 
             $owner->status_id = $statusCode;
             $owner->save();
-            return $this->success(null, "Validation updated");
 
+            return $this->success(null, 'Validation updated');
         } catch (Exception $error) {
             Log::error($error);
+
             return $this->error(null, $error->getMessage(), 500);
         }
     }
 
     /**
      * Get how many owner need to be validated
-     * @return JsonResponse
-     *
      */
-
     public function getOwnerToValidate(): JsonResponse
     {
         try {
             $ownerToValidate = Owner::where('status_id', 3)->count();
 
-            return $this->success($ownerToValidate, "Owner to validate");
-
+            return $this->success($ownerToValidate, 'Owner to validate');
         } catch (Exception $error) {
             Log::error($error);
+
             return $this->error(null, $error->getMessage(), 500);
         }
     }

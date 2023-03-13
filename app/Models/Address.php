@@ -10,6 +10,8 @@ class Address extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     /**
      * The table associated with the model.
      *
@@ -33,12 +35,8 @@ class Address extends Model
         'city',
     ];
 
-    public $timestamps = false;
-
     /**
      * Get the barathonien that owns the Address
-     *
-     * @return BelongsTo
      */
     public function barathonien(): BelongsTo
     {
@@ -47,8 +45,6 @@ class Address extends Model
 
     /**
      * Get the establishment that owns the Address
-     *
-     * @return BelongsTo
      */
     public function establishment(): BelongsTo
     {

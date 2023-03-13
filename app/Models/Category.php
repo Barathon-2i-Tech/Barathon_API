@@ -10,6 +10,8 @@ class Category extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     /**
      * The table associated with the model.
      *
@@ -22,17 +24,14 @@ class Category extends Model
      */
     protected $primaryKey = 'category_id';
 
-
     /**
      * The attributes that are mass assignable.
      *
      * @var string[]
      */
     protected $fillable = [
-        'label'
+        'label',
     ];
-
-    public $timestamps = false;
 
     /**
      * Get the establishment associated with the category
@@ -41,15 +40,14 @@ class Category extends Model
     {
         return $this->belongsToMany(
             Establishment::class,
-            "categories_establishments",
-            "category_id",
-            "establishment_id"
+            'categories_establishments',
+            'category_id',
+            'establishment_id'
         );
     }
 
     public function events(): BelongsToMany
     {
-        return $this->belongsToMany(Event::class, "categories_establishments", "category_id", "establishment_id");
+        return $this->belongsToMany(Event::class, 'categories_establishments', 'category_id', 'establishment_id');
     }
-
 }

@@ -19,13 +19,11 @@ class UserSeeder extends Seeder
      */
     public function run()
     {
-
         $barathonienId = Barathonien::all('barathonien_id')->first();
         $administratorId = Administrator::all('administrator_id')->first();
         $ownerId = Owner::all('owner_id')->first();
         $employeeId = Employee::all('employee_id')->first();
-        $avatar= "https://picsum.photos/180";
-
+        $avatar = 'https://picsum.photos/180';
 
         $datas = [
             [
@@ -37,7 +35,7 @@ class UserSeeder extends Seeder
                 'owner_id' => null,
                 'barathonien_id' => $barathonienId->barathonien_id,
                 'administrator_id' => null,
-                'employee_id' => null
+                'employee_id' => null,
             ],
             [
                 'last_name' => 'Musk',
@@ -48,7 +46,7 @@ class UserSeeder extends Seeder
                 'owner_id' => null,
                 'barathonien_id' => null,
                 'administrator_id' => $administratorId->administrator_id,
-                'employee_id' => null
+                'employee_id' => null,
             ],
             [
                 'last_name' => 'Rothschild',
@@ -59,7 +57,7 @@ class UserSeeder extends Seeder
                 'owner_id' => $ownerId->owner_id,
                 'barathonien_id' => null,
                 'administrator_id' => null,
-                'employee_id' => null
+                'employee_id' => null,
             ],
             [
                 'last_name' => 'Doe',
@@ -70,7 +68,7 @@ class UserSeeder extends Seeder
                 'owner_id' => null,
                 'barathonien_id' => null,
                 'administrator_id' => null,
-                'employee_id' => $employeeId->employee_id
+                'employee_id' => $employeeId->employee_id,
             ],
             [
                 'last_name' => 'Smith',
@@ -81,7 +79,7 @@ class UserSeeder extends Seeder
                 'owner_id' => null,
                 'barathonien_id' => null,
                 'administrator_id' => null,
-                'employee_id' => 2
+                'employee_id' => 2,
             ],
 
         ];

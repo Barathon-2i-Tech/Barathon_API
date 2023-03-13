@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\Booking;
+use App\Traits\HttpResponses;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use App\Traits\HttpResponses;
 
 class BookingController extends Controller
 {
@@ -33,9 +33,6 @@ class BookingController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
     public function store(Request $request): JsonResponse
     {
@@ -53,13 +50,12 @@ class BookingController extends Controller
 
         return $this->success([
             'booking' => $book,
-        ], "Booking created");
+        ], 'Booking created');
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Booking  $booking
      * @return \Illuminate\Http\Response
      */
     public function show(Booking $booking)
@@ -70,7 +66,6 @@ class BookingController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Booking  $booking
      * @return \Illuminate\Http\Response
      */
     public function edit(Booking $booking)
@@ -81,8 +76,6 @@ class BookingController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param  \App\Models\Booking  $booking
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Booking $booking)
@@ -92,20 +85,17 @@ class BookingController extends Controller
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @param  $id
-     * @return JsonResponse
      */
     public function destroy($id): JsonResponse
     {
         $book = Booking::find($id);
 
         if ($book == null) {
-            return $this->error("error", "Booking doesn't exist", 500);
-        }else {
+            return $this->error('error', "Booking doesn't exist", 500);
+        } else {
             $book->delete();
-            return $this->success([], "Booking deleted");
-        }
 
+            return $this->success([], 'Booking deleted');
+        }
     }
 }

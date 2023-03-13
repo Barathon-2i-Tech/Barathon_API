@@ -2,9 +2,7 @@
 
 namespace App\Models;
 
-
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
-
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -29,7 +27,6 @@ class Establishment extends Model
     protected $primaryKey = 'establishment_id';
 
     /**
-
      * The attributes that should be cast.
      *
      * @var array
@@ -39,7 +36,6 @@ class Establishment extends Model
     ];
 
     /**
-
      * The attributes that are mass assignable.
      *
      * @var string[]
@@ -56,7 +52,7 @@ class Establishment extends Model
         'checked',
         'deleted_at',
         'owner_id',
-        'status_id'
+        'status_id',
     ];
 
     /**
@@ -64,7 +60,7 @@ class Establishment extends Model
      */
     public function owner(): HasMany
     {
-        return $this->hasMany(Owner::class, "owner_id");
+        return $this->hasMany(Owner::class, 'owner_id');
     }
 
     /**
@@ -72,7 +68,7 @@ class Establishment extends Model
      */
     public function employees(): BelongsToMany
     {
-        return $this->belongsToMany(Employee::class, "establishments_employees", "establishment_id", "employee_id");
+        return $this->belongsToMany(Employee::class, 'establishments_employees', 'establishment_id', 'employee_id');
     }
 
     /**
@@ -80,7 +76,7 @@ class Establishment extends Model
      */
     public function events(): HasMany
     {
-        return $this->hasMany(Event::class, "event_id",);
+        return $this->hasMany(Event::class, 'event_id');
     }
 
     /**
@@ -88,7 +84,7 @@ class Establishment extends Model
      */
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, "categories_establishments", "establishment_id", "category_id");
+        return $this->belongsToMany(Category::class, 'categories_establishments', 'establishment_id', 'category_id');
     }
 
     /**
@@ -96,13 +92,11 @@ class Establishment extends Model
      */
     public function establishmentsStatus(): BelongsTo
     {
-        return $this->belongsTo(Status::class, "status_id");
+        return $this->belongsTo(Status::class, 'status_id');
     }
 
     /**
      * Get the Address associated with the Establishment
-     *
-     * @return HasOne
      */
     public function Address(): HasOne
     {

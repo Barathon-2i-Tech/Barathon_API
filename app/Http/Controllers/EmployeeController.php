@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Employee;
 use App\Models\Establishment;
-use App\Models\Establishment_Employee;
 use App\Models\User;
 use App\Traits\HttpResponses;
 use Exception;
@@ -21,51 +20,14 @@ class EmployeeController extends Controller
 {
     use HttpResponses;
 
-    private const NO_EMPLOYEE_FOUND = "No employee found";
-    private const USER_NOT_FOUND = "User not found";
+    private const NO_EMPLOYEE_FOUND = 'No employee found';
+    private const USER_NOT_FOUND = 'User not found';
     private const STRINGVALIDATION = 'required|string|max:255';
 
     /**
-     * Display a listing of all employee.
-     *
-     * @return JsonResponse
-     */
-    public function getEmployeeList(): JsonResponse
-    {
-        try {
-            $employees = DB::table('users')
-                ->join('employees', 'users.employee_id', '=', 'employees.employee_id')
-                ->join('establishments_employees', 'employees.employee_id', '=', 'establishments_employees.employee_id')
-                ->join(
-                    'establishments',
-                    'establishments_employees.establishment_id',
-                    '=',
-                    'establishments.establishment_id'
-                )
-                ->select('users.*', 'employees.*', 'establishments.trade_name as establishment_name')
-                ->get();
-
-            if ($employees->isEmpty()) {
-                return $this->error(null, self::NO_EMPLOYEE_FOUND, 404);
-            }
-
-            return $this->success($employees, "Employees List");
-
-        } catch (Exception $error) {
-            Log::error($error);
-            return $this->error(null, $error->getMessage(), 500);
-        }
-    }
-
-
-    /**
      * Store a newly created employee in storage.
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
-    public
-    function store(Request $request): JsonResponse
+    public function store(Request $request): JsonResponse
     {
         try {
             $request->validate([
@@ -82,7 +44,7 @@ class EmployeeController extends Controller
                 'last_name' => $request->last_name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'avatar' => "https://picsum.photos/180",
+                'avatar' => 'https://picsum.photos/180',
             ]);
 
             //create the employee
@@ -94,8 +56,8 @@ class EmployeeController extends Controller
 
             //check if the establishment exists
             $establishment = Establishment::find($request->establishment_id);
-            if (!$establishment) {
-                return $this->error(null, "Establishment not found", 404);
+            if (! $establishment) {
+                return $this->error(null, 'Establishment not found', 404);
             }
 
             // attach the employee to the establishment with the belonging table
@@ -106,23 +68,19 @@ class EmployeeController extends Controller
 
             return $this->success([
                 'userLogged' => $user,
-                'token' => $user->createToken('API Token')->plainTextToken
-            ], "Employee Created", 201);
-
+                'token' => $user->createToken('API Token')->plainTextToken,
+            ], 'Employee Created', 201);
         } catch (Exception $error) {
             Log::error($error);
+
             return $this->error(null, $error->getMessage(), 500);
         }
     }
 
     /**
      * Display the specified employee.
-     *
-     * @param  $userId
-     * @return JsonResponse
      */
-    public
-    function show($userId): JsonResponse
+    public function show($userId): JsonResponse
     {
         try {
             $employee = DB::table('establishments_employees')
@@ -142,24 +100,21 @@ class EmployeeController extends Controller
                 return $this->error(null, self::NO_EMPLOYEE_FOUND, 404);
             }
 
-            return $this->success($employee, "Employee");
-
+            return $this->success($employee, 'Employee');
         } catch (Exception $error) {
             Log::error($error);
+
             return $this->error(null, $error->getMessage(), 500);
         }
     }
 
-
     /**
      * Update the specified employee in storage.
      *
-     * @param Request $request
-     * @param Employee $employee
+     * @param  Employee  $employee
      * @return Response
      */
-    public
-    function update(Request $request, $userId): JsonResponse
+    public function update(Request $request, $userId): JsonResponse
     {
         try {
             // Get the user given in parameter
@@ -197,27 +152,23 @@ class EmployeeController extends Controller
 
             // Check if the user data has changed
             if (empty($userChanges)) {
-                return $this->success($user, "Employee not updated");
+                return $this->success($user, 'Employee not updated');
             }
-            return $this->success($user, "Employee Updated", 200);
 
+            return $this->success($user, 'Employee Updated', 200);
         } catch (Exception $error) {
             Log::error($error);
+
             return $this->error(null, $error->getMessage(), 500);
         }
-
     }
 
     /**
      * Deleting the employee ( softDelete )
-     *
-     * @param $userId
-     * @return JsonResponse
      */
     public function destroy($userId): JsonResponse
     {
         try {
-
             //check if the user exist
             $user = User::withTrashed()->where('user_id', $userId)->first();
             if ($user === null) {
@@ -229,23 +180,51 @@ class EmployeeController extends Controller
             }
             //check if the user is already deleted
             if ($user->deleted_at !== null) {
-                return $this->error(null, "Employee already deleted", 404);
+                return $this->error(null, 'Employee already deleted', 404);
             }
             //delete the user
             User::where('user_id', $userId)->delete();
-            return $this->success(null, "Employee Deleted");
 
+            return $this->success(null, 'Employee Deleted');
         } catch (Exception $error) {
             Log::error($error);
+
+            return $this->error(null, $error->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Display a listing of all employee.
+     */
+    public function getEmployeeList(): JsonResponse
+    {
+        try {
+            $employees = DB::table('users')
+                ->join('employees', 'users.employee_id', '=', 'employees.employee_id')
+                ->join('establishments_employees', 'employees.employee_id', '=', 'establishments_employees.employee_id')
+                ->join(
+                    'establishments',
+                    'establishments_employees.establishment_id',
+                    '=',
+                    'establishments.establishment_id'
+                )
+                ->select('users.*', 'employees.*', 'establishments.trade_name as establishment_name')
+                ->get();
+
+            if ($employees->isEmpty()) {
+                return $this->error(null, self::NO_EMPLOYEE_FOUND, 404);
+            }
+
+            return $this->success($employees, 'Employees List');
+        } catch (Exception $error) {
+            Log::error($error);
+
             return $this->error(null, $error->getMessage(), 500);
         }
     }
 
     /**
      * Restoring the employee
-     *
-     * @param $userId
-     * @return JsonResponse
      */
     public function restore($userId): JsonResponse
     {
@@ -261,13 +240,14 @@ class EmployeeController extends Controller
             }
             //check if the user is already restored
             if ($user->deleted_at === null) {
-                return $this->error(null, "Employee already restored", 404);
+                return $this->error(null, 'Employee already restored', 404);
             }
             User::withTrashed()->where('user_id', $userId)->restore();
-            return $this->success(null, "Employee Restored");
 
+            return $this->success(null, 'Employee Restored');
         } catch (Exception $error) {
             Log::error($error);
+
             return $this->error(null, $error->getMessage(), 500);
         }
     }

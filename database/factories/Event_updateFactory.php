@@ -25,15 +25,15 @@ class Event_updateFactory extends Factory
         return [
             'event_id' => $event->event_id,
             'event_name' => $event->event_name,
-            'description'=> $event->description,
-            'start_event'=> $event->start_event,
-            'end_event'=> $event->end_event,
-            'poster'=>$event->poster,
-            'price'=>$event->price,
-            'capacity'=>$event->capacity,
-            'establishment_id'=>$event->establishment_id,
-            'status_id'=> $eventPending,
-            'user_id'=> $event->user_id,
+            'description' => $event->description,
+            'start_event' => $event->start_event,
+            'end_event' => $event->end_event,
+            'poster' => $event->poster,
+            'price' => $event->price,
+            'capacity' => $event->capacity,
+            'establishment_id' => $event->establishment_id,
+            'status_id' => $eventPending,
+            'user_id' => $event->user_id,
         ];
     }
 }

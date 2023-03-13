@@ -11,6 +11,8 @@ class Barathonien extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     /**
      * The table associated with the model.
      *
@@ -33,20 +35,16 @@ class Barathonien extends Model
         'address_id',
     ];
 
-    public $timestamps = false;
-
     /**
      * Get the user associated with the profile
      */
     public function users(): HasMany
     {
-        return $this->hasMany(User::class, "user_id");
+        return $this->hasMany(User::class, 'user_id');
     }
 
     /**
      * Get the Address associated with the Barathonien
-     *
-     * @return HasOne
      */
     public function address(): HasOne
     {

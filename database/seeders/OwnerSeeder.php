@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Owner;
 use App\Models\Status;
-
 use Illuminate\Database\Seeder;
 
 class OwnerSeeder extends Seeder
@@ -25,7 +24,7 @@ class OwnerSeeder extends Seeder
                 'status_id' => $ownerValid->status_id,
                 'company_name' => fake()->company(),
                 'phone' => '0606060606',
-            ]
+            ],
         ];
         Owner::create($datas[0]);
     }

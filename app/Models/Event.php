@@ -41,7 +41,7 @@ class Event extends Model
         'status_id',
         'user_id',
         'deleted_at',
-        'event_update_id'
+        'event_update_id',
     ];
 
     /**
@@ -49,7 +49,7 @@ class Event extends Model
      */
     public function establishments(): BelongsTo
     {
-        return $this->belongsTo(Establishment::class, "establishment_id");
+        return $this->belongsTo(Establishment::class, 'establishment_id');
     }
 
     /**
@@ -57,7 +57,7 @@ class Event extends Model
      */
     public function status(): BelongsTo
     {
-        return $this->belongsTo(Status::class, "status_id");
+        return $this->belongsTo(Status::class, 'status_id');
     }
 
     /**
@@ -65,7 +65,7 @@ class Event extends Model
      */
     public function users(): BelongsTo
     {
-        return $this->belongsTo(User::class, "user_id");
+        return $this->belongsTo(User::class, 'user_id');
     }
 
     /**
@@ -73,7 +73,7 @@ class Event extends Model
      */
     public function eventParent(): BelongsTo
     {
-        return $this->belongsTo(Event::class, "event_update_id");
+        return $this->belongsTo(Event::class, 'event_update_id');
     }
 
     /**
@@ -81,23 +81,22 @@ class Event extends Model
      */
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, "category_event", "event_id", "category_id");
+        return $this->belongsToMany(Category::class, 'category_event', 'event_id', 'category_id');
     }
+
     /*
      * Get the event associated with the event update
      */
     public function eventChild(): HasMany
     {
-        return $this->hasMany(Event::class, "event_id");
+        return $this->hasMany(Event::class, 'event_id');
     }
-
-
 
     /**
      * Get the booking associated with the event
      */
     public function bookings(): BelongsToMany
     {
-        return $this->belongsToMany(Booking::class, "bookings", "event_id", "user_id");
+        return $this->belongsToMany(Booking::class, 'bookings', 'event_id', 'user_id');
     }
 }

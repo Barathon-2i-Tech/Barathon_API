@@ -23,8 +23,8 @@ class Establishment_EmployeeFactory extends Factory
         $employee = User::where('employee_id', '!=', null)->first();
 
         return [
-            "establishment_id" => $establishment->establishment_id,
-            "employee_id" => $employee->employee_id
+            'establishment_id' => $establishment->establishment_id,
+            'employee_id' => $employee->employee_id,
         ];
     }
 }

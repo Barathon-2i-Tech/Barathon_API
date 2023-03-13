@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Owner;
 use App\Models\User;
 use App\Traits\HttpResponses;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -13,56 +14,22 @@ use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
-use Exception;
-
 
 class OwnerController extends Controller
 {
     use HttpResponses;
 
     private const STRINGVALIDATION = 'required|string|max:255';
-    private const OWNERNOTFOUND = "Owner not found";
-    private const USERNOTFOUND = "User not found";
+    private const OWNERNOTFOUND = 'Owner not found';
+    private const USERNOTFOUND = 'User not found';
 
-    private const PHONEVALIDATION = ['regex:/^([0-9\s\-\+\(\)]*)$/','min:10'];
-
-
-    /**
-     * Display a listing of all owners
-     *
-     * @return JsonResponse
-     */
-    public function getOwnerList(): JsonResponse
-    {
-        try {
-            $owners = DB::table('users')
-                ->join('owners', 'users.owner_id', '=', 'owners.owner_id')
-                ->join('status', 'owners.status_id', '=', 'status.status_id')
-                ->select('users.*', 'owners.*', 'status.status_id', 'status.comment')
-                ->get();
-
-            if ($owners->isEmpty()) {
-                return $this->error(null, "No owners found", 404);
-            }
-
-            return $this->success($owners, "Owner List");
-
-        } catch (Exception $error) {
-            Log::error($error);
-            return $this->error(null, $error->getMessage(), 500);
-        }
-    }
-
+    private const PHONEVALIDATION = ['regex:/^([0-9\s\-\+\(\)]*)$/', 'min:10'];
 
     /**
      * Store a newly created owner in storage.
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
     public function store(Request $request): JsonResponse
     {
-
         $request->validate([
             'first_name' => self::STRINGVALIDATION,
             'last_name' => self::STRINGVALIDATION,
@@ -95,7 +62,7 @@ class OwnerController extends Controller
         $kbisFile = $request->file('kbis');
 
         // Check if the file is valid
-        if (!$kbisFile->isValid()) {
+        if (! $kbisFile->isValid()) {
             return $this->error(null, 'Le fichier KBIS n\'est pas valide.', 500);
         }
 
@@ -113,7 +80,7 @@ class OwnerController extends Controller
             'last_name' => $request->input('last_name'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
-            'avatar' => "https://picsum.photos/180",
+            'avatar' => 'https://picsum.photos/180',
         ]);
 
         $owner = Owner::create([
@@ -129,17 +96,14 @@ class OwnerController extends Controller
 
         return $this->success([
             'userLogged' => $user,
-            'token' => $user->createToken('API Token')->plainTextToken
-        ], "Owner Created");
+            'token' => $user->createToken('API Token')->plainTextToken,
+        ], 'Owner Created');
     }
 
     /**
      * Display the specified owner.
-     *
-     * @param int $userId
-     * @return JsonResponse
      */
-    public function show( int $userId): JsonResponse
+    public function show(int $userId): JsonResponse
     {
         try {
             $owner = DB::table('users')
@@ -152,20 +116,15 @@ class OwnerController extends Controller
             if ($owner->isEmpty()) {
                 return $this->error(null, self::OWNERNOTFOUND, 404);
             }
-            return $this->success($owner, "Owner Details");
 
+            return $this->success($owner, 'Owner Details');
         } catch (Exception $error) {
             return $this->error(null, $error->getMessage(), 500);
         }
     }
 
-
     /**
      * Update the specified owner in storage.
-     *
-     * @param Request $request
-     * @param int $userId
-     * @return JsonResponse
      */
     public function update(Request $request, int $userId): JsonResponse
     {
@@ -179,7 +138,7 @@ class OwnerController extends Controller
 
             // check if the user is an owner
             if ($user->owner_id === null) {
-                return $this->error(null, "Owner not found", 404);
+                return $this->error(null, 'Owner not found', 404);
             }
 
             // validate the request
@@ -217,10 +176,10 @@ class OwnerController extends Controller
             $ownerChanges = $owner->getChanges();
 
             if (empty($userChanges) && empty($ownerChanges)) {
-                return $this->success(null, "Owner not updated");
+                return $this->success(null, 'Owner not updated');
             }
-            return $this->success([$user, $owner], "Owner Updated");
 
+            return $this->success([$user, $owner], 'Owner Updated');
         } catch (Exception $error) {
             return $this->error(null, $error->getMessage(), 500);
         }
@@ -228,14 +187,10 @@ class OwnerController extends Controller
 
     /**
      * Deleting the owner ( softDelete )
-     *
-     * @param $userId
-     * @return JsonResponse
      */
     public function destroy($userId): JsonResponse
     {
         try {
-
             //check if the user exist
             $user = User::withTrashed()->where('user_id', $userId)->first();
             if ($user === null) {
@@ -247,23 +202,45 @@ class OwnerController extends Controller
             }
             //check if the user is already deleted
             if ($user->deleted_at !== null) {
-                return $this->error(null, "Owner already deleted", 404);
+                return $this->error(null, 'Owner already deleted', 404);
             }
             //delete the user
             User::where('user_id', $userId)->delete();
-            return $this->success(null, "Owner Deleted");
 
+            return $this->success(null, 'Owner Deleted');
         } catch (Exception $error) {
             Log::error($error);
+
+            return $this->error(null, $error->getMessage(), 500);
+        }
+    }
+
+    /**
+     * Display a listing of all owners
+     */
+    public function getOwnerList(): JsonResponse
+    {
+        try {
+            $owners = DB::table('users')
+                ->join('owners', 'users.owner_id', '=', 'owners.owner_id')
+                ->join('status', 'owners.status_id', '=', 'status.status_id')
+                ->select('users.*', 'owners.*', 'status.status_id', 'status.comment')
+                ->get();
+
+            if ($owners->isEmpty()) {
+                return $this->error(null, 'No owners found', 404);
+            }
+
+            return $this->success($owners, 'Owner List');
+        } catch (Exception $error) {
+            Log::error($error);
+
             return $this->error(null, $error->getMessage(), 500);
         }
     }
 
     /**
      * Restoring the owner
-     *
-     * @param $userId
-     * @return JsonResponse
      */
     public function restore($userId): JsonResponse
     {
@@ -279,13 +256,14 @@ class OwnerController extends Controller
             }
             //check if the user is already restored
             if ($user->deleted_at === null) {
-                return $this->error(null, "Owner already restored", 404);
+                return $this->error(null, 'Owner already restored', 404);
             }
             User::withTrashed()->where('user_id', $userId)->restore();
-            return $this->success(null, "Owner Restored");
 
+            return $this->success(null, 'Owner Restored');
         } catch (Exception $error) {
             Log::error($error);
+
             return $this->error(null, $error->getMessage(), 500);
         }
     }

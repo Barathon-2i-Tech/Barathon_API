@@ -22,7 +22,6 @@ class Category_Establishment extends Model
      */
     protected $primaryKey = 'category_establishment_id';
 
-
     /**
      * The attributes that are mass assignable.
      *
@@ -30,7 +29,7 @@ class Category_Establishment extends Model
      */
     protected $fillable = [
         'category_id',
-        'establishment_id'
+        'establishment_id',
     ];
 
     protected $hidden = ['pivot'];
@@ -44,5 +43,4 @@ class Category_Establishment extends Model
     {
         return $this->belongsTo(Establishment::class, 'establishment_id');
     }
-
 }

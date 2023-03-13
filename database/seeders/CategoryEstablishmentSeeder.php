@@ -2,11 +2,9 @@
 
 namespace Database\Seeders;
 
-
 use App\Models\Category;
 use App\Models\Category_Establishment;
 use App\Models\Establishment;
-
 use Illuminate\Database\Seeder;
 
 class CategoryEstablishmentSeeder extends Seeder
@@ -25,9 +23,8 @@ class CategoryEstablishmentSeeder extends Seeder
             [
                 'category_id' => $category->category_id,
                 'establishment_id' => $establishment->establishment_id,
-            ]
+            ],
         ];
         Category_Establishment::create($datas[0]);
-
     }
 }

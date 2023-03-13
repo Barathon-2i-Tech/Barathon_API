@@ -46,7 +46,7 @@ return [
     |
     */
 
-    'expiration' => 2880, #expire after 48 hours
+    'expiration' => 2880, //expire after 48 hours
 
     /*
     |--------------------------------------------------------------------------

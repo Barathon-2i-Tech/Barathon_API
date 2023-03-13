@@ -22,7 +22,6 @@ class Establishment_Employee extends Model
      */
     protected $primaryKey = 'establishment_employee_id';
 
-
     /**
      * The attributes that are mass assignable.
      *
@@ -30,7 +29,7 @@ class Establishment_Employee extends Model
      */
     protected $fillable = [
         'establishment_id',
-        'employee_id'
+        'employee_id',
     ];
 
     protected $hidden = ['pivot'];
@@ -44,5 +43,4 @@ class Establishment_Employee extends Model
     {
         return $this->belongsTo(Employee::class, 'employee_id');
     }
-
 }
