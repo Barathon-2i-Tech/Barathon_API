@@ -42,24 +42,42 @@ class BarathonienController extends Controller
                 'address' => 'min:5|required|string|max:255',
                 'postal_code' => 'required|string|size:5',
                 'city' => self::STRINGVALIDATION,
+            ], [
+                'first_name.required' => 'Le prénom est obligatoire.',
+                'last_name.required' => 'Le nom est obligatoire.',
+                'email.required' => "L'adresse e-mail est obligatoire.",
+                'email.email' => "L'adresse e-mail n'est pas valide.",
+                'email.unique' => "L'adresse e-mail est déjà utilisée.",
+                'password.required' => 'Le mot de passe est obligatoire.',
+                'password.confirmed' => 'Les mots de passe ne correspondent pas.',
+                'birthday.before' => 'Vous devez avoir plus de 18 ans pour vous inscrire',
+                'birthday.required' => 'La date de naissance est obligatoire.',
+                'birthday.date' => 'La date de naissance n\'est pas valide.',
+                'address.required' => 'L\'adresse est obligatoire.',
+                'address.min' => 'L\'adresse doit faire au moins 5 caractères.',
+                'address.max' => 'L\'adresse doit faire au maximum 255 caractères.',
+                'postal_code.required' => 'Le code postal est obligatoire.',
+                'postal_code.size' => 'Le code postal doit faire 5 caractères.',
+                'city.required' => 'La ville est obligatoire.',
+                'city.max' => 'La ville doit faire au maximum 255 caractères.',
             ]);
 
             $user = User::create([
-                'first_name' => $request->first_name,
-                'last_name' => $request->last_name,
-                'email' => $request->email,
-                'password' => Hash::make($request->password),
+                'first_name' => $request->input('first_name'),
+                'last_name' => $request->input('last_name'),
+                'email' => $request->input('email'),
+                'password' => Hash::make($request->input('password')),
                 'avatar' => 'https://picsum.photos/180',
             ]);
 
             $address = Address::create([
-                'address' => $request->address,
-                'postal_code' => $request->postal_code,
-                'city' => $request->city,
+                'address' => $request->input('address'),
+                'postal_code' => $request->input('postal_code'),
+                'city' => $request->input('city'),
             ]);
 
             $barathonien = Barathonien::create([
-                'birthday' => $request->birthday,
+                'birthday' => $request->input('birthday'),
                 'address_id' => $address->address_id,
             ]);
 
@@ -71,8 +89,6 @@ class BarathonienController extends Controller
                 'token' => $user->createToken('API Token')->plainTextToken,
             ], 'Barathonien Created', 201);
         } catch (Exception $error) {
-            Log::error($error);
-
             return $this->error(null, $error->getMessage(), 422);
         }
     }
@@ -80,7 +96,7 @@ class BarathonienController extends Controller
     /**
      * Display the specified barathonien.
      */
-    public function show($userId): JsonResponse
+    public function show(int $userId): JsonResponse
     {
         try {
             $barathonien = DB::table('users')
@@ -96,8 +112,6 @@ class BarathonienController extends Controller
 
             return $this->success($barathonien, 'Barathonien');
         } catch (Exception $error) {
-            Log::error($error);
-
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -105,7 +119,7 @@ class BarathonienController extends Controller
     /**
      * Update the specified barathonien in database.
      */
-    public function update(Request $request, $userId): JsonResponse
+    public function update(Request $request, int $userId): JsonResponse
     {
         try {
             // Get the user given in parameter
@@ -131,38 +145,33 @@ class BarathonienController extends Controller
                 'address' => 'min:5|required|string|max:255',
                 'postal_code' => 'required|string|size:5',
                 'city' => self::STRINGVALIDATION,
+            ], [
+                'first_name.required' => 'Le prénom est obligatoire.',
+                'last_name.required' => 'Le nom est obligatoire.',
+                'email.required' => "L'adresse e-mail est obligatoire.",
+                'email.email' => "L'adresse e-mail n'est pas valide.",
+                'email.unique' => "L'adresse e-mail est déjà utilisée.",
+                'address.required' => 'L\'adresse est obligatoire.',
+                'address.min' => 'L\'adresse doit faire au moins 5 caractères.',
+                'address.max' => 'L\'adresse doit faire au maximum 255 caractères.',
+                'postal_code.required' => 'Le code postal est obligatoire.',
+                'postal_code.size' => 'Le code postal doit faire 5 caractères.',
+                'city.required' => 'La ville est obligatoire.',
+                'city.max' => 'La ville doit faire au maximum 255 caractères.',
             ]);
 
-            $userData = $request->only(['first_name', 'last_name', 'email']);
-
-            // Check if the data given in parameter are different from the data in database
-            foreach ($userData as $field => $value) {
-                if ($user->{$field} !== $value) {
-                    $user->{$field} = $value;
-                }
-            }
+            $user->fill($request->only(['first_name', 'last_name', 'email']));
             $user->save();
 
-            // Get the barathonien profile linked to the user
             $barathonien = Barathonien::where('barathonien_id', $user->barathonien_id)->first();
 
-            // Get the address linked to the barathonien profile
             $address = Address::where('address_id', $barathonien->address_id)->first();
-
-            $dataAddress = $request->only(['address', 'postal_code', 'city']);
-
-            // Check if the data given in parameter are different from the data in database
-            foreach ($dataAddress as $field => $value) {
-                if ($address->{$field} !== $value) {
-                    $address->{$field} = $value;
-                }
-            }
+            $address->fill($request->only(['address', 'postal_code', 'city']));
             $address->save();
 
             $userChanges = $user->getChanges();
             $addressChanges = $address->getChanges();
 
-            // Check if the user data has changed
             if (empty($userChanges) && empty($addressChanges)) {
                 return $this->success([$user, $address], 'Barathonien not updated');
             }
@@ -170,8 +179,6 @@ class BarathonienController extends Controller
             // Return the updated user and address
             return $this->success([$user, $address], 'Barathonien updated');
         } catch (Exception $error) {
-            Log::error($error);
-
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -179,29 +186,53 @@ class BarathonienController extends Controller
     /**
      * Deleting the barathonien ( softDelete )
      */
-    public function destroy($userId): JsonResponse
+    public function destroy(int $userId): JsonResponse
     {
         try {
-            //check if the user exist
-            $user = User::withTrashed()->where('user_id', $userId)->first();
-            if ($user === null) {
+            $user = User::withTrashed()
+                ->where('user_id', $userId)
+                ->whereNotNull('barathonien_id')
+                ->first();
+
+            if (!$user) {
                 return $this->error(null, self::USERNOTFOUND, 404);
             }
-            //check if the user is a barathonien
-            if ($user->barathonien_id === null) {
-                return $this->error(null, self::BARATHONIENNOTFOUND, 404);
-            }
-            //check if the user is already deleted
-            if ($user->deleted_at !== null) {
+
+            if ($user->deleted_at) {
                 return $this->error(null, 'Barathonien already deleted', 404);
             }
-            //delete the user
-            User::where('user_id', $userId)->delete();
+
+            $user->delete();
 
             return $this->success(null, 'Barathonien Deleted');
         } catch (Exception $error) {
-            Log::error($error);
+            return $this->error(null, $error->getMessage(), 500);
+        }
+    }
 
+    /**
+     * Restoring the barathonien
+     */
+    public function restore(int $userId): JsonResponse
+    {
+        try {
+            $user = User::withTrashed()
+                ->where('user_id', $userId)
+                ->whereNotNull('barathonien_id')
+                ->first();
+
+            if (!$user) {
+                return $this->error(null, self::USERNOTFOUND, 404);
+            }
+
+            if (!$user->deleted_at) {
+                return $this->error(null, 'Barathonien already restored', 404);
+            }
+
+            $user->restore();
+
+            return $this->success(null, 'Barathonien Restored');
+        } catch (Exception $error) {
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -224,37 +255,6 @@ class BarathonienController extends Controller
 
             return $this->success($barathoniens, 'Barathonien List');
         } catch (Exception $error) {
-            Log::error($error);
-
-            return $this->error(null, $error->getMessage(), 500);
-        }
-    }
-
-    /**
-     * Restoring the barathonien
-     */
-    public function restore($userId): JsonResponse
-    {
-        try {
-            //check if the user exist
-            $user = User::withTrashed()->where('user_id', $userId)->first();
-            if ($user === null) {
-                return $this->error(null, self::USERNOTFOUND, 404);
-            }
-            //check if the user is a barathonien
-            if ($user->barathonien_id === null) {
-                return $this->error(null, self::BARATHONIENNOTFOUND, 404);
-            }
-            //check if the user is already restored
-            if ($user->deleted_at === null) {
-                return $this->error(null, 'Barathonien already restored', 404);
-            }
-            User::withTrashed()->where('user_id', $userId)->restore();
-
-            return $this->success(null, 'Barathonien Restored');
-        } catch (Exception $error) {
-            Log::error($error);
-
             return $this->error(null, $error->getMessage(), 500);
         }
     }
