@@ -1,17 +1,19 @@
 <?php
 
-use App\Http\Controllers\AdministratorController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiAuthController;
 use App\Http\Controllers\BarathonienController;
-use App\Http\Controllers\BookingController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\EventController;
-use App\Http\Controllers\InseeController;
 use App\Http\Controllers\OwnerController;
+use App\Http\Controllers\AdministratorController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\CategoryEstablishmentController;
 use App\Http\Controllers\StatusController;
-use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\InseeController;
+use App\Http\Controllers\EstablishmentController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -22,6 +24,7 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
 
 /*
 |--------------------------------------------------------------------------
@@ -87,6 +90,21 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     | Pro Routes
     |--------------------------------------------------------------------------
     */
+    Route::post('/pro/category/create', [CategoryController::class, 'store'])->name('categories.store');
+
+    Route::get(
+        '/categories/establishment/{establishmentId}',
+        [CategoryEstablishmentController::class, 'getAllCategoriesByEstablishmentId']
+    )->name('categories.establishment');
+    Route::get(
+        '/categories/establishment',
+        [CategoryController::class, 'getAllEstablishmentCategories']
+    )->name('categories.establishment.all');
+    Route::get(
+        '/categories/event',
+        [CategoryController::class, 'getAllEventCategories']
+    )->name('categories.event.all');
+
 
     /*
     |--------------------------------------------------------------------------
@@ -144,6 +162,25 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         'administrator/restore/{user_id}',
         [AdministratorController::class, 'restore']
     )->name('administrator.restore');
+
+    Route::get(
+        '/establishments/list',
+        [EstablishmentController::class, 'getAllEstablishments']
+    )->name('admin.establishment.list');
+
+    /***** Establishment validation  ******/
+    Route::get(
+        'admin/establishment-to-validate',
+        [EstablishmentController::class, 'getEstablishmentToValidate']
+    )->name('admin.establishment-to-validate');
+
+    Route::get('establishment-status', [StatusController::class, 'establishmentStatus'])->name('establishment-status');
+
+    Route::put(
+        'establishment/{establishment_id}/validation/{status_code}',
+        [EstablishmentController::class, 'validateEstablishment']
+    )->name('establishment.validation');
+
 
     Route::get('check-siren/{siren}', [InseeController::class, 'getSiren'])->name('check-siren');
     Route::get('check-siret/{siret}', [InseeController::class, 'getSiret'])->name('check-siret');

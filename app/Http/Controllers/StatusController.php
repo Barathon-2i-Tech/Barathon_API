@@ -6,71 +6,26 @@ use App\Models\Status;
 use App\Traits\HttpResponses;
 use Exception;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class StatusController extends Controller
 {
     use HttpResponses;
 
     /**
-     * Show the form for creating a new resource.
+     * Display a listing of all status about establishments.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function create()
+    public function establishmentStatus()
     {
-        //
-    }
+        try {
+            $status = Status::where('comment->code', 'LIKE', 'ESTABL%')
+                ->get();
+            return $this->success($status, "Status List");
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Status $status)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Status $status)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Status $status)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Status $status)
-    {
-        //
+        } catch (Exception $error) {
+            return $this->error(null, $error->getMessage(), 500);
+        }
     }
 
     /**
@@ -86,8 +41,6 @@ class StatusController extends Controller
 
             return $this->success($status, 'Status List');
         } catch (Exception $error) {
-            Log::error($error);
-
             return $this->error(null, $error->getMessage(), 500);
         }
     }

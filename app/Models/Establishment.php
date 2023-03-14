@@ -9,10 +9,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Establishment extends Model
 {
-    use HasFactory;
+    use HasFactory, softDeletes;
 
     /**
      * The table associated with the model.
@@ -47,18 +48,17 @@ class Establishment extends Model
         'email',
         'website',
         'opening',
-        'checked',
-        'deleted_at',
         'owner_id',
         'status_id',
+        'deleted_at',
     ];
 
     /**
      * Get the owner associated with the establishment
      */
-    public function owner(): HasMany
+    public function owner(): BelongsTo
     {
-        return $this->hasMany(Owner::class, 'owner_id');
+        return $this->belongsTo(Owner::class, "owner_id");
     }
 
     /**
@@ -88,7 +88,7 @@ class Establishment extends Model
     /**
      * Get the status associated with the establishment
      */
-    public function establishmentsStatus(): BelongsTo
+    public function status(): BelongsTo
     {
         return $this->belongsTo(Status::class, 'status_id');
     }
@@ -96,8 +96,8 @@ class Establishment extends Model
     /**
      * Get the Address associated with the Establishment
      */
-    public function Address(): HasOne
+    public function address(): HasOne
     {
-        return $this->hasOne(Address::class);
+        return $this->hasOne(Address::class, 'address_id');
     }
 }
