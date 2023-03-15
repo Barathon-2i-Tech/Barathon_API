@@ -150,18 +150,25 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::delete('employee/{user_id}', [EmployeeController::class, 'destroy'])->name('employee.delete');
     Route::get('employee/restore/{user_id}', [EmployeeController::class, 'restore'])->name('employee.restore');
 
-
     /*
     |--------------------------------------------------------------------------
-    | Administration Routes
+    | establishment Routes
     |--------------------------------------------------------------------------
+    */
+    Route::delete('/pro/{owner_id}/establishment/{establishment_id}', [EstablishmentController::class, 'destroy'])->name('establishment.delete');
+    Route::get('/pro/{owner_id}/establishment/{establishment_id}/restore', [EstablishmentController::class, 'restore'])->name('establishment.restore');
+
+    /*
+    |************************************************************************************************
+    | Administration Routes
+    |************************************************************************************************
     */
 
     Route::get('barathonien/list', [BarathonienController::class, 'getBarathonienList'])->name('barathonien.list');
     Route::get('pro/list', [OwnerController::class, 'getOwnerList'])->name('owner.list');
     Route::get('administrator/list', [AdministratorController::class, 'getAdministratorList'])->name('administrator.list');
     Route::get('employee/list', [EmployeeController::class, 'getEmployeeList'])->name('employee.list');
-    Route::get('/establishments/list', [EstablishmentController::class, 'getAllEstablishments'])->name('admin.establishment.list');
+    Route::get('establishments/list', [EstablishmentController::class, 'getAllEstablishments'])->name('admin.establishment.list');
 
 
     /*

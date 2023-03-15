@@ -3,77 +3,135 @@
 namespace App\Http\Controllers;
 
 use App\Models\Establishment;
-use Illuminate\Http\Request;
+use App\Traits\HttpResponses;
+use Exception;
+use Illuminate\Http\JsonResponse;
+
 
 class EstablishmentController extends Controller
 {
+    use HttpResponses;
+
+    private const ESTABLISHMENT_NOT_FOUND = "Establishment not found";
+
+
+
     /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Deleting the establishment ( softDelete )
      */
-    public function index()
+    public function destroy(int $ownerId, int $establishmentId): JsonResponse
     {
-        //
+        try {
+            $establishment = Establishment::withTrashed()->where('owner_id', $ownerId)
+                ->where('establishment_id', $establishmentId)
+                ->first();
+
+            if ($establishment === null) {
+                return $this->error(null, self::ESTABLISHMENT_NOT_FOUND, 404);
+            }
+            if ($establishment->deleted_at !== null) {
+                return $this->error(null, "Establishment already deleted", 404);
+            }
+
+            $establishment->delete();
+            return $this->success(null, "Establishment Deleted successfully");
+
+        } catch (Exception $error) {
+            return $this->error(null, $error->getMessage(), 500);
+        }
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Restoring the establishment
      */
-    public function create()
+    public function restore(int $ownerId, int $establishmentId): JsonResponse
     {
-        //
+        try {
+            $establishment = Establishment::withTrashed()->where('owner_id', $ownerId)
+                ->where('establishment_id', $establishmentId)
+                ->first();
+
+            if ($establishment === null) {
+                return $this->error(null, self::ESTABLISHMENT_NOT_FOUND, 404);
+            }
+
+            if ($establishment->deleted_at === null) {
+                return $this->error(null, "Establishment already restored", 404);
+            }
+            $establishment->restore();
+            return $this->success(null, "Establishment Restored successfully");
+
+        } catch (Exception $error) {
+            return $this->error(null, $error->getMessage(), 500);
+        }
     }
 
     /**
-     * Store a newly created resource in storage.
+     *Get all establishments for the admin part
      *
-     * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+
+    public function getAllEstablishments(): JsonResponse
     {
-        //
+        try {
+            $establishments = Establishment::select('establishments.*', 'addresses.*', 'owners.*', 'status.*')
+                ->join('addresses', 'addresses.address_id', '=', 'establishments.address_id')
+                ->join('owners', 'owners.owner_id', '=', 'establishments.owner_id')
+                ->join('status', 'status.status_id', '=', 'establishments.status_id')
+                ->withTrashed()
+                ->get();
+
+            if ($establishments->isEmpty()) {
+                return $this->error(null, self::ESTABLISHMENT_NOT_FOUND, 404);
+            }
+            return $this->success($establishments, "Establishments");
+
+        } catch (Exception $error) {
+            return $this->error(null, $error->getMessage(), 500);
+        }
     }
 
     /**
-     * Display the specified resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Validate the establishment
      */
-    public function show(Establishment $establishment)
+    public function validateEstablishment($establishmentId, $statusCode): jsonResponse
     {
-        //
+        try {
+            //parse the status code
+            $statusCode = intval($statusCode);
+
+            $establishment = Establishment::find($establishmentId);
+
+            if ($establishment === null) {
+                return $this->error(null, self::ESTABLISHMENT_NOT_FOUND, 404);
+            }
+
+            if ($establishment->status_id === $statusCode) {
+                return $this->error(null, 'Establishment already validated', 404);
+            }
+
+            $establishment->status_id = $statusCode;
+            $establishment->save();
+            return $this->success(null, "Validation updated");
+
+        } catch (Exception $error) {
+            return $this->error(null, $error->getMessage(), 500);
+        }
     }
 
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Get how many establishment need to be validated
      */
-    public function edit(Establishment $establishment)
-    {
-        //
-    }
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Establishment $establishment)
+    public function getEstablishmentToValidate(): JsonResponse
     {
-        //
-    }
+        try {
+            $establishmentToValidate = Establishment::where('status_id', 6)->count();
 
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Establishment $establishment)
-    {
-        //
+            return $this->success($establishmentToValidate, "Establishments to validate");
+
+        } catch (Exception $error) {
+            return $this->error(null, $error->getMessage(), 500);
+        }
     }
 }
