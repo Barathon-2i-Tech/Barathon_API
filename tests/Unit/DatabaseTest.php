@@ -114,7 +114,7 @@ class DatabaseTest extends TestCase
     {
         $this->assertTrue(
             Schema::hasColumns('categories', [
-                'category_id', 'label'
+                'category_id', 'category_details'
             ]), 1);
     }
 

@@ -19,8 +19,18 @@ class EstablishmentSeeder extends Seeder
     {
         $ownerId = Owner::all('owner_id')->first();
         $establValid = Status::where('comment->code', 'ESTABL_VALID')->first();
+        $establPending = Status::where('comment->code', 'ESTABL_PENDING')->first();
         $address2 = Address::where('address_id', 2)->first();
-        $address3 = Address::where('address_id', 3)->first();
+        $fantomeOperaAddress = Address::create([
+            'address' => "19 rue royale",
+            'postal_code' => "69001",
+            'city' => "Lyon"
+        ]);
+        $cafeLumiereAddress = Address::create([
+            'address' => "137 Rue de la République",
+            'postal_code' => "69150",
+            'city' => "Decines Charpieu"
+        ]);
 
         $datas = [
             [
@@ -45,23 +55,43 @@ class EstablishmentSeeder extends Seeder
             ],
             [
                 'trade_name' => 'Le Fantôme de l\'Opéra',
-                'siret' => fake()->siret(),
-                'address_id' => $address3->address_id,
+                'siret' => '53096293500025',
+                'address_id' => $fantomeOperaAddress->address_id,
                 'logo' => fake()->imageUrl(180, 180, 'Establishment logo', false),
-                'phone' => fake()->phoneNumber(),
-                'email' => 'fantome.opera@mail.fr',
+                'phone' => '0437920388',
+                'email' => 'fantomeoperalyon@gmail.com',
                 'website' => 'www.lefantomedelopera.fr',
                 'opening' => [
                     'Lundi' => 'fermer',
-                    'Mardi' => '17h00 - 01h00',
-                    'Mercredi' => '17h00 - 01h00',
-                    'Jeudi' => '17h00 - 01h00',
-                    'Vendredi' => '17h00 - 01h00',
-                    'Samedi' => '17h00 - 01h00',
-                    'Dimanche' => '17h00 - 01h00',
+                    'Mardi' => '18h00 - 01h00',
+                    'Mercredi' => '18h00 - 01h00',
+                    'Jeudi' => '18h00 - 01h00',
+                    'Vendredi' => '18h00 - 01h00',
+                    'Samedi' => '18h00 - 01h00',
+                    'Dimanche' => 'fermer',
                 ],
                 'owner_id' => $ownerId->owner_id,
-                'status_id' => $establValid->status_id,
+                'status_id' => $establPending->status_id,
+            ],
+            [
+                'trade_name' => 'LE CAFE LUMIERE',
+                'siret' => '83154825000024',
+                'address_id' => $cafeLumiereAddress->address_id,
+                'logo' => fake()->imageUrl(180, 180, 'Establishment logo', false),
+                'phone' => "0472055598",
+                'email' => 'cafelumiere@mail.fr',
+                'website' => 'https://le-cafe-lumiere.business.site/',
+                'opening' => [
+                    'Lundi' => '07h00 - 21h30',
+                    'Mardi' => '07h00 - 21h30',
+                    'Mercredi' => '07h00 - 21h30',
+                    'Jeudi' => '07h00 - 21h30',
+                    'Vendredi' => '07h00 - 21h30',
+                    'Samedi' => '10h30 - 20h00',
+                    'Dimanche' => '08h00 - 18h00',
+                ],
+                'owner_id' => $ownerId->owner_id,
+                'status_id' => $establPending->status_id,
             ],
         ];
         foreach ($datas as $data) {

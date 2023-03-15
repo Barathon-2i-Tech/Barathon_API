@@ -144,7 +144,7 @@ class AdministratorController extends Controller
     /**
      * Deleting the administrator ( softDelete )
      */
-    public function destroy(int $userId): JsonResponse
+    public function destroy( $userId): JsonResponse
     {
         try {
             $user = User::withTrashed()
@@ -171,7 +171,7 @@ class AdministratorController extends Controller
     /**
      * Restoring the administrator
      */
-    public function restore(int $userId): JsonResponse
+    public function restore( $userId): JsonResponse
     {
         try {
             $user = User::withTrashed()

@@ -103,7 +103,7 @@ class OwnerController extends Controller
     /**
      * Display the specified owner.
      */
-    public function show(int $userId): JsonResponse
+    public function show( $userId): JsonResponse
     {
         try {
             $owner = DB::table('users')
@@ -126,7 +126,7 @@ class OwnerController extends Controller
     /**
      * Update the specified owner in storage.
      */
-    public function update(Request $request, int $userId): JsonResponse
+    public function update(Request $request,  $userId): JsonResponse
     {
         try {
             //get the user given in parameter
@@ -187,7 +187,7 @@ class OwnerController extends Controller
     /**
      * Deleting the owner ( softDelete )
      */
-    public function destroy(int $userId): JsonResponse
+    public function destroy( $userId): JsonResponse
     {
         try {
             //check if the user exist
@@ -217,7 +217,7 @@ class OwnerController extends Controller
     /**
      * Restoring the owner
      */
-    public function restore(int $userId): JsonResponse
+    public function restore( $userId): JsonResponse
     {
         try {
             //check if the user exist
@@ -270,7 +270,7 @@ class OwnerController extends Controller
     /**
      * Validate the owner
      */
-    public function validateOwner(int $ownerId, int $statusCode): jsonResponse
+    public function validateOwner( $ownerId,  $statusCode): jsonResponse
     {
         try {
             $owner = Owner::find($ownerId);

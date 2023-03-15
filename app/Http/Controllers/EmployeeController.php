@@ -94,7 +94,7 @@ class EmployeeController extends Controller
     /**
      * Display the specified employee.
      */
-    public function show(int $userId): JsonResponse
+    public function show( $userId): JsonResponse
     {
         try {
             $employee = DB::table('establishments_employees')
@@ -124,7 +124,7 @@ class EmployeeController extends Controller
     /**
      * Update the specified employee in storage.
      */
-    public function update(Request $request, int $userId): JsonResponse
+    public function update(Request $request,  $userId): JsonResponse
     {
         try {
 
@@ -179,7 +179,7 @@ class EmployeeController extends Controller
     /**
      * Deleting the employee ( softDelete )
      */
-    public function destroy(int $userId): JsonResponse
+    public function destroy( $userId): JsonResponse
     {
         try {
 
@@ -207,7 +207,7 @@ class EmployeeController extends Controller
     /**
      * Restoring the employee
      */
-    public function restore(int $userId): JsonResponse
+    public function restore( $userId): JsonResponse
     {
         try {
             $user = User::withTrashed()

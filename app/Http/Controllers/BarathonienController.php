@@ -12,7 +12,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
 
@@ -96,7 +95,7 @@ class BarathonienController extends Controller
     /**
      * Display the specified barathonien.
      */
-    public function show(int $userId): JsonResponse
+    public function show( $userId): JsonResponse
     {
         try {
             $barathonien = DB::table('users')
@@ -119,7 +118,7 @@ class BarathonienController extends Controller
     /**
      * Update the specified barathonien in database.
      */
-    public function update(Request $request, int $userId): JsonResponse
+    public function update(Request $request,  $userId): JsonResponse
     {
         try {
             // Get the user given in parameter
@@ -186,7 +185,7 @@ class BarathonienController extends Controller
     /**
      * Deleting the barathonien ( softDelete )
      */
-    public function destroy(int $userId): JsonResponse
+    public function destroy( $userId): JsonResponse
     {
         try {
             $user = User::withTrashed()
@@ -213,7 +212,7 @@ class BarathonienController extends Controller
     /**
      * Restoring the barathonien
      */
-    public function restore(int $userId): JsonResponse
+    public function restore( $userId): JsonResponse
     {
         try {
             $user = User::withTrashed()

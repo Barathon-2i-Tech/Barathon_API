@@ -163,7 +163,7 @@ class CategoryController extends Controller
             ->join('categories', 'categories_events.category_id', '=', 'categories.category_id')
             ->select(
                 'categories.category_id',
-                'categories.label',
+                'categories.category_details',
                 DB::raw('COUNT(categories_events.category_id) as total_cate'))
             ->groupBy('categories.category_id')
             ->orderBy('total_cate', 'desc')

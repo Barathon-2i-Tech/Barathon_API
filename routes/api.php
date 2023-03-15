@@ -1,17 +1,19 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdministratorController;
 use App\Http\Controllers\ApiAuthController;
 use App\Http\Controllers\BarathonienController;
-use App\Http\Controllers\OwnerController;
-use App\Http\Controllers\AdministratorController;
-use App\Http\Controllers\EventController;
-use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\BookingController;
-use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CategoryEstablishmentController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EstablishmentController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\InseeController;
+use App\Http\Controllers\OwnerController;
+use App\Http\Controllers\StatusController;
+use Illuminate\Support\Facades\Route;
+
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -41,14 +43,52 @@ Route::post('register/employee', [EmployeeController::class, 'store'])->name('us
 | Common Routes
 |--------------------------------------------------------------------------
 */
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
+
     Route::post('logout', [ApiAuthController::class, 'logout'])->name('user.logout');
+
 
     // get top 10 tags
     Route::get(
         'barathonien/top/categories',
         [CategoryController::class, 'getTopTenCategories']
     )->name('barathonien.topCateg');
+
+    /*
+    |************************************************************************************************
+    | Administration Routes
+    |************************************************************************************************
+    */
+
+    Route::get('barathonien/list', [BarathonienController::class, 'getBarathonienList'])->name('barathonien.list');
+    Route::get('pro/list', [OwnerController::class, 'getOwnerList'])->name('owner.list');
+    Route::get('administrator/list', [AdministratorController::class, 'getAdministratorList'])->name('administrator.list');
+    Route::get('employee/list', [EmployeeController::class, 'getEmployeeList'])->name('employee.list');
+    Route::get('establishments/list', [EstablishmentController::class, 'getAllEstablishments'])->name('admin.establishment.list');
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Status Routes
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('owner-status', [StatusController::class, 'ownerStatus'])->name('owner-status');
+    Route::get('establishment-status', [StatusController::class, 'establishmentStatus'])->name('establishment-status');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Validation Routes
+    |--------------------------------------------------------------------------
+    */
+
+    Route::get('admin/pro-to-validate', [OwnerController::class, 'getOwnerToValidate'])->name('admin.pro-to-validate');
+    Route::get('admin/establishment-to-validate', [EstablishmentController::class, 'getEstablishmentToValidate'])->name('admin.establishment-to-validate');
+
+    Route::put('establishment/{establishment_id}/validation/{status_code}', [EstablishmentController::class, 'validateEstablishment'])->name('establishment.validation');
+    Route::put('pro/{owner_id}/validation/{status_code}', [OwnerController::class, 'validateOwner'])->name('pro.validation');
+
 
     /*
     |--------------------------------------------------------------------------
@@ -173,50 +213,41 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     /*
     |--------------------------------------------------------------------------
-    | establishment Routes
+    | Establishment Routes
     |--------------------------------------------------------------------------
     */
-    Route::delete('/pro/{owner_id}/establishment/{establishment_id}', [EstablishmentController::class, 'destroy'])->name('establishment.delete');
-    Route::get('/pro/{owner_id}/establishment/{establishment_id}/restore', [EstablishmentController::class, 'restore'])->name('establishment.restore');
+    Route::get(
+        '/pro/{owner_id}/establishment',
+        [EstablishmentController::class, 'getEstablishmentListByOwnerId']
+    )->name('establishment.list');
+    Route::get(
+        '/pro/{owner_id}/establishment/{establishment_id}',
+        [EstablishmentController::class, 'show']
+    )->name('establishment.show');
+    Route::put(
+        '/pro/{owner_id}/establishment/{establishment_id}',
+        [EstablishmentController::class, 'update']
+    )->name('establishment.update');
+    Route::post(
+        '/pro/{owner_id}/establishment/',
+        [EstablishmentController::class, 'store']
+    )->name('establishment.store');
+    Route::delete(
+        '/pro/{owner_id}/establishment/{establishment_id}',
+        [EstablishmentController::class, 'destroy']
+    )->name('establishment.delete');
+    Route::get(
+        '/pro/{owner_id}/establishment/{establishment_id}/restore',
+        [EstablishmentController::class, 'restore']
+    )->name('establishment.restore');
 
-    /*
-    |************************************************************************************************
-    | Administration Routes
-    |************************************************************************************************
-    */
-
-    Route::get('barathonien/list', [BarathonienController::class, 'getBarathonienList'])->name('barathonien.list');
-    Route::get('pro/list', [OwnerController::class, 'getOwnerList'])->name('owner.list');
-    Route::get('administrator/list', [AdministratorController::class, 'getAdministratorList'])->name('administrator.list');
-    Route::get('employee/list', [EmployeeController::class, 'getEmployeeList'])->name('employee.list');
-    Route::get('establishments/list', [EstablishmentController::class, 'getAllEstablishments'])->name('admin.establishment.list');
-
-
-    /*
-    |--------------------------------------------------------------------------
-    | Status Routes
-    |--------------------------------------------------------------------------
-    */
-
-    Route::get('owner-status', [StatusController::class, 'ownerStatus'])->name('owner-status');
-    Route::get('establishment-status', [StatusController::class, 'establishmentStatus'])->name('establishment-status');
-
-    /*
-    |--------------------------------------------------------------------------
-    | Validation Routes
-    |--------------------------------------------------------------------------
-    */
-    Route::get('admin/pro-to-validate', [OwnerController::class, 'getOwnerToValidate'])->name('admin.pro-to-validate');
-    Route::get('admin/establishment-to-validate', [EstablishmentController::class, 'getEstablishmentToValidate'])->name('admin.establishment-to-validate');
-
-    Route::put('establishment/{establishment_id}/validation/{status_code}', [EstablishmentController::class, 'validateEstablishment'])->name('establishment.validation');
-    Route::put('pro/{owner_id}/validation/{status_code}', [OwnerController::class, 'validateOwner'])->name('pro.validation');
 
     /*
     |--------------------------------------------------------------------------
     | API SIRENE
     |--------------------------------------------------------------------------
     */
+
     Route::get('check-siren/{siren}', [InseeController::class, 'getSiren'])->name('check-siren');
     Route::get('check-siret/{siret}', [InseeController::class, 'getSiret'])->name('check-siret');
 
