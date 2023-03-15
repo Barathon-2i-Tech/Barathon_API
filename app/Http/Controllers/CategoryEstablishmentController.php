@@ -7,73 +7,42 @@ use Illuminate\Http\Request;
 
 class CategoryEstablishmentController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function index()
-    {
-        //
-    }
+    use HttpResponses;
 
     /**
-     * Show the form for creating a new resource.
+     * Display all categories associate with an establishment
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function create()
+    public function getAllCategoriesByEstablishmentId(int $estbalishmentId)
     {
-        //
-    }
+        try {
+           $establCategories = DB::table('categories_establishments')
+               ->join(
+                   'establishments',
+                   'establishments.establishment_id',
+                   '=',
+                   'categories_establishments.establishment_id'
+               )
+               ->join('categories', 'categories.category_id', '=', 'categories_establishments.category_id')
+               ->where('categories_establishments.establishment_id', $estbalishmentId)
+               ->select(
+                   'establishments.establishment_id',
+                   'establishments.trade_name as establishment_name',
+                   'categories.*'
+               )
+               ->get();
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+           if ($establCategories->isEmpty()) {
+               return $this->error(null, "No categories found for this establishment", 404);
+           }
 
-    /**
-     * Display the specified resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Category_Establishment $categoryEstablishment)
-    {
-        //
-    }
 
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Category_Establishment $categoryEstablishment)
-    {
-        //
-    }
+            return $this->success($establCategories, "Categories List");
 
-    /**
-     * Update the specified resource in storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Category_Establishment $categoryEstablishment)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Category_Establishment $categoryEstablishment)
-    {
-        //
+        } catch (Exception $error) {
+            Log::error($error);
+            return $this->error(null, $error->getMessage(), 500);
+        }
     }
 }

@@ -1,69 +1,197 @@
-# Contributing to Barathon Desktop
+# Little reminder why it's important
 
-In order for your **P**ull **R**equests (**PR**) to be accepted, you need to follow some guidelines.
+## 1. Better Communication
 
-## Branch naming convention
+Building a product is always a  **Team Effort**  which requires making sure that everyone understands the  **names**  that we name, we got to name them clearly.
 
-Your branch need to be named this way :
+## 2. Easy Reviewing
 
-- `feat/<id>-<short-description>` : if your PR aims to add a new feature to the application
-- `fix/<id>-<short-description>` : if your PR aims to fix a bug or an unexpected behavior of the application
+Consistent code conventions makes reviewing things easier as we don’t have to find out what something means.
 
-Where **\<id>** represents the identification number of the feature or the bug - usually the number of your card, of the form **#xxxxxx**\
-And **\<short-description>** briefly describes the task - usually the title of your card.
+## 3. Easy On-boarding
 
-You can find your card on the **AzureDevOps Board**.
+For onboarding new developers, coding conventions allow them to easily grasp the meaning just by looking at the code.
 
-## Commit message convention
+# How to write meaningful names?
 
-Your commit message need to follow a precise schema :
+👉 **Use intention revealing names**
+Variable name must define the exact explanation of its content so it can document itself in case of no documentation.
+<pre>
+❌ var d // elapsed time in days
+
+
+✔️ var elapsedTimeInDays
+
+</pre>
+
+👉 **Use pronounceable names**
+
+<pre>
+❌ class NwClmDmg { private _lyt = 'dashboard'; private Date _modymdhms;}
+
+
+✔️ class NewClaimDamage { private _layout = 'dashboard'; private Date _modificationTimestamp;}
+</pre>
+
+👉 **Use searchable names**
+
+If a variable or constant might be seen or used in multiple places in a body of code, it is imperative to give it a search-friendly name.
+<pre>
+❌ for (int item = 0; item < 34; item++) { s += (t[item] * 4) / 5;}
+
+✔️  var realDaysPerIdealDay = 4;
+    const WORK_DAYS_PER_WEEK = 5;
+    var sum = 0;
+    
+   for (var item = 0; item < NUMBER_OF_TASKS; item++) {
+         var realTaskDays = taskEstimate[item] * realDaysPerIdealDay; 
+         var realTaskWeeks = (realTaskDays / WORK_DAYS_PER_WEEK); 
+         sum += realTaskWeeks;
+    }
+
+</pre>
+👉 **Use one consistent language**
+
+Decide and use one natural language for naming, e.g. using mixed English and French names will be inconsistent and unreadable.
+
+👉 **There’s no limit to the length of the variable name**
+
+Use short enough and long enough variable names in each scope of code.
+
+
+:information_source: **Conventions commonly used in code:**
+
+**Snakecase:**
+
+Words are delimited by an underscore.
+
+<pre>first_name</pre>
+
+## **Pascalcase:**
+
+Words are delimited by capital letters.
+
+<pre>FirstName</pre>
+
+## **Camelcase:**
+
+Words are delimited by capital letters, except the initial word.
+
+<pre>firstName
+</pre>
+# **Naming Conventions**
+
+Consistency and readability are key ideas that should be utilized in the naming of variables. Regardless of how you choose to name your variables, always ensure that your naming conventions are consistent throughout the code. Consistency allows others to more easily understand your code.
+
+
+👉 **Better Variables**
+
+Most often variables are declared with  ****camelCase****.
+<pre>
+var firstName = 'John';
+</pre>
+
+👉 **Better Constants**
+
+Constants intended to be non-changing variables are declared in  ****ALL CAPS****.
+<pre>
+var SECONDS = 60;
+</pre>
+
+👉 **Better Booleans**
+
+A prefix like `is` , `are` , `has` helps developer to distinguish a boolean from another variable by just looking at it.
+<pre>
+var isVisible = true;
+var hasKey = false;
+</pre>
+
+👉 **Better Functions**
+
+Functions names are written in  ****camelCase****. Always start your function name with a  ****”Verb”****  which defines what that function is trying to do in conjunction with the name of the  ****”Entity”****  being affected by this function.
+<pre>
+getOrder()
+fetchClaims()
+deleteOrder()
+connectToDatabase()
+</pre>
+
+👉 **Better Methods**
+
+Like functions, methods names are written in  ****camelCase****. As class name itself depict “Entity” thus suffixing the “Entity” in a function name doesn’t make sense because it becomes self-explanatory in case of class methods.
+
+<pre>
+class User { 
+     delete(id) {
+          // do something 
+    }
+ }
+var user = new User();
+
+console.log(user.delete(2)); // delete the user with ID = 2
+</pre>
+
+👉 **Better Classes**
+
+A class should be declared with  ****PascalCase****  in its own file.
+<pre>
+class User { 
+    constructor(firstName, lastName) {
+        this.firstName = firstName;
+        this.lastName = lastName; 
+    }
+}
+
+var user = new User(‘John’, ‘Doe’);
+</pre>
+
+👉 **Better Components**
+
+Components are widely declared with  ****PascalCase****  too. When a component gets used, it distinguishes itself from native HTML and web components, because its first letter is always written in uppercase.
 
 ```
-<header>
-<BLANK LINE>
-<body>
-<BLANK LINE>
-<footer>
+function UserProfile(user) { 
+     return ( 
+        <div>
+            <span>First Name: {user.firstName}</span>
+            <span>Last Name: {user.lastName}</span>
+        </div>
+     );
+}
+
+<div> 
+     <UserProfile user={{ firstName: ‘John’, lastName: ‘Doe’ }}
+     />
+</div>
 ```
+👉 **Better Arguments**
 
-### Commit message _Header_
+Use self-explanatory argument label that indicates more expressively the intent of the argument.
+<pre>
+❌ function getRemainder(x, y) {}
 
-The header cannot be omitted and must follow this schema :
+✔️ function getRemainder(number, divisor) {}
+</pre>
 
-```
-<type>(<scope>): <short summary>
-  │       │             │
-  │       │             └─⫸ Short summary of what happend in the commit in present tense.
-  │       │                  Not capitalized. No period at the end.
-  │       │
-  │       └─⫸ Commit Scope: A few words (dash-separated) describing the scope of the modification.
-  │                          It can be the name of the component, the API route, the module,
-  │                          the filename, etc.
-  │
-  └─⫸ Commit Type: build|ci|chore|docs|feat|fix|perf|refactor|revert|style|test
-```
 
-### Commit message _Body_
+**Parentheses Style**
 
-The body is optionnal, when present, it contains deeper explaination of what the commit _is_ doing (not necessarily _how_). You can add further explainations, stating the motivation of the change, why this change was necessary, things that need to be taken into account, and so on.
+Two commonly used conventions for parenthesis are:  **K&R Style Parentheses** and **Allman Parentheses.**
 
-### Commit message _Footer_
+It is recommended to use **K&R Style parentheses** because they save one line and seem natural.
 
-In the footer you can add a **BREAKING CHANGES** section and/or a **Fixes** section that looks like that :
 
-```
-BREAKING CHANGES: <describe here the breaking changes / can be multiline, no blank lines in the descirption>
-<BLANK LINE>
-Fixes #123
-```
+👉 **K&R Style Parentheses**
+<pre>
+if(isVisible) { 
+    // do something
+}
+</pre>
 
-### 3rd party tools to help you
-
-You can use the JavaScript tool [commitizen](https://github.com/commitizen/cz-cli) to help you format your commit message.
-
-You can install it globaly on your computer with the command `npm install -g commitizen` (if you have `npm` installed localy on your machine, since it is not bundle in the `Container`).
-
-**Note**: You **MUST NOT** install it in the project, so be careful to correctly add the `-g` flag.
-
-Once the script is installed, `cd` inside the project repository where you have commit message to write, and run it via `cz`, then let yourself be guided thought the steps.\
-This tool must be ran outside of the `Dev Container`, otherwise you will get an error stating that `cz` is not a know command.
+👉 **Allman Parentheses**
+<pre>
+if(isVisible)
+{
+    // do something
+}
+</pre>

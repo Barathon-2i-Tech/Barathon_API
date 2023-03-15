@@ -1,18 +1,17 @@
 <?php
 
-use App\Http\Controllers\AdministratorController;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ApiAuthController;
 use App\Http\Controllers\BarathonienController;
-use App\Http\Controllers\BookingController;
-use App\Http\Controllers\CategoryController;
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\EstablishmentController;
-use App\Http\Controllers\EventController;
-use App\Http\Controllers\InseeController;
 use App\Http\Controllers\OwnerController;
-use App\Http\Controllers\StatusController;
-use Illuminate\Support\Facades\Route;
-
+use App\Http\Controllers\AdministratorController;
+use App\Http\Controllers\EventController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\BookingController;
+use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\CategoryEstablishmentController;
+use App\Http\Controllers\EstablishmentController;
 /*
 |--------------------------------------------------------------------------
 | API Routes
@@ -23,6 +22,7 @@ use Illuminate\Support\Facades\Route;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
+
 
 /*
 |--------------------------------------------------------------------------
@@ -88,6 +88,27 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         'barathonien/booking/{id}',
         [BookingController::class, 'destroy']
     )->name('barathonien.deleteBooking');
+
+    /*
+    |--------------------------------------------------------------------------
+    | Pro Routes
+    |--------------------------------------------------------------------------
+    */
+    Route::post('/pro/category/create', [CategoryController::class, 'store'])->name('categories.store');
+
+    Route::get(
+        '/categories/establishment/{establishmentId}',
+        [CategoryEstablishmentController::class, 'getAllCategoriesByEstablishmentId']
+    )->name('categories.establishment');
+    Route::get(
+        '/categories/establishment',
+        [CategoryController::class, 'getAllEstablishmentCategories']
+    )->name('categories.establishment.all');
+    Route::get(
+        '/categories/event',
+        [CategoryController::class, 'getAllEventCategories']
+    )->name('categories.event.all');
+
 
     /*
    |--------------------------------------------------------------------------

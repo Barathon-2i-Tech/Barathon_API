@@ -13,9 +13,9 @@ class InseeController extends Controller
 {
     use HttpResponses;
 
+    protected string $apiKey;
     private const BASE_URL = 'https://api.insee.fr/entreprises/sirene/V3/';
 
-    protected string $apiKey;
 
     public function __construct()
     {
@@ -28,12 +28,11 @@ class InseeController extends Controller
      * (subscription required to use this API)
      *
      * @return string  access token for the INSEE API SIRENE
-     *
      * @throws GuzzleException
      */
     public function generateToken(): string
     {
-        $client = new Client;
+        $client = new Client();
         $result = $client->post('https://api.insee.fr/token', [
             'headers' => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
@@ -45,7 +44,6 @@ class InseeController extends Controller
         ]);
 
         $result = json_decode($result->getBody());
-
         return $result->access_token;
     }
 
@@ -63,7 +61,8 @@ class InseeController extends Controller
     /**
      * Retrieve information about a company using its SIREN number.
      *
-     * @param  string  $siren enterprise SIREN number
+     * @param string $siren enterprise SIREN number
+     * @return JsonResponse
      */
     public function getSiren(string $siren): JsonResponse
     {
@@ -82,10 +81,10 @@ class InseeController extends Controller
             //generate token
             $tokenGenerated = $this->generateToken();
 
-            $client = new Client;
+            $client = new Client();
             $response = $client->get(self::BASE_URL . 'siren/' . $sirenToCheck, [
                 'headers' => [
-                    'Accept' => 'application/json',
+                    'Accept' => "application/json",
                     'Authorization' => 'Bearer ' . $tokenGenerated,
                 ],
                 'http_errors' => false,
@@ -96,12 +95,10 @@ class InseeController extends Controller
                 return $this->checkStatusCodeFromApi($response);
             } else {
                 $dataFetch = json_decode($response->getBody());
-
                 return $this->success($dataFetch->uniteLegale, 'Siren found');
             }
         } catch (GuzzleException $error) {
             Log::error($error);
-
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -109,7 +106,8 @@ class InseeController extends Controller
     /**
      * Retrieve information about a company using its SIRET number.
      *
-     * @param  string  $siret enterprise SIRET number
+     * @param string $siret enterprise SIRET number
+     * @return JsonResponse
      */
     public function getSiret(string $siret): JsonResponse
     {
@@ -128,10 +126,10 @@ class InseeController extends Controller
             //generate token
             $tokenGenerated = $this->generateToken();
 
-            $client = new Client;
+            $client = new Client();
             $response = $client->get(self::BASE_URL . 'siret/' . $siretToCheck, [
                 'headers' => [
-                    'Accept' => 'application/json',
+                    'Accept' => "application/json",
                     'Authorization' => 'Bearer ' . $tokenGenerated,
                 ],
                 'http_errors' => false,
@@ -142,13 +140,12 @@ class InseeController extends Controller
                 return $this->checkStatusCodeFromApi($response);
             } else {
                 $dataFetch = json_decode($response->getBody());
-
                 return $this->success($dataFetch->etablissement, 'Siret found');
             }
         } catch (GuzzleException $error) {
             Log::error($error);
-
             return $this->error(null, $error->getMessage(), 500);
         }
     }
 }
+
