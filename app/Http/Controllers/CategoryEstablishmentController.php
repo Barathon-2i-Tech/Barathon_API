@@ -3,7 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\Category_Establishment;
+use App\Traits\HttpResponses;
+use Exception;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class CategoryEstablishmentController extends Controller
 {
@@ -11,10 +15,8 @@ class CategoryEstablishmentController extends Controller
 
     /**
      * Display all categories associate with an establishment
-     *
-     * @return JsonResponse
      */
-    public function getAllCategoriesByEstablishmentId(int $estbalishmentId)
+    public function getAllCategoriesByEstablishmentId($establishmentId): JsonResponse
     {
         try {
            $establCategories = DB::table('categories_establishments')
@@ -25,7 +27,7 @@ class CategoryEstablishmentController extends Controller
                    'categories_establishments.establishment_id'
                )
                ->join('categories', 'categories.category_id', '=', 'categories_establishments.category_id')
-               ->where('categories_establishments.establishment_id', $estbalishmentId)
+               ->where('categories_establishments.establishment_id', $establishmentId)
                ->select(
                    'establishments.establishment_id',
                    'establishments.trade_name as establishment_name',
@@ -36,12 +38,9 @@ class CategoryEstablishmentController extends Controller
            if ($establCategories->isEmpty()) {
                return $this->error(null, "No categories found for this establishment", 404);
            }
-
-
             return $this->success($establCategories, "Categories List");
 
         } catch (Exception $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }
