@@ -6,6 +6,7 @@ use App\Models\Address;
 use App\Models\Establishment;
 use App\Models\Owner;
 use App\Models\Status;
+use App\Models\User;
 use Illuminate\Database\Seeder;
 
 class EstablishmentSeeder extends Seeder
@@ -17,10 +18,14 @@ class EstablishmentSeeder extends Seeder
      */
     public function run()
     {
-        $ownerId = Owner::all('owner_id')->first();
         $establValid = Status::where('comment->code', 'ESTABL_VALID')->first();
         $establPending = Status::where('comment->code', 'ESTABL_PENDING')->first();
-        $address2 = Address::where('address_id', 2)->first();
+
+        $FaifFoifAddress = Address::create([
+            'address' => "69 avenue tony Garnier",
+            'postal_code' => "69007",
+            'city' => "Lyon"
+        ]);
         $fantomeOperaAddress = Address::create([
             'address' => "19 rue royale",
             'postal_code' => "69001",
@@ -32,11 +37,15 @@ class EstablishmentSeeder extends Seeder
             'city' => "Decines Charpieu"
         ]);
 
+        $ownerRothschild = User::where ('last_name', 'Rothschild')->first();
+
+        $ownerJacobs = User::where ('last_name', 'Jacobs')->first();
+
         $datas = [
             [
                 'trade_name' => 'Fait Foif',
                 'siret' => fake()->siret(),
-                'address_id' => $address2->address_id,
+                'address_id' => $FaifFoifAddress->address_id,
                 'logo' => fake()->imageUrl(180, 180, 'Establishment logo', false),
                 'phone' => fake()->phoneNumber(),
                 'email' => 'etablissement@mail.fr',
@@ -50,7 +59,7 @@ class EstablishmentSeeder extends Seeder
                     'Samedi' => '17h00 - 01h00',
                     'Dimanche' => '17h00 - 01h00',
                 ],
-                'owner_id' => $ownerId->owner_id,
+                'owner_id' => $ownerRothschild->owner_id,
                 'status_id' => $establValid->status_id,
             ],
             [
@@ -70,7 +79,7 @@ class EstablishmentSeeder extends Seeder
                     'Samedi' => '18h00 - 01h00',
                     'Dimanche' => 'fermer',
                 ],
-                'owner_id' => $ownerId->owner_id,
+                'owner_id' => $ownerJacobs->owner_id,
                 'status_id' => $establPending->status_id,
             ],
             [
@@ -90,7 +99,7 @@ class EstablishmentSeeder extends Seeder
                     'Samedi' => '10h30 - 20h00',
                     'Dimanche' => '08h00 - 18h00',
                 ],
-                'owner_id' => $ownerId->owner_id,
+                'owner_id' => $ownerRothschild->owner_id,
                 'status_id' => $establPending->status_id,
             ],
         ];
