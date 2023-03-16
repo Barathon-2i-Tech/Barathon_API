@@ -98,7 +98,6 @@ class InseeController extends Controller
                 return $this->success($dataFetch->uniteLegale, 'Siren found');
             }
         } catch (GuzzleException $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -143,7 +142,6 @@ class InseeController extends Controller
                 return $this->success($dataFetch->etablissement, 'Siret found');
             }
         } catch (GuzzleException $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }

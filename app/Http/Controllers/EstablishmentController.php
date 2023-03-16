@@ -10,7 +10,6 @@ use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 
 class EstablishmentController extends Controller
@@ -325,7 +324,6 @@ class EstablishmentController extends Controller
             return $this->success(null, "Validation updated");
 
         } catch (Exception $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -342,7 +340,6 @@ class EstablishmentController extends Controller
             return $this->success($establishmentToValidate, "Establishments to validate");
 
         } catch (Exception $error) {
-            Log::error($error);
             return $this->error(null, $error->getMessage(), 500);
         }
     }

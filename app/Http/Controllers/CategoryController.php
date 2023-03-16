@@ -4,10 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Traits\HttpResponses;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Exception;
 
 class CategoryController extends Controller
 {
@@ -20,7 +20,6 @@ class CategoryController extends Controller
      * Get all categories with sub_category = Establishment || All
      * and state = Approved
      *
-     * @return JsonResponse
      */
     public function getAllEstablishmentCategories(): JsonResponse
     {
@@ -47,7 +46,6 @@ class CategoryController extends Controller
      * Get all categories with sub_category = Establishment || All
      * and state = Approved
      *
-     * @return JsonResponse
      */
     public function getAllEventCategories(): JsonResponse
     {
@@ -73,9 +71,6 @@ class CategoryController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
 
     public function store(Request $request)

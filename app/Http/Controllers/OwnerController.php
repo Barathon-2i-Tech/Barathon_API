@@ -10,7 +10,6 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Rules;
@@ -208,8 +207,6 @@ class OwnerController extends Controller
 
             return $this->success(null, 'Owner Deleted');
         } catch (Exception $error) {
-            Log::error($error);
-
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -237,8 +234,6 @@ class OwnerController extends Controller
 
             return $this->success(null, 'Owner Restored');
         } catch (Exception $error) {
-            Log::error($error);
-
             return $this->error(null, $error->getMessage(), 500);
         }
     }
@@ -261,8 +256,6 @@ class OwnerController extends Controller
 
             return $this->success($owners, 'Owner List');
         } catch (Exception $error) {
-            Log::error($error);
-
             return $this->error(null, $error->getMessage(), 500);
         }
     }

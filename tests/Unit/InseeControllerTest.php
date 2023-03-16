@@ -328,22 +328,4 @@ class InseeControllerTest extends TestCase
                 'message' => 'validation.numeric'
             ]);
     }
-
-//    /**
-//     * A test to get a 404 response with a siret.
-//     *
-//     * @return void
-//     */
-//    public function test_Get_Siret_With_Non_existent_Siret()
-//    {
-//        $administrator = $this->createAdminUser();
-//
-//        $siret = '11111111111111';
-//        $response = $this->actingAs($administrator)->get(route('check-siret', $siret));
-//        $response->assertStatus(404)
-//            ->assertJson([
-//                'status' => 'An error has occurred...',
-//                'message' => 'Siret not found'
-//            ]);
-//    }
 }
