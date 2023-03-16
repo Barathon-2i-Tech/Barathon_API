@@ -279,7 +279,7 @@ class OwnerController extends Controller
                 return $this->error(null, self::OWNERNOTFOUND, 404);
             }
 
-            if ($owner->status_id === $statusCode) {
+            if ($owner->status_id == $statusCode) {
                 return $this->error(null, 'Owner already validated', 404);
             }
 

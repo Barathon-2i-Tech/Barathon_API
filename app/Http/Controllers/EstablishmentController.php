@@ -316,7 +316,7 @@ class EstablishmentController extends Controller
                 return $this->error(null, self::ESTABLISHMENT_NOT_FOUND, 404);
             }
 
-            if ($establishment->status_id === $statusCode) {
+            if ($establishment->status_id == $statusCode) {
                 return $this->error(null, 'Establishment already validated', 404);
             }
 

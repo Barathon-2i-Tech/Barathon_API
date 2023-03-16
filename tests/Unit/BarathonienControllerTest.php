@@ -154,8 +154,8 @@ class BarathonienControllerTest extends TestCase
             'first_name' => 'John',
             'last_name' => 'Doe',
             'email' => 'barathonien@mail.fr',
-            'address' => '9 place Camille Georges',
-            'postal_code' => '69002',
+            'address' => '20 boulevard eugene deruelle',
+            'postal_code' => '69003',
             'city' => 'Lyon'
         ])
             ->assertOk();

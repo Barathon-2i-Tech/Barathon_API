@@ -3,6 +3,7 @@
 namespace Tests\Unit;
 
 use App\Models\Owner;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -187,7 +188,7 @@ class AdministratorControllerTest extends TestCase
             'first_name' => 'Elon',
             'last_name' => 'Musk',
             'email' => 'admin@mail.fr',
-            'superAdmin' => false])
+            'superAdmin' => true])
             ->assertOk();
         $response->assertJsonStructure([
             'status',
@@ -420,20 +421,20 @@ class AdministratorControllerTest extends TestCase
      * A test to change the status of a owner on a validated owner
      * todo : fix this test
      */
-//    public function test_to_change_the_status_of_a_owner_on_a_validated_owner(): void
-//    {
-//        $administrator = $this->createAdminUser();
-//        $owner = $this->createOwnerUser();
-//
-//        $response = $this->actingAs($administrator)->put(route('pro.validation', [$owner->owner_id, 1]))
-//            ->assertNotFound();
-//        $response->assertJsonStructure([
-//            'status',
-//            'message',
-//            'data'
-//        ]);
-//        $response->assertJson(['message' => 'Owner already validated']);
-//    }
+    public function test_to_change_the_status_of_a_owner_on_a_validated_owner(): void
+    {
+        $administrator = $this->createAdminUser();
+        $owner = $this->createOwnerUser();
+
+        $response = $this->actingAs($administrator)->put(route('pro.validation', [$owner->owner_id, 1]))
+            ->assertNotFound();
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+        $response->assertJson(['message' => 'Owner already validated']);
+    }
 
     /**
      * A test to change throw a error when validated the owner

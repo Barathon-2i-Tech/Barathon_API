@@ -170,7 +170,7 @@ class OwnerControllerTest extends TestCase
             'first_name' => 'Benjamin',
             'last_name' => 'Rothschild',
             'email' => 'owner@mail.fr',
-            'phone' => '0606060606',])
+            'phone' => '0102030405',])
             ->assertOk();
         $response->assertJsonStructure([
             'status',
