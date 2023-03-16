@@ -19,13 +19,13 @@ class EstablishmentController extends Controller
 
     private const ESTABLISHMENT_NOT_FOUND = "Establishment not found";
     private const STRING_VALIDATION = 'required|string|max:255';
+    private const PHONEVALIDATION = ['regex:/^([0-9\s\-\+\(\)]*)$/', 'min:10'];
+    private const NULLABLE_STRING_VALIDATION = 'nullable|string|max:255';
+    private const ADDRESS_ERROR = "L\'adresse est invalide";
 
 
     /**
      * Display a listing of establishment.
-     *
-     * @return JsonResponse
-     *
      */
     public function getEstablishmentListByOwnerId($ownerId): JsonResponse
     {
@@ -54,10 +54,6 @@ class EstablishmentController extends Controller
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param Request $request
-     * @param $ownerId
-     * @return JsonResponse
      */
     public function store(Request $request, $ownerId): JsonResponse
     {
@@ -65,36 +61,44 @@ class EstablishmentController extends Controller
 
             $request->validate([
                 'trade_name' => self::STRING_VALIDATION,
-                'siret' => 'required|string|size:14|unique:establishments', // 14 characters for a SIRET
-                'logo' => 'nullable|string', //modify later
-                'phone' => 'required|string',
+                'siret' => 'required|string|size:14|unique:establishments',
+                'logo' => self::NULLABLE_STRING_VALIDATION,
+                'phone' => self::PHONEVALIDATION,
                 'email' => 'nullable|email|string',
-                'website' => 'nullable|string',
+                'website' => self::NULLABLE_STRING_VALIDATION,
                 'opening' => 'nullable|json',
                 'address' => 'min:5|required|string|max:255',
                 'postal_code' => 'required|string|size:5',
                 'city' => self::STRING_VALIDATION,
+            ], [
+                'siret.unique' => 'Le siret doit etre unique',
+                'siret.size' => 'Le siret doit contenir 14 caractères',
+                'postal_code.size' => 'Le code postal doit contenir 5 caractères',
+                'email.email' => "L\'email doit être au format email",
+                'phone.regex' => "Le numéro de téléphone doit être au format 00 00 00 00 00 ou +33 0 00 00 00 00",
+                'opening.json' => "Le format de l\'ouverture doit être au format JSON",
+                'address.min' => self::ADDRESS_ERROR,
+                'address.max' => self::ADDRESS_ERROR,
+
             ]);
 
             $establPending = Status::where('comment->code', 'ESTABL_PENDING')->first()->status_id;
 
             $address = Address::create([
-                'address' => $request->address,
-                'postal_code' => $request->postal_code,
-                'city' => $request->city
+                'address' => $request->input('address'),
+                'postal_code' => $request->input('postal_code'),
+                'city' => $request->input('city'),
             ]);
 
-            // Decodage de la valeur de la clé "opening" en JSON
-            $opening = json_decode($request->opening, true);
-
+            $opening = json_decode($request->input('opening'), true);
 
             $establishment = Establishment::create([
-                'trade_name' => $request->trade_name,
-                'siret' => $request->siret,
-                'logo' => $request->logo,
-                'phone' => $request->phone,
-                'email' => $request->email,
-                'website' => $request->website,
+                'trade_name' => $request->input('trade_name'),
+                'siret' => $request->input('siret'),
+                'logo' => $request->input('logo'),
+                'phone' => $request->input('phone'),
+                'email' => $request->input('email'),
+                'website' => $request->input('website'),
                 'opening' => $opening,
                 'owner_id' => $ownerId,
                 'address_id' => $address->address_id,
@@ -116,10 +120,6 @@ class EstablishmentController extends Controller
 
     /**
      * Display the specified resource.
-     *
-     * @param $ownerId
-     * @param $establishmentId
-     * @return JsonResponse
      */
     public function show($ownerId, $establishmentId): JsonResponse
     {
@@ -150,10 +150,6 @@ class EstablishmentController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param Request $request
-     * @param $ownerId
-     * @param $establishmentId
-     * @return JsonResponse
      */
     public function update(Request $request, $ownerId, $establishmentId): JsonResponse
     {
@@ -164,14 +160,20 @@ class EstablishmentController extends Controller
 
             $request->validate([
                 'trade_name' => self::STRING_VALIDATION,
-                'logo' => 'nullable|string', // modify later
+                'logo' => self::NULLABLE_STRING_VALIDATION,
                 'phone' => 'required|string',
                 'email' => 'nullable|email|string',
-                'website' => 'nullable|string',
+                'website' => self::NULLABLE_STRING_VALIDATION,
                 'opening' => 'nullable|json',
                 'address' => 'min:5|required|string|max:255',
                 'postal_code' => 'required|string|size:5',
                 'city' => self::STRING_VALIDATION,
+            ], [
+                'email.email' => "L\'email doit être au format email",
+                'phone.regex' => "Le numéro de téléphone doit être au format 00 00 00 00 00 ou +33 0 00 00 00 00",
+                'opening.json' => "Le format de l\'ouverture doit être au format JSON",
+                'address.min' => self::ADDRESS_ERROR,
+                'address.max' => self::ADDRESS_ERROR,
             ]);
 
 
@@ -224,9 +226,6 @@ class EstablishmentController extends Controller
     /**
      * Deleting the establishment ( softDelete )
      *
-     * @param $ownerId
-     * @param $establishmentId
-     * @return JsonResponse
      */
     public function destroy($ownerId, $establishmentId): JsonResponse
     {
@@ -253,9 +252,6 @@ class EstablishmentController extends Controller
     /**
      * Restoring the establishment
      *
-     * @param $ownerId
-     * @param $establishmentId
-     * @return JsonResponse
      */
     public function restore($ownerId, $establishmentId): JsonResponse
     {
@@ -307,9 +303,6 @@ class EstablishmentController extends Controller
     /**
      * Validate the establishment
      *
-     * @param $establishmentId
-     * @param $statusCode
-     * @return JsonResponse
      */
     public function validateEstablishment($establishmentId, $statusCode): jsonResponse
     {
@@ -339,7 +332,6 @@ class EstablishmentController extends Controller
 
     /**
      * Get how many establishment need to be validated
-     * @return JsonResponse
      */
 
     public function getEstablishmentToValidate(): JsonResponse
