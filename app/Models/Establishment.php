@@ -87,7 +87,7 @@ class Establishment extends Model
      */
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, "category_establishment", "establishment_id", "category_id");
+        return $this->belongsToMany(Category::class, "categories_establishments", "establishment_id", "category_id");
     }
 
     /**

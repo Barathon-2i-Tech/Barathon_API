@@ -39,7 +39,7 @@ class Category extends Model
      */
     public function establishments(): BelongsToMany
     {
-        return $this->belongsToMany(Establishment::class, "categories_establishments", "categoryid", "establishment_id" );
+        return $this->belongsToMany(Establishment::class, "categories_establishments", "category_id", "establishment_id" );
     }
 
     public function events(): BelongsToMany
