@@ -2,11 +2,7 @@
 
 namespace Database\Seeders;
 
-
-use App\Models\Category;
 use App\Models\Category_Event;
-use App\Models\Event;
-
 use Illuminate\Database\Seeder;
 
 class CategoryEventSeeder extends Seeder
@@ -18,12 +14,11 @@ class CategoryEventSeeder extends Seeder
      */
     public function run()
     {
-
         $datas = [
             [
                 'category_id' => 1,
                 'event_id' => 1,
-            ]
+            ],
         ];
         Category_Event::create($datas[0]);
 
@@ -31,7 +26,7 @@ class CategoryEventSeeder extends Seeder
             [
                 'category_id' => 1,
                 'event_id' => 2,
-            ]
+            ],
         ];
         Category_Event::create($datas[0]);
 
@@ -39,7 +34,7 @@ class CategoryEventSeeder extends Seeder
             [
                 'category_id' => 1,
                 'event_id' => 3,
-            ]
+            ],
         ];
         Category_Event::create($datas[0]);
 
@@ -47,7 +42,7 @@ class CategoryEventSeeder extends Seeder
             [
                 'category_id' => 2,
                 'event_id' => 1,
-            ]
+            ],
         ];
         Category_Event::create($datas[0]);
 
@@ -55,7 +50,7 @@ class CategoryEventSeeder extends Seeder
             [
                 'category_id' => 2,
                 'event_id' => 2,
-            ]
+            ],
         ];
         Category_Event::create($datas[0]);
 
@@ -63,9 +58,8 @@ class CategoryEventSeeder extends Seeder
             [
                 'category_id' => 3,
                 'event_id' => 3,
-            ]
+            ],
         ];
         Category_Event::create($datas[0]);
-
     }
 }
