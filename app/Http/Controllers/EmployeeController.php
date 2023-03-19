@@ -35,20 +35,20 @@ class EmployeeController extends Controller
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
                 'hiring_date' => 'required|date',
             ], [
-                'first_name.required' => 'The first name is required',
-                'first_name.string' => 'The first name must be a string',
-                'first_name.max' => 'The first name must be less than 255 characters',
-                'last_name.required' => 'The last name is required',
-                'last_name.string' => 'The last name must be a string',
-                'last_name.max' => 'The last name must be less than 255 characters',
-                'email.required' => 'The email is required',
-                'email.string' => 'The email must be a string',
-                'email.email' => 'The email must be a valid email',
-                'email.unique' => 'The email must be unique',
-                'password.required' => 'The password is required',
-                'password.confirmed' => 'The password confirmation does not match',
-                'hiring_date.required' => 'The hiring date is required',
-                'hiring_date.date' => 'The hiring date must be a valid date',
+                'first_name.required' => 'Le prénom est obligatoire.',
+                'first_name.string' => 'Le prénom doit être une chaîne de caractères.',
+                'first_name.max' => 'Le prénom doit faire moins de 255 caractères.',
+                'last_name.required' => 'Le nom est obligatoire.',
+                'last_name.string' => 'Le nom doit être une chaîne de caractères.',
+                'last_name.max' => 'Le nom doit faire moins de 255 caractères.',
+                'email.required' => 'L\'adresse e-mail est obligatoire.',
+                'email.string' => 'L\'adresse e-mail doit être une chaîne de caractères.',
+                'email.email' => 'L\'adresse e-mail n\'est pas valide.',
+                'email.unique' => 'L\'adresse e-mail est déjà utilisée.',
+                'password.required' => 'Le mot de passe est obligatoire.',
+                'password.confirmed' => 'Les mots de passe ne correspondent pas.',
+                'hiring_date.required' => 'La date d\'embauche est obligatoire.',
+                'hiring_date.date' => 'La date d\'embauche doit être une date valide.',
             ]);
 
             //create the user
@@ -91,7 +91,7 @@ class EmployeeController extends Controller
     /**
      * Display the specified employee.
      */
-    public function show( $userId): JsonResponse
+    public function show( int $userId): JsonResponse
     {
         try {
             $employee = DB::table('establishments_employees')
@@ -120,7 +120,7 @@ class EmployeeController extends Controller
     /**
      * Update the specified employee in storage.
      */
-    public function update(Request $request,  $userId): JsonResponse
+    public function update(Request $request, int $userId): JsonResponse
     {
         try {
 
@@ -143,16 +143,16 @@ class EmployeeController extends Controller
                     Rule::unique('users')->ignore($user), // Ignore the user given in parameter
                 ],
             ], [
-                    'first_name.required' => 'The first name is required',
-                    'first_name.string' => 'The first name must be a string',
-                    'first_name.max' => 'The first name must be less than 255 characters',
-                    'last_name.required' => 'The last name is required',
-                    'last_name.string' => 'The last name must be a string',
-                    'last_name.max' => 'The last name must be less than 255 characters',
-                    'email.required' => 'The email is required',
-                    'email.string' => 'The email must be a string',
-                    'email.email' => 'The email must be a valid email',
-                    'email.unique' => 'The email must be unique',
+                    'first_name.required' => 'Le prénom est obligatoire.',
+                    'first_name.string' => 'Le prénom doit être une chaîne de caractères.',
+                    'first_name.max' => 'Le prénom doit faire moins de 255 caractères.',
+                    'last_name.required' => 'Le nom est obligatoire.',
+                    'last_name.string' => 'Le nom doit être une chaîne de caractères.',
+                    'last_name.max' => 'Le nom doit faire moins de 255 caractères.',
+                    'email.required' => 'L\'adresse e-mail est obligatoire.',
+                    'email.string' => 'L\'adresse e-mail doit être une chaîne de caractères.',
+                    'email.email' => 'L\'adresse e-mail n\'est pas valide.',
+                    'email.unique' => 'L\'adresse e-mail est déjà utilisée.',
                 ]
             );
 
@@ -175,7 +175,7 @@ class EmployeeController extends Controller
     /**
      * Deleting the employee ( softDelete )
      */
-    public function destroy( $userId): JsonResponse
+    public function destroy( int $userId): JsonResponse
     {
         try {
 
@@ -203,7 +203,7 @@ class EmployeeController extends Controller
     /**
      * Restoring the employee
      */
-    public function restore( $userId): JsonResponse
+    public function restore( int $userId): JsonResponse
     {
         try {
             $user = User::withTrashed()

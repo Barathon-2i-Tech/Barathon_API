@@ -95,7 +95,7 @@ class BarathonienController extends Controller
     /**
      * Display the specified barathonien.
      */
-    public function show( $userId): JsonResponse
+    public function show( int $userId): JsonResponse
     {
         try {
             $barathonien = DB::table('users')
@@ -118,7 +118,7 @@ class BarathonienController extends Controller
     /**
      * Update the specified barathonien in database.
      */
-    public function update(Request $request,  $userId): JsonResponse
+    public function update(Request $request,  int $userId): JsonResponse
     {
         try {
             // Get the user given in parameter
@@ -185,7 +185,7 @@ class BarathonienController extends Controller
     /**
      * Deleting the barathonien ( softDelete )
      */
-    public function destroy( $userId): JsonResponse
+    public function destroy( int $userId): JsonResponse
     {
         try {
             $user = User::withTrashed()
@@ -212,7 +212,7 @@ class BarathonienController extends Controller
     /**
      * Restoring the barathonien
      */
-    public function restore( $userId): JsonResponse
+    public function restore( int $userId): JsonResponse
     {
         try {
             $user = User::withTrashed()

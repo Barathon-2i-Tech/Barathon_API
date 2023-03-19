@@ -36,7 +36,7 @@ class OwnerController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'siren' => 'required|string|size:9|unique:owners',
             'kbis' => 'required|file|mimes:pdf|max:2048',
-            'company_name' => 'string|max:255',
+            'company_name' => 'nullable|string|max:255',
             'phone' => self::PHONEVALIDATION,
         ], [
             'first_name.required' => 'Le prénom est obligatoire.',
@@ -102,7 +102,7 @@ class OwnerController extends Controller
     /**
      * Display the specified owner.
      */
-    public function show( $userId): JsonResponse
+    public function show( int $userId): JsonResponse
     {
         try {
             $owner = DB::table('users')
@@ -125,7 +125,7 @@ class OwnerController extends Controller
     /**
      * Update the specified owner in storage.
      */
-    public function update(Request $request,  $userId): JsonResponse
+    public function update(Request $request,  int $userId): JsonResponse
     {
         try {
             //get the user given in parameter
@@ -150,7 +150,7 @@ class OwnerController extends Controller
                     'email',
                     Rule::unique('users')->ignore($user), // Ignore the user given in parameter
                 ],
-                'company_name' => 'string|max:255',
+                'company_name' => 'nullable|string|max:255',
                 'phone' => self::PHONEVALIDATION,
             ], [
                 'first_name.required' => 'Le prénom est obligatoire.',
@@ -186,7 +186,7 @@ class OwnerController extends Controller
     /**
      * Deleting the owner ( softDelete )
      */
-    public function destroy( $userId): JsonResponse
+    public function destroy( int $userId): JsonResponse
     {
         try {
             //check if the user exist
@@ -214,7 +214,7 @@ class OwnerController extends Controller
     /**
      * Restoring the owner
      */
-    public function restore( $userId): JsonResponse
+    public function restore( int $userId): JsonResponse
     {
         try {
             //check if the user exist
@@ -263,7 +263,7 @@ class OwnerController extends Controller
     /**
      * Validate the owner
      */
-    public function validateOwner( $ownerId,  $statusCode): jsonResponse
+    public function validateOwner( int $ownerId,  int $statusCode): jsonResponse
     {
         try {
             $owner = Owner::find($ownerId);
@@ -272,7 +272,7 @@ class OwnerController extends Controller
                 return $this->error(null, self::OWNERNOTFOUND, 404);
             }
 
-            if ($owner->status_id == $statusCode) {
+            if ($owner->status_id === $statusCode) {
                 return $this->error(null, 'Owner already validated', 404);
             }
 

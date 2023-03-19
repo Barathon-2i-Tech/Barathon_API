@@ -66,7 +66,7 @@ class AdministratorController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show($userId): JsonResponse
+    public function show(int $userId): JsonResponse
     {
         try {
             $administrator = DB::table('users')
@@ -88,7 +88,7 @@ class AdministratorController extends Controller
     /**
      * Update the specified administrator in storage.
      */
-    public function update(Request $request, $userId): JsonResponse
+    public function update(Request $request, int $userId): JsonResponse
     {
         try {
 
@@ -144,7 +144,7 @@ class AdministratorController extends Controller
     /**
      * Deleting the administrator ( softDelete )
      */
-    public function destroy( $userId): JsonResponse
+    public function destroy( int $userId): JsonResponse
     {
         try {
             $user = User::withTrashed()
@@ -171,7 +171,7 @@ class AdministratorController extends Controller
     /**
      * Restoring the administrator
      */
-    public function restore( $userId): JsonResponse
+    public function restore( int $userId): JsonResponse
     {
         try {
             $user = User::withTrashed()

@@ -109,24 +109,6 @@ class AdministratorControllerTest extends TestCase
         $response->assertJson(['message' => 'Administrator not found']);
     }
 
-    /**
-     * A test to get a 500 error on show method
-     *
-     * @return void
-     */
-    public function test_get_500_error_administrator_show_method(): void
-    {
-        $administrator = $this->createAdminUser();
-        $response = $this->actingAs($administrator)->get(route('administrator.show', 'error'))
-            ->assertStatus(500);
-
-        $response->assertJsonStructure([
-            'status',
-            'message',
-            'data',
-        ]);
-        $response->assertJson(['status' => 'An error has occurred...']);
-    }
 
     /**
      * A test to update an administrator
