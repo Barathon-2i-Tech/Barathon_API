@@ -4,44 +4,101 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use App\Traits\HttpResponses;
+use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class CategoryController extends Controller
 {
-
     use HttpResponses;
 
+    private const CATEGORIES_NOT_FOUND = "Categories not found";
+
+
     /**
-     * Display a listing of the resource.
+     * Get all categories with sub_category = Establishment || All
+     * and state = Approved
      *
-     * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function getAllEstablishmentCategories(): JsonResponse
     {
-        //
+        try {
+            $allEstablishmentCategories = Category::where(function ($query) {
+                $query->where('category_details->sub_category', 'Establishment')
+                    ->orWhere('category_details->sub_category', 'All');
+            })
+                ->where('category_details->state', 'Approved')
+                ->get();
+
+            if ($allEstablishmentCategories->isEmpty()) {
+                return $this->error(null, "No establishment categories found", 404);
+            }
+
+            return $this->success($allEstablishmentCategories, "Categories List");
+
+        } catch (Exception $error) {
+            return $this->error(null, $error->getMessage(), 500);
+        }
     }
 
     /**
-     * Show the form for creating a new resource.
+     * Get all categories with sub_category = Establishment || All
+     * and state = Approved
      *
-     * @return \Illuminate\Http\Response
      */
-    public function create()
+    public function getAllEventCategories(): JsonResponse
     {
-        //
+        try {
+            $allEventCategories = Category::where(function ($query) {
+                $query->where('category_details->sub_category', 'Event')
+                    ->orWhere('category_details->sub_category', 'All');
+            })
+                ->where('category_details->state', 'Approved')
+                ->get();
+
+            if ($allEventCategories->isEmpty()) {
+                return $this->error(null, "No event categories found", 404);
+            }
+
+            return $this->success($allEventCategories, "Categories List");
+
+        } catch (Exception $error) {
+            return $this->error(null, $error->getMessage(), 500);
+        }
     }
+
 
     /**
      * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
      */
+
     public function store(Request $request)
     {
-        //
+        try {
+            $request->validate([
+                'sub_category' => 'required|string',
+                'icon' => 'required|string',
+                'label' => 'required|string',
+            ]);
+
+            $label = array('sub_category' => $request->sub_category, 'icon' => $request->icon, 'label' => $request->label, 'state' => 'Hold');
+
+            $label = json_encode('label');
+
+            $category = Category::create([
+                'label' => $label,
+            ]);
+
+            $category->save();
+
+            return $this->success([
+                $category
+            ], "Category created", 201);
+
+        } catch (Exception $error) {
+            return $this->error(null, $error->getMessage(), 422);
+        }
     }
 
     /**
@@ -94,17 +151,20 @@ class CategoryController extends Controller
      *
      * @return JsonResponse
      */
-    public function getTopTenCategories(){
+    public function getTopTenCategories()
+    {
         //get top ten categories used by events
         $categories = DB::table('categories_events')
             ->join('categories', 'categories_events.category_id', '=', 'categories.category_id')
-            ->select('categories.category_id', 'categories.label', DB::raw('COUNT(categories_events.category_id) as total_cate'))
+            ->select(
+                'categories.category_id',
+                'categories.category_details',
+                DB::raw('COUNT(categories_events.category_id) as total_cate'))
             ->groupBy('categories.category_id')
             ->orderBy('total_cate', 'desc')
             ->skip(0)
             ->take(10)
             ->get();
-
 
         return $this->success([
             'categories' => $categories,

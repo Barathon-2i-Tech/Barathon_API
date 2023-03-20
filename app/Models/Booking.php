@@ -10,6 +10,8 @@ class Booking extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     /**
      * The table associated with the model.
      *
@@ -22,7 +24,6 @@ class Booking extends Model
      */
     protected $primaryKey = 'booking_id';
 
-
     /**
      * The attributes that are mass assignable.
      *
@@ -31,12 +32,10 @@ class Booking extends Model
     protected $fillable = [
         'user_id',
         'event_id',
-        'isFav'
+        'isFav',
     ];
 
     protected $hidden = ['pivot'];
-
-    public $timestamps = false;
 
     public function user(): BelongsTo
     {

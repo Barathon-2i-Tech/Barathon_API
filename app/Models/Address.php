@@ -10,6 +10,8 @@ class Address extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     /**
      * The table associated with the model.
      *
@@ -33,25 +35,19 @@ class Address extends Model
         'city',
     ];
 
-    public $timestamps = false;
-
     /**
      * Get the barathonien that owns the Address
-     *
-     * @return BelongsTo
      */
     public function barathonien(): BelongsTo
     {
-        return $this->belongsTo(barathonien::class, 'address_id');
+        return $this->belongsTo(Barathonien::class, 'barathonien_id');
     }
 
     /**
      * Get the establishment that owns the Address
-     *
-     * @return BelongsTo
      */
     public function establishment(): BelongsTo
     {
-        return $this->belongsTo(establishment::class, 'address_id');
+        return $this->belongsTo(Establishment::class, 'establishment_id');
     }
 }

@@ -2,17 +2,17 @@
 
 namespace App\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable;
+    use HasApiTokens, HasFactory, Notifiable, softDeletes;
 
     /**
      * The table associated with the model.
@@ -41,7 +41,7 @@ class User extends Authenticatable
         'owner_id',
         'barathonien_id',
         'administrator_id',
-        'employee_id'
+        'employee_id',
     ];
 
     /**
@@ -66,33 +66,33 @@ class User extends Authenticatable
     /**
      * Get the owner profile associated with the user
      */
-    public function owner()
+    public function owner(): BelongsTo
     {
-        return $this->belongsTo(Owner::class, "owner_id");
+        return $this->belongsTo(Owner::class, 'owner_id');
     }
 
     /**
      * Get the employee profile associated with the user
      */
-    public function employee()
+    public function employee(): BelongsTo
     {
-        return $this->belongsTo(Employee::class, "employee_id");
+        return $this->belongsTo(Employee::class, 'employee_id');
     }
 
     /**
      * Get the administrator profile associated with the user
      */
-    public function administrator()
+    public function administrator(): BelongsTo
     {
-        return $this->belongsTo(Administrator::class, "administrator_id");
+        return $this->belongsTo(Administrator::class, 'administrator_id');
     }
 
     /**
      * Get the barathonien profile associated with the user
      */
-    public function barathonien()
+    public function barathonien(): BelongsTo
     {
-        return $this->belongsTo(Barathonien::class, "barathonien_id");
+        return $this->belongsTo(Barathonien::class, 'barathonien_id');
     }
 
     /**
@@ -100,7 +100,7 @@ class User extends Authenticatable
      */
     public function events(): BelongsTo
     {
-        return $this->belongsTo(Event::class, "event_id");
+        return $this->belongsTo(Event::class, 'event_id');
     }
 
     /**
@@ -108,7 +108,6 @@ class User extends Authenticatable
      */
     public function bookings(): BelongsToMany
     {
-        return $this->belongsToMany(Booking::class, "bookings", "user_id", "event_id" );
+        return $this->belongsToMany(Booking::class, 'bookings', 'user_id', 'event_id');
     }
-
 }

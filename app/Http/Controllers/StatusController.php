@@ -3,83 +3,43 @@
 namespace App\Http\Controllers;
 
 use App\Models\Status;
-use Illuminate\Http\Request;
+use App\Traits\HttpResponses;
+use Exception;
+use Illuminate\Http\JsonResponse;
 
 class StatusController extends Controller
 {
+    use HttpResponses;
+
     /**
-     * Display a listing of the resource.
+     * Display a listing of all status about establishments.
      *
-     * @return \Illuminate\Http\Response
+     * @return JsonResponse
      */
-    public function index()
+    public function establishmentStatus()
     {
-        //
+        try {
+            $status = Status::where('comment->code', 'LIKE', 'ESTABL%')
+                ->get();
+            return $this->success($status, "Status List");
+
+        } catch (Exception $error) {
+            return $this->error(null, $error->getMessage(), 500);
+        }
     }
 
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return \Illuminate\Http\Response
+     * Display a listing of all status about owners.
      */
-    public function create()
+    public function ownerStatus(): JsonResponse
     {
-        //
-    }
+        try {
+            $status = Status::where('comment->code', 'LIKE', 'OWNER%')
+                ->get();
 
-    /**
-     * Store a newly created resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @return \Illuminate\Http\Response
-     */
-    public function store(Request $request)
-    {
-        //
-    }
-
-    /**
-     * Display the specified resource.
-     *
-     * @param  \App\Models\Status  $status
-     * @return \Illuminate\Http\Response
-     */
-    public function show(Status $status)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     *
-     * @param  \App\Models\Status  $status
-     * @return \Illuminate\Http\Response
-     */
-    public function edit(Status $status)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Status  $status
-     * @return \Illuminate\Http\Response
-     */
-    public function update(Request $request, Status $status)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     *
-     * @param  \App\Models\Status  $status
-     * @return \Illuminate\Http\Response
-     */
-    public function destroy(Status $status)
-    {
-        //
+            return $this->success($status, 'Status List');
+        } catch (Exception $error) {
+            return $this->error(null, $error->getMessage(), 500);
+        }
     }
 }

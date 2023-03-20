@@ -114,7 +114,7 @@ class DatabaseTest extends TestCase
     {
         $this->assertTrue(
             Schema::hasColumns('categories', [
-                'category_id', 'label'
+                'category_id', 'category_details'
             ]), 1);
     }
 
@@ -129,6 +129,5 @@ class DatabaseTest extends TestCase
                 'event_id', 'event_name', 'description', 'start_event', 'end_event', 'poster', 'price', 'capacity', 'establishment_id', 'status_id', 'user_id', 'deleted_at', 'updated_at', 'created_at'
             ]), 1);
     }
-
 
 }

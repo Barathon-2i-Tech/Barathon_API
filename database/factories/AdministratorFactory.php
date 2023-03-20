@@ -18,7 +18,7 @@ class AdministratorFactory extends Factory
     public function definition()
     {
         return [
-            'superAdmin' => false
+            'superAdmin' => false,
         ];
     }
 }

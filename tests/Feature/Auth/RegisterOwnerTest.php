@@ -4,12 +4,14 @@ namespace Auth;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Http\Testing\File;
 use Tests\TestCase;
 
 
 class RegisterOwnerTest extends TestCase
 {
     use RefreshDatabase, withFaker;
+
 
     /**
      * A test to check if a owner can register
@@ -33,14 +35,17 @@ class RegisterOwnerTest extends TestCase
                 "token"
             ]];
 
+
+        $file = File::create('kbis.pdf');
+
         $response = $this->postJson(route('user.register.owner'), [
             'first_name' => 'Pierre',
             'last_name' => 'Dupont',
             'email' => 'toto@gmail.com',
             'password' => 'azertyuiop',
             'password_confirmation' => 'azertyuiop',
-            'siren' => fake()->siren(),
-            'kbis' => 'myKbis',
+            'siren' => '010203040',
+            'kbis' => $file,
             'active' => false,
             'avatar' => "myavatar.jpg"
         ], [
@@ -57,6 +62,8 @@ class RegisterOwnerTest extends TestCase
      */
     public function test_owner_can_not_register_without_siren()
     {
+        $file = File::create('kbis.pdf');
+
         $this->withHeaders([
             'Accept' => 'application/json',
             'Content-Type' => 'application/json'
@@ -66,12 +73,12 @@ class RegisterOwnerTest extends TestCase
             'email' => 'toto@gmail.com',
             'password' => 'azertyuiop',
             'password_confirmation' => 'azertyuiop',
-            'kbis' => 'myKbis',
+            'kbis' => $file,
             'active' => false,
             'avatar' => "myavatar.jpg"
         ])
             ->assertStatus(422)
-            ->assertInvalid(['siren' => 'validation.required']);
+            ->assertInvalid(['siren' => 'Le numéro SIREN est obligatoire.']);
     }
 
 
@@ -95,7 +102,7 @@ class RegisterOwnerTest extends TestCase
             'Content-Type' => 'application/json'
         ])
             ->assertStatus(422)
-            ->assertInvalid(['kbis' => 'validation.required']);
+            ->assertInvalid(['kbis' => 'Le KBIS est obligatoire.']);
     }
 
 }

@@ -19,7 +19,7 @@ class EmployeeFactory extends Factory
     {
         return [
             'hiring_date' => fake()->date,
-            'dismissal_date' => null
+            'dismissal_date' => null,
         ];
     }
 }

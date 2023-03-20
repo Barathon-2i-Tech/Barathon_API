@@ -3,7 +3,8 @@
     "scripts": {
         "prepare": "husky install",
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "duster-fix": "./vendor/bin/duster fix --dirty"
     },
     "devDependencies": {
         "@commitlint/cli": "^17.3.0",
@@ -20,6 +21,11 @@
     "config": {
         "commitizen": {
             "path": "./node_modules/cz-conventional-changelog"
+        }
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "npm run duster-fix"
         }
     }
 }
