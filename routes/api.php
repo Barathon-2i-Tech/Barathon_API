@@ -117,6 +117,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::put('/pro/establishment/{establishment_id}/category' , [CategoryEstablishmentController::class, 'associateCategoriesToEstablishment'])->name('categories.update');
 
+    Route::post('/pro/establishment/{establishment_id}/category' , [CategoryEstablishmentController::class, 'associateCategoriesToEstablishment'])->name('categories.store');
 
     /*
     |--------------------------------------------------------------------------
