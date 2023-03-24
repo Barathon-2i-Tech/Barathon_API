@@ -59,20 +59,24 @@ class CategoryEstablishmentController extends Controller
         try {
             $establishment = Establishment::find($establishmentId);
             if (!$establishment) {
+                error_log('ERRORRR Establishment not found');
                 return $this->error(null, "Establishment not found", 404);
             }
 
             //check if the categories are in an array
             if (!is_array($request->input('options'))) {
+                error_log('ERRORRR Categories must be an array');
                 return $this->error(null, "Categories must be an array", 400);
             }
 
             // check if the array length is under or equal to 4
             if (count($request->input('options')) > 4) {
+                error_log("ERRORRR You can't associate more than 4 categories to an establishment");
                 return $this->error(null, "You can't associate more than 4 categories to an establishment", 400);
             }
 
             $establishment->categories()->sync($request->input('options'));
+            error_log("ERRORRR Categories associated to the establishment");
             return $this->success(null, "Categories associated to the establishment");
 
         } catch (Exception $error) {

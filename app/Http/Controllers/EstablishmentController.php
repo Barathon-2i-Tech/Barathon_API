@@ -11,7 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
-
+use Illuminate\Support\Facades\Storage;
 
 class EstablishmentController extends Controller
 {
@@ -19,6 +19,9 @@ class EstablishmentController extends Controller
 
     private const ESTABLISHMENT_NOT_FOUND = "Establishment not found";
     private const STRING_VALIDATION = 'required|string|max:255';
+    private const ADDRESS_ERROR = "L\'adresse est invalide";
+    private const PHONEVALIDATION = ['regex:/^([0-9\s\-\+\(\)]*)$/', 'min:10'];
+    private const NULLABLE_STRING_VALIDATION = 'nullable|string|max:255';
 
 
     /**
@@ -44,6 +47,13 @@ class EstablishmentController extends Controller
                 return $this->error(null, self::ESTABLISHMENT_NOT_FOUND, 404);
             }
 
+            // Add the correct URL prefix to the logo_url
+
+
+            foreach ($establishments as $establishment) {
+                $establishment->logo_url = env('APP_URL').Storage::url($establishment->logo);
+            }
+
             // return the establishments list
             return $this->success($establishments, "Establishment List");
 
@@ -61,22 +71,39 @@ class EstablishmentController extends Controller
      */
     public function store(Request $request, $ownerId): JsonResponse
     {
-        try {
+        
 
-            $request->validate([
-                'trade_name' => self::STRING_VALIDATION,
-                'siret' => 'required|string|size:14|unique:establishments', // 14 characters for a SIRET
-                'logo' => 'nullable|string', //modify later
-                'phone' => 'required|string',
-                'email' => 'nullable|email|string',
-                'website' => 'nullable|string',
-                'opening' => 'nullable|json',
-                'address' => 'min:5|required|string|max:255',
-                'postal_code' => 'required|string|size:5',
-                'city' => self::STRING_VALIDATION,
-            ]);
+        $request->validate([
+            'trade_name' => self::STRING_VALIDATION,
+            'siret' => 'required|string|size:14|unique:establishments',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'phone' => self::PHONEVALIDATION,
+            'email' => 'nullable|email|string',
+            'website' => self::NULLABLE_STRING_VALIDATION,
+            'opening' => 'nullable|json',
+            'address' => 'min:5|required|string|max:255',
+            'postal_code' => 'required|string|size:5',
+            'city' => self::STRING_VALIDATION,
+        ], [
+            'siret.unique' => 'Le siret doit etre unique',
+            'siret.size' => 'Le siret doit contenir 14 caractères',
+            'postal_code.size' => 'Le code postal doit contenir 5 caractères',
+            'email.email' => "L\'email doit être au format email",
+            'phone.regex' => "Le numéro de téléphone doit être au format 00 00 00 00 00 ou +33 0 00 00 00 00",
+            'opening.json' => "Le format de l\'ouverture doit être au format JSON",
+            'address.min' => self::ADDRESS_ERROR,
+            'address.max' => self::ADDRESS_ERROR,
 
+        ]);
+           
             $establPending = Status::where('comment->code', 'ESTABL_PENDING')->first()->status_id;
+
+
+            $establishmentLogoPath = null;
+
+            if ($request->hasFile('logo')) {
+                $establishmentLogoPath = $request->logo->store('logos', 'public');
+            }
 
             $address = Address::create([
                 'address' => $request->address,
@@ -91,7 +118,7 @@ class EstablishmentController extends Controller
             $establishment = Establishment::create([
                 'trade_name' => $request->trade_name,
                 'siret' => $request->siret,
-                'logo' => $request->logo,
+                'logo' => $establishmentLogoPath,
                 'phone' => $request->phone,
                 'email' => $request->email,
                 'website' => $request->website,
@@ -104,14 +131,12 @@ class EstablishmentController extends Controller
             $establishmentPending = Status::where('comment->code', 'ESTABL_PENDING')->first();
             $establishment->status_id = $establishmentPending->status_id;
             $establishment->save();
+            $establishment->logo_url = env('APP_URL').Storage::url($establishment->logo);
 
             return $this->success([
                 $establishment
             ], "Establishment created", 201);
 
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 422);
-        }
     }
 
     /**
