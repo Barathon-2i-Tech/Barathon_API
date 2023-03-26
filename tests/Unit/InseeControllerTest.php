@@ -175,7 +175,7 @@ class InseeControllerTest extends TestCase
         $response->assertStatus(400)
             ->assertJson([
                 'status' => 'An error has occurred...',
-                'message' => 'validation.numeric'
+                'message' => '{"siren":["Le numero SIREN doit etre compose de chiffres","Le numero SIREN doit etre compose de 9 chiffres"]}',
             ]);
     }
 

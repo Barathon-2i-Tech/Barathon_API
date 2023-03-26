@@ -12,7 +12,7 @@ use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasApiTokens, HasFactory, Notifiable, softDeletes;
+    use HasApiTokens, HasFactory, Notifiable, SoftDeletes;
 
     /**
      * The table associated with the model.
@@ -37,7 +37,6 @@ class User extends Authenticatable
         'email',
         'password',
         'avatar',
-        'deleted_at',
         'owner_id',
         'barathonien_id',
         'administrator_id',

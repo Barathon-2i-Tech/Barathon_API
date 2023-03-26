@@ -55,7 +55,6 @@ class Establishment extends Model
         'opening',
         'owner_id',
         'status_id',
-        'deleted_at',
     ];
 
     /**
