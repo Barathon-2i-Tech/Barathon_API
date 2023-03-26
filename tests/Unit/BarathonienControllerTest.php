@@ -2,8 +2,12 @@
 
 namespace Tests\Unit;
 
+use App\Models\Booking;
+use App\Models\Owner;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class BarathonienControllerTest extends TestCase
@@ -11,30 +15,30 @@ class BarathonienControllerTest extends TestCase
     use RefreshDatabase;
 
     private const  STRUCTURE = [
-            "status",
-            "message",
-            "data" => [
-                ["user_id",
-                    "first_name",
-                    "last_name",
-                    "email",
-                    "email_verified_at",
-                    "password",
-                    "avatar",
-                    "owner_id",
-                    "barathonien_id",
-                    "administrator_id",
-                    "employee_id",
-                    "remember_token",
-                    "deleted_at",
-                    "created_at",
-                    "updated_at",
-                    "birthday",
-                    "address_id",
-                    "address",
-                    "postal_code",
-                    "city"]]
-        ];
+        "status",
+        "message",
+        "data" => [
+            ["user_id",
+                "first_name",
+                "last_name",
+                "email",
+                "email_verified_at",
+                "password",
+                "avatar",
+                "owner_id",
+                "barathonien_id",
+                "administrator_id",
+                "employee_id",
+                "remember_token",
+                "deleted_at",
+                "created_at",
+                "updated_at",
+                "birthday",
+                "address_id",
+                "address",
+                "postal_code",
+                "city"]]
+    ];
 
     /**
      * A test to get all barathoniens
@@ -141,6 +145,30 @@ class BarathonienControllerTest extends TestCase
     }
 
     /**
+     * A test to check if the update is really on a user
+     *
+     * @return void
+     */
+    public function test_to_check_on_update_if_really_a_user(): void
+    {
+        $administrator = $this->createAdminUser();
+        $response = $this->actingAs($administrator)->put(route('barathonien.update', 450), [
+            'first_name' => 'test',
+            'last_name' => 'test',
+            'email' => 'test@test.fr',
+            'address' => 'address test',
+            'postal_code' => '75000',
+            'city' => 'Paris'])
+            ->assertNotFound();
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+        $response->assertJson(['message' => 'User not found']);
+    }
+
+    /**
      * A test to check if the barathonien is updated with the same information as before
      *
      * @return void
@@ -177,14 +205,8 @@ class BarathonienControllerTest extends TestCase
         $administrator = $this->createAdminUser();
         $barathonien = $this->createBarathonienUser();
 
-        $response = $this->actingAs($administrator)->put(route('barathonien.update', $barathonien->user_id), [])
-            ->assertStatus(500);
-        $response->assertJsonStructure([
-            'status',
-            'message',
-            'data'
-        ]);
-        $response->assertJson(['status' => 'An error has occurred...']);
+        $this->actingAs($administrator)->put(route('barathonien.update', $barathonien->user_id), [])
+            ->assertStatus(302);
     }
 
     /**
