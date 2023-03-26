@@ -191,13 +191,7 @@ class OwnerControllerTest extends TestCase
         $owner = $this->createOwnerUser();
 
         $response = $this->actingAs($administrator)->put(route('owner.update', $owner->user_id), [])
-            ->assertStatus(500);
-        $response->assertJsonStructure([
-            'status',
-            'message',
-            'data'
-        ]);
-        $response->assertJson(['status' => 'An error has occurred...']);
+            ->assertStatus(302);
     }
 
     /**

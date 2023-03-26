@@ -200,14 +200,8 @@ class EmployeeControllerTest extends TestCase
         $employee = $this->createEmployeeUser();
         $administrator = $this->createAdminUser();
 
-        $response = $this->actingAs($administrator)->put(route('employee.update', $employee->user_id), [])
-            ->assertStatus(500);
-        $response->assertJsonStructure([
-            'status',
-            'message',
-            'data'
-        ]);
-        $response->assertJson(['status' => 'An error has occurred...']);
+       $this->actingAs($administrator)->put(route('employee.update', $employee->user_id), [])
+            ->assertStatus(302);
     }
 
     /**

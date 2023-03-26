@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Administrator;
 use App\Models\User;
 use App\Traits\HttpResponses;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -64,25 +63,21 @@ class AdministratorController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * Display the specified administrator.
      */
     public function show(int $userId): JsonResponse
     {
-        try {
-            $administrator = DB::table('users')
-                ->join('administrators', 'users.administrator_id', '=', 'administrators.administrator_id')
-                ->select('users.*', 'administrators.*')
-                ->where('users.user_id', $userId)
-                ->get();
+        $administrator = DB::table('users')
+            ->join('administrators', 'users.administrator_id', '=', 'administrators.administrator_id')
+            ->select('users.*', 'administrators.*')
+            ->where('users.user_id', $userId)
+            ->get();
 
-            if ($administrator->isEmpty()) {
-                return $this->error(null, self::ADMINISTRATOR_NOT_FOUND, 404);
-            }
-
-            return $this->success($administrator, 'Administrator');
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 500);
+        if ($administrator->isEmpty()) {
+            return $this->error(null, self::ADMINISTRATOR_NOT_FOUND, 404);
         }
+
+        return $this->success($administrator, 'Administrator');
     }
 
     /**
@@ -90,109 +85,96 @@ class AdministratorController extends Controller
      */
     public function update(Request $request, int $userId): JsonResponse
     {
-        try {
+        $user = User::find($userId);
+        if ($user === null) {
+            return $this->error(null, self::USER_NOT_FOUND, 404);
+        }
 
-            $user = User::find($userId);
-            if ($user === null) {
-                return $this->error(null, self::USER_NOT_FOUND, 404);
-            }
-
-            if ($user->administrator_id === null) {
-                return $this->error(null, self::ADMINISTRATOR_NOT_FOUND, 404);
-            }
-            $request->validate([
-                'first_name' => self::STRINGVALIDATION,
-                'last_name' => self::STRINGVALIDATION,
-                'email' => [
-                    'required',
-                    'string',
-                    'email',
-                    Rule::unique('users')->ignore($user), // Ignore the user given in parameter
-                ],
-                'superAdmin' => 'boolean',
-            ], [
+        if ($user->administrator_id === null) {
+            return $this->error(null, self::ADMINISTRATOR_NOT_FOUND, 404);
+        }
+        $request->validate([
+            'first_name' => self::STRINGVALIDATION,
+            'last_name' => self::STRINGVALIDATION,
+            'email' => [
+                'required',
+                'string',
+                'email',
+                Rule::unique('users')->ignore($user), // Ignore the user given in parameter
+            ],
+            'superAdmin' => 'boolean',
+        ], [
                 'first_name.required' => 'Le prénom est obligatoire.',
                 'last_name.required' => 'Le nom est obligatoire.',
                 'email.required' => "L'adresse e-mail est obligatoire.",
                 'email.email' => "L'adresse e-mail n'est pas valide.",
                 'email.unique' => "L'adresse e-mail est déjà utilisée.",
             ]
-            );
+        );
 
-            $user->fill($request->only(['first_name', 'last_name', 'email']));
-            $user->save();
+        $user->fill($request->only(['first_name', 'last_name', 'email']));
+        $user->save();
 
-            $administrator = Administrator::where('administrator_id', $user->administrator_id)->first();
+        $administrator = Administrator::where('administrator_id', $user->administrator_id)->first();
 
-            $administrator->fill($request->only(['superAdmin']));
-            $administrator->save();
+        $administrator->fill($request->only(['superAdmin']));
+        $administrator->save();
 
-            $userChanges = $user->getChanges();
-            $administratorChanges = $administrator->getChanges();
+        $userChanges = $user->getChanges();
+        $administratorChanges = $administrator->getChanges();
 
-            if (empty($userChanges) && empty($administratorChanges)) {
-                return $this->success($user, 'Administrator not updated');
-            }
-
-            // Return the updated user
-            return $this->success($user, 'Administrator updated');
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 500);
+        if (empty($userChanges) && empty($administratorChanges)) {
+            return $this->success($user, 'Administrator not updated');
         }
+
+        // Return the updated user
+        return $this->success($user, 'Administrator updated');
     }
 
     /**
      * Deleting the administrator ( softDelete )
      */
-    public function destroy( int $userId): JsonResponse
+    public function destroy(int $userId): JsonResponse
     {
-        try {
-            $user = User::withTrashed()
-                ->where('user_id', $userId)
-                ->whereNotNull('administrator_id')
-                ->first();
+        $user = User::withTrashed()
+            ->where('user_id', $userId)
+            ->whereNotNull('administrator_id')
+            ->first();
 
-            if (! $user) {
-                return $this->error(null, self::USER_NOT_FOUND, 404);
-            }
-
-            if ($user->deleted_at) {
-                return $this->error(null, 'Administrator already deleted', 404);
-            }
-
-            $user->delete();
-
-            return $this->success(null, 'Administrator Deleted');
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 500);
+        if (!$user) {
+            return $this->error(null, self::USER_NOT_FOUND, 404);
         }
+
+        if ($user->deleted_at) {
+            return $this->error(null, 'Administrator already deleted', 404);
+        }
+
+        $user->delete();
+
+        return $this->success(null, 'Administrator Deleted');
     }
 
     /**
      * Restoring the administrator
      */
-    public function restore( int $userId): JsonResponse
+    public function restore(int $userId): JsonResponse
     {
-        try {
-            $user = User::withTrashed()
-                ->where('user_id', $userId)
-                ->whereNotNull('administrator_id')
-                ->first();
+        $user = User::withTrashed()
+            ->where('user_id', $userId)
+            ->whereNotNull('administrator_id')
+            ->first();
 
-            if (! $user) {
-                return $this->error(null, self::USER_NOT_FOUND, 404);
-            }
-
-            if (! $user->deleted_at) {
-                return $this->error(null, 'Administrator already restored', 404);
-            }
-
-            $user->restore();
-
-            return $this->success(null, 'Administrator Restored');
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 500);
+        if (!$user) {
+            return $this->error(null, self::USER_NOT_FOUND, 404);
         }
+
+        if (!$user->deleted_at) {
+            return $this->error(null, 'Administrator already restored', 404);
+        }
+
+        $user->restore();
+
+        return $this->success(null, 'Administrator Restored');
     }
 
     /**
@@ -200,19 +182,15 @@ class AdministratorController extends Controller
      */
     public function getAdministratorList(): JsonResponse
     {
-        try {
-            $administrators = DB::table('users')
-                ->join('administrators', 'users.administrator_id', '=', 'administrators.administrator_id')
-                ->select('users.*', 'administrators.*')
-                ->get();
+        $administrators = DB::table('users')
+            ->join('administrators', 'users.administrator_id', '=', 'administrators.administrator_id')
+            ->select('users.*', 'administrators.*')
+            ->get();
 
-            if ($administrators->isEmpty()) {
-                return $this->error(null, self::ADMINISTRATOR_NOT_FOUND, 404);
-            }
-
-            return $this->success($administrators, 'Administrators List');
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 500);
+        if ($administrators->isEmpty()) {
+            return $this->error(null, self::ADMINISTRATOR_NOT_FOUND, 404);
         }
+
+        return $this->success($administrators, 'Administrators List');
     }
 }

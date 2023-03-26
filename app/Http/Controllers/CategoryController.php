@@ -23,23 +23,18 @@ class CategoryController extends Controller
      */
     public function getAllEstablishmentCategories(): JsonResponse
     {
-        try {
-            $allEstablishmentCategories = Category::where(function ($query) {
-                $query->where('category_details->sub_category', 'Establishment')
-                    ->orWhere('category_details->sub_category', 'All');
-            })
-                ->where('category_details->state', 'Approved')
-                ->get();
+        $allEstablishmentCategories = Category::where(function ($query) {
+            $query->where('category_details->sub_category', 'Establishment')
+                ->orWhere('category_details->sub_category', 'All');
+        })
+            ->where('category_details->state', 'Approved')
+            ->get();
 
-            if ($allEstablishmentCategories->isEmpty()) {
-                return $this->error(null, "No establishment categories found", 404);
-            }
-
-            return $this->success($allEstablishmentCategories, "Categories List");
-
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 500);
+        if ($allEstablishmentCategories->isEmpty()) {
+            return $this->error(null, "No establishment categories found", 404);
         }
+
+        return $this->success($allEstablishmentCategories, "Categories List");
     }
 
     /**
@@ -49,23 +44,19 @@ class CategoryController extends Controller
      */
     public function getAllEventCategories(): JsonResponse
     {
-        try {
-            $allEventCategories = Category::where(function ($query) {
-                $query->where('category_details->sub_category', 'Event')
-                    ->orWhere('category_details->sub_category', 'All');
-            })
-                ->where('category_details->state', 'Approved')
-                ->get();
+        $allEventCategories = Category::where(function ($query) {
+            $query->where('category_details->sub_category', 'Event')
+                ->orWhere('category_details->sub_category', 'All');
+        })
+            ->where('category_details->state', 'Approved')
+            ->get();
 
-            if ($allEventCategories->isEmpty()) {
-                return $this->error(null, "No event categories found", 404);
-            }
-
-            return $this->success($allEventCategories, "Categories List");
-
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 500);
+        if ($allEventCategories->isEmpty()) {
+            return $this->error(null, "No event categories found", 404);
         }
+
+        return $this->success($allEventCategories, "Categories List");
+
     }
 
 
@@ -75,36 +66,32 @@ class CategoryController extends Controller
 
     public function store(Request $request)
     {
-        try {
-            $request->validate([
-                'sub_category' => 'required|string',
-                'icon' => 'required|string',
-                'label' => 'required|string',
-            ]);
+        $request->validate([
+            'sub_category' => 'required|string',
+            'icon' => 'required|string',
+            'label' => 'required|string',
+        ]);
 
-            $label = array('sub_category' => $request->sub_category, 'icon' => $request->icon, 'label' => $request->label, 'state' => 'Hold');
+        $label = array('sub_category' => $request->sub_category, 'icon' => $request->icon, 'label' => $request->label, 'state' => 'Hold');
 
-            $label = json_encode('label');
+        $label = json_encode('label');
 
-            $category = Category::create([
-                'label' => $label,
-            ]);
+        $category = Category::create([
+            'label' => $label,
+        ]);
 
-            $category->save();
+        $category->save();
 
-            return $this->success([
-                $category
-            ], "Category created", 201);
+        return $this->success([
+            $category
+        ], "Category created", 201);
 
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 422);
-        }
     }
 
     /**
      * Display the specified resource.
      *
-     * @param  \App\Models\Category  $category
+     * @param \App\Models\Category $category
      * @return \Illuminate\Http\Response
      */
     public function show(Category $category)
@@ -115,7 +102,7 @@ class CategoryController extends Controller
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  \App\Models\Category  $category
+     * @param \App\Models\Category $category
      * @return \Illuminate\Http\Response
      */
     public function edit(Category $category)
@@ -126,8 +113,8 @@ class CategoryController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @param  \App\Models\Category  $category
+     * @param \Illuminate\Http\Request $request
+     * @param \App\Models\Category $category
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, Category $category)
@@ -138,7 +125,7 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  \App\Models\Category  $category
+     * @param \App\Models\Category $category
      * @return \Illuminate\Http\Response
      */
     public function destroy(Category $category)
