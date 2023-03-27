@@ -1,14 +1,31 @@
 {
     "private": true,
     "scripts": {
+        "prepare": "husky install",
         "dev": "vite",
-        "build": "vite build"
+        "build": "vite build",
+        "duster-fix": "./vendor/bin/duster fix --dirty"
     },
     "devDependencies": {
+        "@commitlint/cli": "^17.3.0",
+        "@commitlint/config-conventional": "^17.3.0",
         "axios": "^1.1.2",
+        "commitizen": "^4.2.5",
         "laravel-vite-plugin": "^0.7.0",
         "lodash": "^4.17.19",
         "postcss": "^8.1.14",
-        "vite": "^3.0.0"
+        "validate-branch-name": "^1.3.0",
+        "vite": "^3.0.0",
+        "husky": "^8.0.0"
+    },
+    "config": {
+        "commitizen": {
+            "path": "./node_modules/cz-conventional-changelog"
+        }
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "npm run duster-fix"
+        }
     }
 }
