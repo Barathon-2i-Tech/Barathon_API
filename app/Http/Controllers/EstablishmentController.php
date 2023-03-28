@@ -181,70 +181,79 @@ class EstablishmentController extends Controller
      * @return JsonResponse
      */
     public function update(Request $request, $ownerId, $establishmentId): JsonResponse
-    {
-        try {
-            // Get the establishment given in parameter
-            $establishment = Establishment::where('owner_id', $ownerId)
-                ->findOrFail($establishmentId);
+{
+    try {
+        // Get the establishment given in parameter
+        $establishment = Establishment::where('owner_id', $ownerId)
+            ->findOrFail($establishmentId);
 
-            $request->validate([
-                'trade_name' => self::STRING_VALIDATION,
-                'logo' => 'nullable|string', // modify later
-                'phone' => 'required|string',
-                'email' => 'nullable|email|string',
-                'website' => 'nullable|string',
-                'opening' => 'nullable|json',
-                'address' => 'min:5|required|string|max:255',
-                'postal_code' => 'required|string|size:5',
-                'city' => self::STRING_VALIDATION,
-            ]);
+        $request->validate([
+            'trade_name' => self::STRING_VALIDATION,
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'phone' => 'required|string',
+            'email' => 'nullable|email|string',
+            'website' => 'nullable|string',
+            'opening' => 'nullable|json',
+            'address' => 'min:5|required|string|max:255',
+            'postal_code' => 'required|string|size:5',
+            'city' => self::STRING_VALIDATION,
+        ]);
 
-
-            $dataEstablishment = $request->only(
-                ['trade_name', 'siret', 'logo', 'phone', 'email', 'website', 'opening']);
-
-            // Décoder la valeur de 'opening'
-            $dataEstablishment['opening'] = json_decode($dataEstablishment['opening'], true);
-
-            // Check if the data given in parameter are different from the data in database
-            foreach ($dataEstablishment as $field => $value) {
-                if ($establishment->{$field} !== $value) {
-                    $establishment->{$field} = $value;
-                }
-            }
-            $establishmentPending = Status::where('comment->code', 'ESTABL_PENDING')->first();
-            $establishment->status_id = $establishmentPending->status_id;
-            $establishment->save();
-
-            // Get the address linked to the establishment
-            $address = Address::where('address_id', $establishment->address_id)->first();
-
-            $dataAddress = $request->only(['address', 'postal_code', 'city']);
-
-            // Check if the data given in parameter are different from the data in database
-            foreach ($dataAddress as $field => $value) {
-                if ($address->{$field} !== $value) {
-                    $address->{$field} = $value;
-                }
-            }
-            $address->save();
-
-            $establishmentChanges = $establishment->getChanges();
-            $addressChanges = $address->getChanges();
-
-
-            // Check if the establishment data has changed
-            if (empty($establishmentChanges) && empty($addressChanges)) {
-                return $this->success([$establishment, $address], "Establishment not updated");
+        if ($request->hasFile('logo')) {
+            // Delete the old logo if it exists
+            if ($establishment->logo) {
+                Storage::disk('public')->delete($establishment->logo);
             }
 
-            // Return the updated establishment and address
-            return $this->success([$establishment, $address], "Establishment Updated");
-
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 500);
+            // Store the new logo and update the establishment's logo field
+            $establishmentLogoPath = $request->logo->store('logos', 'public');
+            $establishment->logo = $establishmentLogoPath;
         }
+
+        $dataEstablishment = $request->only(
+            ['trade_name', 'logo', 'phone', 'email', 'website', 'opening']);
+
+        // Decode the 'opening' value
+        $dataEstablishment['opening'] = json_decode($dataEstablishment['opening'], true);
+
+        // Check if the data given in parameter are different from the data in database
+        foreach ($dataEstablishment as $field => $value) {
+            if ($establishment->{$field} !== $value) {
+                $establishment->{$field} = $value;
+            }
+        }
+        $establishmentPending = Status::where('comment->code', 'ESTABL_PENDING')->first();
+        $establishment->status_id = $establishmentPending->status_id;
+        $establishment->save();
+
+        // Get the address linked to the establishment
+        $address = Address::where('address_id', $establishment->address_id)->first();
+
+        $dataAddress = $request->only(['address', 'postal_code', 'city']);
+
+        // Check if the data given in parameter are different from the data in database
+        foreach ($dataAddress as $field => $value) {
+            if ($address->{$field} !== $value) {
+                $address->{$field} = $value;
+            }
+        }
+        $address->save();
+
+        $establishmentChanges = $establishment->getChanges();
+        $addressChanges = $address->getChanges();
+
+        // Check if the establishment data has changed
+        if (empty($establishmentChanges) && empty($addressChanges)) {
+            return $this->success([$establishment, $address], "Establishment not updated");
+        }
+
+        // Return the updated establishment and address
+        return $this->success([$establishment, $address], "Establishment Updated");
+
+    } catch (Exception $error) {
+        return $this->error(null, $error->getMessage(), 500);
     }
+}
 
     /**
      * Deleting the establishment ( softDelete )
