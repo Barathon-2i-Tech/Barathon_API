@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage; 
 
 class Establishment extends Model
 {
@@ -107,4 +108,14 @@ class Establishment extends Model
     {
         return $this->hasOne(Address::class, 'address_id');
     }
+
+    public function getLogoUrlAttribute()
+    {
+        if ($this->logo) {
+            return Storage::url($this->logo);
+        }
+
+        return null;
+    }
 }
+
