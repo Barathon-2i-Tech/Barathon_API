@@ -11,6 +11,8 @@ class Owner extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     /**
      * The table associated with the model.
      *
@@ -31,18 +33,17 @@ class Owner extends Model
     protected $fillable = [
         'siren',
         'kbis',
-        'status_id'
+        'status_id',
+        'phone',
+        'company_name',
     ];
-
-    public $timestamps = false;
-
 
     /**
      * Get the status associated with the user
      */
     public function owner_status(): BelongsTo
     {
-        return $this->belongsTo(Status::class,  "status_id");
+        return $this->belongsTo(Status::class, 'status_id');
     }
 
     /**
@@ -50,7 +51,7 @@ class Owner extends Model
      */
     public function users(): HasMany
     {
-        return $this->hasMany(User::class, "user_id");
+        return $this->hasMany(User::class, 'user_id');
     }
 
     /**
@@ -58,6 +59,6 @@ class Owner extends Model
      */
     public function establishments(): HasMany
     {
-        return $this->hasMany(Establishment::class, "establishment_id");
+        return $this->hasMany(Establishment::class, 'establishment_id');
     }
 }
