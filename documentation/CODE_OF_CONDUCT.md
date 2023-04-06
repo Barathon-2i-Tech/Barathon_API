@@ -6,9 +6,8 @@ We promise to extend **courtesy and respect to everyone** involved in this proje
 
 Tech leads, maintainers and integrators may take action if **any of these points said above are not respected**. It can be a PR that is not correct, code to redo, but also bad behavior and violation of this code of conduct.
 
-If you have any questions regarding this code of conduct or have any other concerns, please contact one of these people : 
+If you have any questions regarding this code of conduct or have any other concerns, please contact one of these people :
 
-- **Eddy MANDRAN** [@eddymandran](https://github.com/eddymandran) 
-- **Bastien GIRARDIN-VINCENT** [@ParadoxVie](https://github.com/ParadoxVie) 
+- **Eddy MANDRAN** [@eddymandran](https://github.com/eddymandran)
+- **Bastien GIRARDIN-VINCENT** [@ParadoxVie](https://github.com/ParadoxVie)
 - **Julien PELLATTIERO** [@Pella0](https://github.com/Pella0)
-- **Simon MAINFROY** [@SimonMfroy](https://github.com/SimonMfroy)

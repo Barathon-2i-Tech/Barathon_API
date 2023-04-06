@@ -13,7 +13,7 @@ class InseeController extends Controller
 {
     use HttpResponses;
 
-    protected string $apiKey;
+    private string $apiKey;
     private const BASE_URL = 'https://api.insee.fr/entreprises/sirene/V3/';
 
 
@@ -26,9 +26,6 @@ class InseeController extends Controller
     /**
      * Generate a valid access token for the SIRENE API of INSEE.
      * (subscription required to use this API)
-     *
-     * @return string  access token for the INSEE API SIRENE
-     * @throws GuzzleException
      */
     public function generateToken(): string
     {
@@ -54,98 +51,94 @@ class InseeController extends Controller
             403 => $this->error(null, 'Access forbidden', 403),
             404 => $this->error(null, 'Not found', 404),
             429 => $this->error(null, 'Too many requests', 429),
-            default => $this->error(null, 'Internal server error', 500),
+            default => $this->error(null, 'Internal server error', $response->getStatusCode()),
         };
     }
 
     /**
-     * Retrieve information about a company using its SIREN number.
-     *
-     * @param string $siren enterprise SIREN number
-     * @return JsonResponse
+     * Retrieve information about a company using SIREN number.
      */
     public function getSiren(string $siren): JsonResponse
     {
-        try {
-            // format siren
-            $sirenToCheck = str_replace(' ', '', $siren);
+        // removing blank space
+        $sirenToCheck = str_replace(' ', '', $siren);
 
-            $validator = Validator::make(['siren' => $sirenToCheck], [
-                'siren' => 'required|numeric|digits:9',
-            ]);
+        //validating Siren
+        $validator = Validator::make(['siren' => $sirenToCheck], [
+            'siren' => 'required|numeric|digits:9',
+        ], [
+            'siren.required' => 'Le numero SIREN est obligatoire',
+            'siren.numeric' => 'Le numero SIREN doit etre compose de chiffres',
+            'siren.digits' => 'Le numero SIREN doit etre compose de 9 chiffres',
+        ]);
 
-            if ($validator->fails()) {
-                return $this->error(null, $validator->errors()->first(), 400);
-            }
-
-            //generate token
-            $tokenGenerated = $this->generateToken();
-
-            $client = new Client();
-            $response = $client->get(self::BASE_URL . 'siren/' . $sirenToCheck, [
-                'headers' => [
-                    'Accept' => "application/json",
-                    'Authorization' => 'Bearer ' . $tokenGenerated,
-                ],
-                'http_errors' => false,
-            ]);
-
-            // Check errors return by INSEE API SIRENE
-            if ($response->getStatusCode() !== 200) {
-                return $this->checkStatusCodeFromApi($response);
-            } else {
-                $dataFetch = json_decode($response->getBody());
-                return $this->success($dataFetch->uniteLegale, 'Siren found');
-            }
-        } catch (GuzzleException $error) {
-            Log::error($error);
-            return $this->error(null, $error->getMessage(), 500);
+        // returning a error if validation fail
+        if ($validator->fails()) {
+            return $this->error(null, $validator->errors(), 400);
         }
+
+        //generating acces token
+        $tokenGenerated = $this->generateToken();
+
+        // instantiation of the Guzzle HTTP client
+        $client = new Client();
+
+        // sending http get request
+        $response = $client->get(self::BASE_URL . 'siren/' . $sirenToCheck, [
+            'headers' => [
+                'Accept' => "application/json",
+                'Authorization' => 'Bearer ' . $tokenGenerated,
+            ],
+            'http_errors' => false,
+        ]);
+
+        // checking response return by INSEE API SIRENE
+        if ($response->getStatusCode() !== 200) {
+            return $this->checkStatusCodeFromApi($response);
+        } else {
+            // getting the body of the HTTP response and decoding it to JSON
+            $dataFetch = json_decode($response->getBody());
+            // returning a JSON response with the company information
+            return $this->success($dataFetch->uniteLegale, 'Siren found');
+        }
+
     }
 
     /**
      * Retrieve information about a company using its SIRET number.
      *
-     * @param string $siret enterprise SIRET number
-     * @return JsonResponse
      */
     public function getSiret(string $siret): JsonResponse
     {
-        try {
-            // format siren
-            $siretToCheck = str_replace(' ', '', $siret);
+        // format siren
+        $siretToCheck = str_replace(' ', '', $siret);
 
-            $validator = Validator::make(['siret' => $siretToCheck], [
-                'siret' => 'required|numeric|digits:14',
-            ]);
+        $validator = Validator::make(['siret' => $siretToCheck], [
+            'siret' => 'required|numeric|digits:14',
+        ]);
 
-            if ($validator->fails()) {
-                return $this->error(null, $validator->errors()->first(), 400);
-            }
+        if ($validator->fails()) {
+            return $this->error(null, $validator->errors()->first(), 400);
+        }
 
-            //generate token
-            $tokenGenerated = $this->generateToken();
+        //generate token
+        $tokenGenerated = $this->generateToken();
 
-            $client = new Client();
-            $response = $client->get(self::BASE_URL . 'siret/' . $siretToCheck, [
-                'headers' => [
-                    'Accept' => "application/json",
-                    'Authorization' => 'Bearer ' . $tokenGenerated,
-                ],
-                'http_errors' => false,
-            ]);
+        $client = new Client();
+        $response = $client->get(self::BASE_URL . 'siret/' . $siretToCheck, [
+            'headers' => [
+                'Accept' => "application/json",
+                'Authorization' => 'Bearer ' . $tokenGenerated,
+            ],
+            'http_errors' => false,
+        ]);
 
-            // Check errors return by INSEE API SIRENE
-            if ($response->getStatusCode() !== 200) {
-                return $this->checkStatusCodeFromApi($response);
-            } else {
-                $dataFetch = json_decode($response->getBody());
-                return $this->success($dataFetch->etablissement, 'Siret found');
-            }
-        } catch (GuzzleException $error) {
-            Log::error($error);
-            return $this->error(null, $error->getMessage(), 500);
+        // Check errors return by INSEE API SIRENE
+        if ($response->getStatusCode() !== 200) {
+            return $this->checkStatusCodeFromApi($response);
+        } else {
+            $dataFetch = json_decode($response->getBody());
+            return $this->success($dataFetch->etablissement, 'Siret found');
         }
     }
 }
-

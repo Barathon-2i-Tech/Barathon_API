@@ -22,7 +22,6 @@ class Category_Event extends Model
      */
     protected $primaryKey = 'category_event_id';
 
-
     /**
      * The attributes that are mass assignable.
      *
@@ -30,7 +29,7 @@ class Category_Event extends Model
      */
     protected $fillable = [
         'category_id',
-        'event_id'
+        'event_id',
     ];
 
     protected $hidden = ['pivot'];
@@ -44,5 +43,4 @@ class Category_Event extends Model
     {
         return $this->belongsTo(Event::class, 'event_id');
     }
-
 }

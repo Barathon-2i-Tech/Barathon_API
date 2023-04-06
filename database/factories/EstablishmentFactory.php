@@ -20,19 +20,19 @@ class EstablishmentFactory extends Factory
      */
     public function definition()
     {
-        $owner_id = Owner::all('owner_id')->first();
-        $ESTABL_VALID = Status::where('comment->code', 'ESTABL_VALID')->first();
+        $ownerId = Owner::all('owner_id')->first();
+        $establValid = Status::where('comment->code', 'ESTABL_VALID')->first();
         $address = Address::all('address_id')->first();
 
         return [
-            'trade_name'=>fake()->company,
-            'siret'=>fake()->siret(),
-            'address_id'=>$address->address_id,
-            'logo'=> fake()->imageUrl(180,180,"Establishment logo",false,),
-            'phone'=>fake()->phoneNumber(),
-            'email'=>fake()->companyEmail(),
-            'website'=>fake()->url(),
-            'opening'=> [
+            'trade_name' => fake()->company,
+            'siret' => fake()->siret(),
+            'address_id' => $address->address_id,
+            'logo' => fake()->imageUrl(180, 180, 'Establishment logo', false),
+            'phone' => fake()->phoneNumber(),
+            'email' => fake()->companyEmail(),
+            'website' => fake()->url(),
+            'opening' => [
                 'Lundi' => 'fermer',
                 'Mardi' => '17h00 - 01h00',
                 'Mercredi' => '17h00 - 01h00',
@@ -41,12 +41,8 @@ class EstablishmentFactory extends Factory
                 'Samedi' => '17h00 - 01h00',
                 'Dimanche' => '17h00 - 01h00',
             ],
-            'owner_id'=>$owner_id->owner_id,
-            'status_id'=>$ESTABL_VALID->status_id,
+            'owner_id' => $ownerId->owner_id,
+            'status_id' => $establValid->status_id,
         ];
     }
-
-
-
-
 }

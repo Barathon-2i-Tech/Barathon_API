@@ -42,5 +42,14 @@ abstract class TestCase extends BaseTestCase
         return $user;
     }
 
-
+    public function createNewAdminUser()
+    {
+        $user = User::create([
+            'first_name' => 'Admin',
+            'last_name' => 'Admin',
+            'email' => 'admintest@mail.fr',
+            'password' => Hash::make('password'),
+            'superAdmin' => true,]);
+        return $user;
+    }
 }

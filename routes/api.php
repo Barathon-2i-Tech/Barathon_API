@@ -1,17 +1,17 @@
 <?php
-use App\Http\Controllers\InseeController;
-use App\Http\Controllers\StatusController;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AdministratorController;
+use App\Http\Controllers\ApiAuthController;
+use App\Http\Controllers\BarathonienController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CategoryEstablishmentController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EstablishmentController;
 use App\Http\Controllers\EventController;
-use App\Http\Controllers\ApiAuthController;
-use App\Http\Controllers\BarathonienController;
+use App\Http\Controllers\InseeController;
 use App\Http\Controllers\OwnerController;
-use App\Http\Controllers\AdministratorController;
+use App\Http\Controllers\StatusController;
+use Illuminate\Support\Facades\Route;
 
 
 /*
@@ -30,11 +30,13 @@ use App\Http\Controllers\AdministratorController;
 | Register and Login Methods
 |--------------------------------------------------------------------------
 */
-Route::post('/login', [ApiAuthController::class, 'login'])->name('user.login');
-Route::post('/register', [ApiAuthController::class, 'register'])->name('user.register');
-Route::post('/register/barathonien', [BarathonienController::class, 'store'])->name('user.register.barathonien');
-Route::post('/register/owner', [OwnerController::class, 'store'])->name('user.register.owner');
-Route::post('/register/admin', [AdministratorController::class, 'store'])->name('user.register.admin');
+Route::post('login', [ApiAuthController::class, 'login'])->name('user.login');
+Route::post('register', [ApiAuthController::class, 'register'])->name('user.register');
+Route::post('register/barathonien', [BarathonienController::class, 'store'])->name('user.register.barathonien');
+Route::post('register/owner', [OwnerController::class, 'store'])->name('user.register.owner');
+Route::post('register/admin', [AdministratorController::class, 'store'])->name('user.register.admin');
+Route::post('register/employee', [EmployeeController::class, 'store'])->name('user.register.employee');
+
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
 
@@ -115,9 +117,6 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     */
     Route::post('/pro/category/create', [CategoryController::class, 'store'])->name('categories.store');
 
-    Route::put('/pro/establishment/{establishment_id}/category' , [CategoryEstablishmentController::class, 'associateCategoriesToEstablishment'])->name('categories.update');
-
-    Route::post('/pro/establishment/{establishment_id}/category' , [CategoryEstablishmentController::class, 'associateCategoriesToEstablishment'])->name('categories.store');
 
     /*
     |--------------------------------------------------------------------------

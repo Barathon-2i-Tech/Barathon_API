@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-
 use Illuminate\Database\Eloquent\Casts\AsArrayObject;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -25,23 +24,19 @@ class Status extends Model
     protected $primaryKey = 'status_id';
 
     /**
-
      * The attributes that should be cast.
-     *
-     * @var array
      */
     protected $casts = [
         'comment' => AsArrayObject::class,
     ];
 
     /**
-
      * The attributes that are mass assignable.
      *
      * @var string[]
      */
     protected $fillable = [
-        'comment'
+        'comment',
     ];
 
     /**
@@ -49,7 +44,7 @@ class Status extends Model
      */
     public function establishments(): HasMany
     {
-        return $this->hasMany(Establishment::class, "establishment_id");
+        return $this->hasMany(Establishment::class, 'establishment_id');
     }
 
     /**
@@ -57,7 +52,7 @@ class Status extends Model
      */
     public function owners(): HasMany
     {
-        return $this->hasMany(Owner::class, "owner_id");
+        return $this->hasMany(Owner::class, 'owner_id');
     }
 
     /**
@@ -65,6 +60,6 @@ class Status extends Model
      */
     public function events(): HasMany
     {
-        return $this->hasMany(Event::class, "event_id");
+        return $this->hasMany(Event::class, 'event_id');
     }
 }

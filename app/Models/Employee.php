@@ -11,6 +11,8 @@ class Employee extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     /**
      * The table associated with the model.
      *
@@ -23,7 +25,6 @@ class Employee extends Model
      */
     protected $primaryKey = 'employee_id';
 
-
     /**
      * The attributes that are mass assignable.
      *
@@ -31,18 +32,15 @@ class Employee extends Model
      */
     protected $fillable = [
         'hiring_date',
-        'dismissal_date'
+        'dismissal_date',
     ];
-
-    public $timestamps = false;
-
 
     /**
      * Get the user associated with the profile
      */
-    public function users(): HasMany
+    public function user(): HasMany
     {
-        return $this->hasMany(User::class, "user_id");
+        return $this->hasMany(User::class, 'user_id');
     }
 
     /**
@@ -50,7 +48,6 @@ class Employee extends Model
      */
     public function establishments(): BelongsToMany
     {
-        return $this->belongsToMany(Establishment::class, "establishment_employee", "employee_id", "establishment_id");
+        return $this->belongsToMany(Establishment::class, 'establishments_employees', 'employee_id', 'establishment_id');
     }
-
 }

@@ -10,6 +10,8 @@ class Administrator extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     /**
      * The table associated with the model.
      *
@@ -22,24 +24,20 @@ class Administrator extends Model
      */
     protected $primaryKey = 'administrator_id';
 
-
     /**
      * The attributes that are mass assignable.
      *
      * @var string[]
      */
     protected $fillable = [
-        'superAdmin'
+        'superAdmin',
     ];
-
-    public $timestamps = false;
 
     /**
      * Get the user associated with the profile
      */
     public function users(): HasMany
     {
-        return $this->hasMany(User::class, "user_id");
+        return $this->hasMany(User::class, 'user_id');
     }
-
 }

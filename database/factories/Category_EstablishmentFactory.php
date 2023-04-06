@@ -23,8 +23,8 @@ class Category_EstablishmentFactory extends Factory
         $category = Category::query()->first();
 
         return [
-            "establishment_id" => $establishment->establishment_id,
-            "category_id" => $category->category_id
+            'establishment_id' => $establishment->establishment_id,
+            'category_id' => $category->category_id,
         ];
     }
 }
