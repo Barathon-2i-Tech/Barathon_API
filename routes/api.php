@@ -63,9 +63,15 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('barathonien/list', [BarathonienController::class, 'getBarathonienList'])->name('barathonien.list');
     Route::get('pro/list', [OwnerController::class, 'getOwnerList'])->name('owner.list');
-    Route::get('administrator/list', [AdministratorController::class, 'getAdministratorList'])->name('administrator.list');
+    Route::get(
+        'administrator/list',
+        [AdministratorController::class, 'getAdministratorList']
+    )->name('administrator.list');
     Route::get('employee/list', [EmployeeController::class, 'getEmployeeList'])->name('employee.list');
-    Route::get('establishments/list', [EstablishmentController::class, 'getAllEstablishments'])->name('admin.establishment.list');
+    Route::get(
+        'establishments/list',
+        [EstablishmentController::class, 'getAllEstablishments']
+    )->name('admin.establishment.list');
 
 
     /*
@@ -84,10 +90,19 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     */
 
     Route::get('admin/pro-to-validate', [OwnerController::class, 'getOwnerToValidate'])->name('admin.pro-to-validate');
-    Route::get('admin/establishment-to-validate', [EstablishmentController::class, 'getEstablishmentToValidate'])->name('admin.establishment-to-validate');
+    Route::get(
+        'admin/establishment-to-validate',
+        [EstablishmentController::class, 'getEstablishmentToValidate']
+    )->name('admin.establishment-to-validate');
 
-    Route::put('establishment/{establishment_id}/validation/{status_code}', [EstablishmentController::class, 'validateEstablishment'])->name('establishment.validation');
-    Route::put('pro/{owner_id}/validation/{status_code}', [OwnerController::class, 'validateOwner'])->name('pro.validation');
+    Route::put(
+        'establishment/{establishment_id}/validation/{status_code}',
+        [EstablishmentController::class, 'validateEstablishment']
+    )->name('establishment.validation');
+    Route::put(
+        'pro/{owner_id}/validation/{status_code}',
+        [OwnerController::class, 'validateOwner']
+    )->name('pro.validation');
 
 
     /*
@@ -120,10 +135,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     |--------------------------------------------------------------------------
     */
 
-    // POST booking
     Route::post('barathonien/booking', [BookingController::class, 'store'])->name('barathonien.postBooking');
 
-    // DELETE booking
     Route::delete(
         'barathonien/booking/{id}',
         [BookingController::class, 'destroy']
@@ -149,12 +162,21 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         [CategoryController::class, 'getAllEventCategories']
     )->name('categories.event.all');
 
+    Route::put(
+        '/pro/establishment/{establishment_id}/category',
+        [CategoryEstablishmentController::class, 'associateCategoriesToEstablishment']
+    )->name('categories.update');
+
+    Route::post(
+        '/pro/establishment/{establishment_id}/category',
+        [CategoryEstablishmentController::class, 'associateCategoriesToEstablishment']
+    )->name('categories.store');
 
     /*
-   |--------------------------------------------------------------------------
-   | Barathonien Routes
-   |--------------------------------------------------------------------------
-   */
+    |--------------------------------------------------------------------------
+    | Barathonien Routes
+    |--------------------------------------------------------------------------
+    */
 
     Route::get('barathonien/{user_id}', [BarathonienController::class, 'show'])->name('barathonien.show');
     Route::put('barathonien/{user_id}', [BarathonienController::class, 'update'])->name('barathonien.update');
