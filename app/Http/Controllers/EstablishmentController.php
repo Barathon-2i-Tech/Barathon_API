@@ -6,13 +6,11 @@ use App\Models\Address;
 use App\Models\Establishment;
 use App\Models\Status;
 use App\Traits\HttpResponses;
-use Exception;
-use Illuminate\Validation\ValidationException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\Rule;
 
 class EstablishmentController extends Controller
 {
@@ -82,16 +80,16 @@ class EstablishmentController extends Controller
             'postal_code' => 'required|string|size:5',
             'city' => self::STRING_VALIDATION,
         ], [
-                'siret.unique' => 'Le siret doit etre unique',
-                'siret.size' => 'Le siret doit contenir 14 caractères',
-                'postal_code.size' => 'Le code postal doit contenir 5 caractères',
-                'email.email' => "L\'email doit être au format email",
-                'phone.regex' => "Le numéro de téléphone doit être au format 00 00 00 00 00 ou +33 0 00 00 00 00",
-                'opening.json' => "Le format de l\'ouverture doit être au format JSON",
-                'address.min' => self::ADDRESS_ERROR,
-                'address.max' => self::ADDRESS_ERROR,
+            'siret.unique' => 'Le siret doit etre unique',
+            'siret.size' => 'Le siret doit contenir 14 caractères',
+            'postal_code.size' => 'Le code postal doit contenir 5 caractères',
+            'email.email' => "L\'email doit être au format email",
+            'phone.regex' => "Le numéro de téléphone doit être au format 00 00 00 00 00 ou +33 0 00 00 00 00",
+            'opening.json' => "Le format de l\'ouverture doit être au format JSON",
+            'address.min' => self::ADDRESS_ERROR,
+            'address.max' => self::ADDRESS_ERROR,
 
-            ]);
+        ]);
 
         $establPending = Status::where('comment->code', 'ESTABL_PENDING')->first()->status_id;
 
@@ -175,7 +173,7 @@ class EstablishmentController extends Controller
 
         $request->validate([
             'trade_name' => self::STRING_VALIDATION,
-            'siret' => 'required|string|size:14|unique:establishments',
+            'siret' => 'required','string','size:14',Rule::unique('establishments')->ignore($establishment),
             'phone' => self::PHONEVALIDATION,
             'email' => 'nullable|email|string',
             'website' => self::NULLABLE_STRING_VALIDATION,
@@ -184,15 +182,15 @@ class EstablishmentController extends Controller
             'postal_code' => 'required|string|size:5',
             'city' => self::STRING_VALIDATION,
         ], [
-                'siret.unique' => 'Le siret doit etre unique',
-                'siret.size' => 'Le siret doit contenir 14 caractères',
-                'postal_code.size' => 'Le code postal doit contenir 5 caractères',
-                'email.email' => "L\'email doit être au format email",
-                'phone.regex' => "Le numéro de téléphone doit être au format 00 00 00 00 00 ou +33 0 00 00 00 00",
-                'opening.json' => "Le format de l\'ouverture doit être au format JSON",
-                'address.min' => self::ADDRESS_ERROR,
-                'address.max' => self::ADDRESS_ERROR,
-            ]);
+            'siret.unique' => 'Le siret doit etre unique',
+            'siret.size' => 'Le siret doit contenir 14 caractères',
+            'postal_code.size' => 'Le code postal doit contenir 5 caractères',
+            'email.email' => "L\'email doit être au format email",
+            'phone.regex' => "Le numéro de téléphone doit être au format 00 00 00 00 00 ou +33 0 00 00 00 00",
+            'opening.json' => "Le format de l\'ouverture doit être au format JSON",
+            'address.min' => self::ADDRESS_ERROR,
+            'address.max' => self::ADDRESS_ERROR,
+        ]);
 
         // Handle logo file upload if a new logo is present in the request
 
