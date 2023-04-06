@@ -16,24 +16,23 @@ use Illuminate\Support\Facades\Storage;
 
 class EstablishmentController extends Controller
 {
-use HttpResponses;
+    use HttpResponses;
 
-private const ESTABLISHMENT_NOT_FOUND = "Establishment not found";
-private const STRING_VALIDATION = 'required|string|max:255';
-private const ADDRESS_ERROR = "L\'adresse est invalide";
-private const PHONEVALIDATION = ['regex:/^([0-9\s\-\+\(\)]*)$/', 'min:10'];
-private const NULLABLE_STRING_VALIDATION = 'nullable|string|max:255';
+    private const ESTABLISHMENT_NOT_FOUND = "Establishment not found";
+    private const STRING_VALIDATION = 'required|string|max:255';
+    private const ADDRESS_ERROR = "L\'adresse est invalide";
+    private const PHONEVALIDATION = ['regex:/^([0-9\s\-\+\(\)]*)$/', 'min:10'];
+    private const NULLABLE_STRING_VALIDATION = 'nullable|string|max:255';
 
 
-/**
- * Display a listing of establishment.
- *
- * @return JsonResponse
- *
- */
-public function getEstablishmentListByOwnerId($ownerId): JsonResponse
-{
-    try {
+    /**
+     * Display a listing of establishment.
+     *
+     * @return JsonResponse
+     *
+     */
+    public function getEstablishmentListByOwnerId(int $ownerId): JsonResponse
+    {
         // get all establishments from the owner
 
         $establishments = DB::table('establishments')
@@ -52,53 +51,49 @@ public function getEstablishmentListByOwnerId($ownerId): JsonResponse
 
 
         foreach ($establishments as $establishment) {
-            $establishment->logo_url = env('APP_URL').Storage::url($establishment->logo);
+            $establishment->logo_url = env('APP_URL') . Storage::url($establishment->logo);
         }
 
         // return the establishments list
         return $this->success($establishments, "Establishment List");
 
-    } catch (Exception $error) {
-        return $this->error(null, $error->getMessage(), 500);
     }
-}
 
-/**
- * Store a newly created resource in storage.
- *
- * @param Request $request
- * @param $ownerId
- * @return JsonResponse
- */
-public function store(Request $request, $ownerId): JsonResponse
-{
-    
+    /**
+     * Store a newly created resource in storage.
+     *
+     * @param Request $request
+     * @param $ownerId
+     * @return JsonResponse
+     */
+    public function store(Request $request, int $ownerId): JsonResponse
+    {
 
-    $request->validate([
-        'trade_name' => self::STRING_VALIDATION,
-        'siret' => 'required|string|size:14|unique:establishments',
-        'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        'phone' => self::PHONEVALIDATION,
-        'email' => 'nullable|email|string',
-        'website' => self::NULLABLE_STRING_VALIDATION,
-        'opening' => 'nullable|json',
-        'address' => 'min:5|required|string|max:255',
-        'postal_code' => 'required|string|size:5',
-        'city' => self::STRING_VALIDATION,
-    ], [
-        'siret.unique' => 'Le siret doit etre unique',
-        'siret.size' => 'Le siret doit contenir 14 caractères',
-        'postal_code.size' => 'Le code postal doit contenir 5 caractères',
-        'email.email' => "L\'email doit être au format email",
-        'phone.regex' => "Le numéro de téléphone doit être au format 00 00 00 00 00 ou +33 0 00 00 00 00",
-        'opening.json' => "Le format de l\'ouverture doit être au format JSON",
-        'address.min' => self::ADDRESS_ERROR,
-        'address.max' => self::ADDRESS_ERROR,
 
-    ]);
-        
+        $request->validate([
+            'trade_name' => self::STRING_VALIDATION,
+            'siret' => 'required|string|size:14|unique:establishments',
+            'logo' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'phone' => self::PHONEVALIDATION,
+            'email' => 'nullable|email|string',
+            'website' => self::NULLABLE_STRING_VALIDATION,
+            'opening' => 'nullable|json',
+            'address' => 'min:5|required|string|max:255',
+            'postal_code' => 'required|string|size:5',
+            'city' => self::STRING_VALIDATION,
+        ], [
+                'siret.unique' => 'Le siret doit etre unique',
+                'siret.size' => 'Le siret doit contenir 14 caractères',
+                'postal_code.size' => 'Le code postal doit contenir 5 caractères',
+                'email.email' => "L\'email doit être au format email",
+                'phone.regex' => "Le numéro de téléphone doit être au format 00 00 00 00 00 ou +33 0 00 00 00 00",
+                'opening.json' => "Le format de l\'ouverture doit être au format JSON",
+                'address.min' => self::ADDRESS_ERROR,
+                'address.max' => self::ADDRESS_ERROR,
+
+            ]);
+
         $establPending = Status::where('comment->code', 'ESTABL_PENDING')->first()->status_id;
-
 
         $establishmentLogoPath = null;
 
@@ -132,25 +127,24 @@ public function store(Request $request, $ownerId): JsonResponse
         $establishmentPending = Status::where('comment->code', 'ESTABL_PENDING')->first();
         $establishment->status_id = $establishmentPending->status_id;
         $establishment->save();
-        $establishment->logo_url = env('APP_URL').Storage::url($establishment->logo);
+        $establishment->logo_url = env('APP_URL') . Storage::url($establishment->logo);
 
         return $this->success([
             $establishment
         ], "Establishment created", 201);
 
-}
+    }
 
-/**
- * Display the specified resource.
- *
- * @param $ownerId
- * @param $establishmentId
- * @return JsonResponse
- */
-public function show($ownerId, $establishmentId): JsonResponse
-{
+    /**
+     * Display the specified resource.
+     *
+     * @param $ownerId
+     * @param $establishmentId
+     * @return JsonResponse
+     */
+    public function show(int $ownerId, int $establishmentId): JsonResponse
+    {
 
-    try {
         // get all establishments from the owner
         $establishments = Establishment::select('establishments.*', 'addresses.*', 'owners.*', 'status.*')
             ->join('addresses', 'addresses.address_id', '=', 'establishments.address_id')
@@ -167,38 +161,21 @@ public function show($ownerId, $establishmentId): JsonResponse
         // return the establishments list
         return $this->success($establishments, "Establishment");
 
-    } catch (Exception $error) {
-        return $this->error(null, $error->getMessage(), 500);
     }
-}
 
-/**
- * Update the specified resource in storage.
- *
- * @param Request $request
- * @param $ownerId
- * @param $establishmentId
- * @return JsonResponse
- */
-public function update(Request $request, $ownerId, $establishmentId): JsonResponse
-{
-    // Log entering the update method and the request data
-    Log::info('Entering update method');
-    Log::info('Request data', ['request_data' => $request->input()]);
-    Log::info('Request data', ['request_data' => $request->post()]);
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, int $ownerId, int $establishmentId): JsonResponse
+    {
 
-    try {
         // Find the establishment by its owner ID and establishment ID
         $establishment = Establishment::where('owner_id', $ownerId)
             ->findOrFail($establishmentId);
 
-        // Log the found establishment
-        Log::info('Establishment found', ['establishment' => $establishment]);
-
-        // Validate the request data
-        Log::info('Starting validation');
         $request->validate([
             'trade_name' => self::STRING_VALIDATION,
+            'siret' => 'required|string|size:14|unique:establishments',
             'phone' => self::PHONEVALIDATION,
             'email' => 'nullable|email|string',
             'website' => self::NULLABLE_STRING_VALIDATION,
@@ -207,17 +184,18 @@ public function update(Request $request, $ownerId, $establishmentId): JsonRespon
             'postal_code' => 'required|string|size:5',
             'city' => self::STRING_VALIDATION,
         ], [
-            'postal_code.size' => 'Le code postal doit contenir 5 caractères',
-            'email.email' => "L\'email doit être au format email",
-            'phone.regex' => "Le numéro de téléphone doit être au format 00 00 00 00 00 ou +33 0 00 00 00 00",
-            'opening.json' => "Le format de l\'ouverture doit être au format JSON",
-            'address.min' => self::ADDRESS_ERROR,
-            'address.max' => self::ADDRESS_ERROR,
-        ]);
-        Log::info('Validation passed');
+                'siret.unique' => 'Le siret doit etre unique',
+                'siret.size' => 'Le siret doit contenir 14 caractères',
+                'postal_code.size' => 'Le code postal doit contenir 5 caractères',
+                'email.email' => "L\'email doit être au format email",
+                'phone.regex' => "Le numéro de téléphone doit être au format 00 00 00 00 00 ou +33 0 00 00 00 00",
+                'opening.json' => "Le format de l\'ouverture doit être au format JSON",
+                'address.min' => self::ADDRESS_ERROR,
+                'address.max' => self::ADDRESS_ERROR,
+            ]);
 
         // Handle logo file upload if a new logo is present in the request
-        Log::info('Starting logo file handling');
+
         if ($request->hasFile('logo')) {
             $request->validate([
                 'logo' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
@@ -230,7 +208,6 @@ public function update(Request $request, $ownerId, $establishmentId): JsonRespon
 
             // Store the new logo and update the establishment object with the new logo path
             $logoPath = $request->file('logo')->store('logos', 'public');
-            Log::info('Logo path:', ['logo_path' => $logoPath]);
             $establishment->logo = $logoPath;
             $establishment->save();
             $dataEstablishment['logo'] = $logoPath;
@@ -238,9 +215,12 @@ public function update(Request $request, $ownerId, $establishmentId): JsonRespon
 
         // Get the data to update the establishment object and decode the opening hours
         $dataEstablishment = $request->only([
-            'trade_name', 'phone', 'email', 'opening'
+            'trade_name',
+            'siret',
+            'phone',
+            'email',
+            'opening'
         ]);
-        Log::info('DataEstablishment', ['dataEstablishment' => $dataEstablishment]);
         $dataEstablishment['opening'] = json_decode($dataEstablishment['opening'], true);
 
         // Update establishment fields if they have changed
@@ -255,8 +235,6 @@ public function update(Request $request, $ownerId, $establishmentId): JsonRespon
         $establishment->status_id = $establishmentPending->status_id;
         $establishment->save();
 
-        // Log the establishment with updated logo path
-        Log::info('Establishment with updated logo path', ['establishment' => $establishment]);
 
         // Get the address linked to the establishment
         $address = Address::where('address_id', $establishment->address_id)->first();
@@ -284,37 +262,16 @@ public function update(Request $request, $ownerId, $establishmentId): JsonRespon
             $establishment->refresh();
             return $this->success($establishment, "Establishment Updated");
         }
-    } catch (ValidationException $e) {
-        // Handle validation errors
-        // ...
-    } catch (Exception $error) {
-        // Handle other errors
-        // ...
+
     }
 
-    // Log exiting the update method
-    Log::info('Exiting update method');
-}
 
+    /**
+     * Deleting the establishment ( softDelete )
+     */
+    public function destroy(int $ownerId, int $establishmentId): JsonResponse
+    {
 
-
-
-
-
-
-
-
-
-/**
- * Deleting the establishment ( softDelete )
- *
- * @param $ownerId
- * @param $establishmentId
- * @return JsonResponse
- */
-public function destroy($ownerId, $establishmentId): JsonResponse
-{
-    try {
         $establishment = Establishment::withTrashed()->where('owner_id', $ownerId)
             ->where('establishment_id', $establishmentId)
             ->first();
@@ -329,21 +286,13 @@ public function destroy($ownerId, $establishmentId): JsonResponse
         $establishment->delete();
         return $this->success(null, "Establishment Deleted successfully");
 
-    } catch (Exception $error) {
-        return $this->error(null, $error->getMessage(), 500);
     }
-}
 
-/**
- * Restoring the establishment
- *
- * @param $ownerId
- * @param $establishmentId
- * @return JsonResponse
- */
-public function restore($ownerId, $establishmentId): JsonResponse
-{
-    try {
+    /**
+     * Restoring the establishment
+     */
+    public function restore(int $ownerId, int $establishmentId): JsonResponse
+    {
         $establishment = Establishment::withTrashed()->where('owner_id', $ownerId)
             ->where('establishment_id', $establishmentId)
             ->first();
@@ -358,19 +307,14 @@ public function restore($ownerId, $establishmentId): JsonResponse
         $establishment->restore();
         return $this->success(null, "Establishment Restored successfully");
 
-    } catch (Exception $error) {
-        return $this->error(null, $error->getMessage(), 500);
     }
-}
 
-/**
- *Get all establishments for the admin part
-    *
-*/
-
-public function getAllEstablishments(): JsonResponse
-{
-    try {
+    /**
+     *Get all establishments for the admin part
+     *
+     */
+    public function getAllEstablishments(): JsonResponse
+    {
         $establishments = Establishment::select('establishments.*', 'addresses.*', 'owners.*', 'status.*')
             ->join('addresses', 'addresses.address_id', '=', 'establishments.address_id')
             ->join('owners', 'owners.owner_id', '=', 'establishments.owner_id')
@@ -382,22 +326,13 @@ public function getAllEstablishments(): JsonResponse
             return $this->error(null, self::ESTABLISHMENT_NOT_FOUND, 404);
         }
         return $this->success($establishments, "Establishments");
-
-    } catch (Exception $error) {
-        return $this->error(null, $error->getMessage(), 500);
     }
-}
 
-/**
- * Validate the establishment
- *
- * @param $establishmentId
- * @param $statusCode
- * @return JsonResponse
- */
-public function validateEstablishment($establishmentId, $statusCode): jsonResponse
-{
-    try {
+    /**
+     * Validate the establishment
+     */
+    public function validateEstablishment(int $establishmentId, int $statusCode): jsonResponse
+    {
         //parse the status code
         $statusCode = intval($statusCode);
 
@@ -415,27 +350,15 @@ public function validateEstablishment($establishmentId, $statusCode): jsonRespon
         $establishment->save();
         return $this->success(null, "Validation updated");
 
-    } catch (Exception $error) {
-        Log::error($error);
-        return $this->error(null, $error->getMessage(), 500);
     }
-}
 
-/**
- * Get how many establishment need to be validated
- * @return JsonResponse
- */
+    /**
+     * Get how many establishment need to be validated
+     */
 
-public function getEstablishmentToValidate(): JsonResponse
-{
-    try {
+    public function getEstablishmentToValidate(): JsonResponse
+    {
         $establishmentToValidate = Establishment::where('status_id', 6)->count();
-
         return $this->success($establishmentToValidate, "Establishments to validate");
-
-    } catch (Exception $error) {
-        Log::error($error);
-        return $this->error(null, $error->getMessage(), 500);
     }
-}
 }
