@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\DB;
 
 class EventController extends Controller
 {
@@ -20,14 +21,25 @@ class EventController extends Controller
     private const NOT_BARATHONIEN = 'the User is not a barathonien';
 
     /**
-     * Display a listing of the resource.
-     *
-     * @return Response
+     * Display all event by establishment ID.
      */
-    public function index()
+    public function getEventsByEstablishmentId(int $establishmentId): JsonResponse
     {
-        //
+        $events = DB::table('events')
+            ->join('establishments', 'events.establishment_id', '=', 'establishments.establishment_id')
+            ->join('status', 'events.status_id', '=', 'status.status_id')
+            ->select('events.*', 'establishments.*', 'status.status_id', 'status.comment')
+            ->where('establishments.establishment_id', $establishmentId)
+            ->get();
+
+        if ($events->isEmpty()) {
+            return $this->error(null, 'No event found', 404);
+        }
+
+        return $this->success($events, 'Events List');
     }
+
+
 
     /**
      * Show the form for creating a new resource.

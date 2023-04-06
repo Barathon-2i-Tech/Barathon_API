@@ -129,6 +129,8 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         [EventController::class, 'getEventByUserChoice']
     )->name('barathonien.eventByUserChoice');
 
+    Route::get('pro/events/{establishmentId}', [EventController::class, 'getEventsByEstablishmentId'])->name('pro.eventsByEstablishmentId');
+
     /*
     |--------------------------------------------------------------------------
     | Booking Routes
