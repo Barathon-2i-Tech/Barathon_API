@@ -6,6 +6,7 @@ use App\Models\Address;
 use App\Models\Booking;
 use App\Models\Establishment;
 use App\Models\Event;
+use App\Models\Status;
 use App\Models\User;
 use App\Traits\HttpResponses;
 use Carbon\Carbon;
@@ -58,7 +59,39 @@ class EventController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request->validate([
+            'event_name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'start_event' => 'required|date',
+            'end_event' => 'required|date',
+            'poster' => 'nullable|string',
+            'price' => 'nullable|numeric',
+            'capacity' => 'nullable|integer',
+            'establishment_id' => 'required|integer',
+            'user_id' => 'required|integer',
+        ]);
+
+        $eventPending = Status::where('comment->code', 'EVENT_PENDING')->first();
+
+        $event = Event::create([
+            'event_name' => $request->event_name,
+            'description' => $request->description,
+            'start_event' => $request->start_event,
+            'end_event' => $request->end_event,
+            'poster' => $request->poster,
+            'price' => $request->price,
+            'capacity' => $request->capacity,
+            'establishment_id' => $request->establishment_id,
+            'user_id' => $request->user_id,
+            'status_id' => $eventPending->status_id,
+            'event_update_id' => null
+        ]);
+
+        $event->save();
+
+        return $this->success([
+            $event
+        ], "event created", 201);
     }
 
     /**
@@ -86,9 +119,45 @@ class EventController extends Controller
      *
      * @return Response
      */
-    public function update(Request $request, Event $event)
+    public function update(Request $request, int $eventId,)
     {
-        //
+        
+        $event = Event::findOrFail($eventId);
+       
+        $request->validate([
+            'event_name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'start_event' => 'required|date',
+            'end_event' => 'required|date',
+            'poster' => 'nullable|string',
+            'price' => 'nullable|numeric',
+            'capacity' => 'nullable|integer',
+            'establishment_id' => 'required|integer',
+            'user_id' => 'required|integer',
+            'event_update_id' => 'nullable|integer',
+        ]);
+        
+        
+        $eventPending = Status::where('comment->code', 'EVENT_PENDING')->first();
+
+        $event->event_name = $request->event_name;
+        $event->description = $request->description;
+        $event->start_event = $request->start_event;
+        $event->end_event = $request->end_event;
+        $event->poster = $request->poster;
+        $event->price = $request->price;
+        $event->capacity = $request->capacity;
+        $event->establishment_id = $request->establishment_id;
+        $event->user_id = $request->user_id;
+        $event->status_id = $eventPending->status_id;
+        $event->event_update_id = $request->event_update_id;
+
+        $event->save();
+        
+        return $this->success([
+            $event
+        ], "Establishment Updated", 200);
+        
     }
 
     /**

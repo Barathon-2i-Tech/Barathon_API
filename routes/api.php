@@ -131,6 +131,9 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('pro/events/{establishmentId}', [EventController::class, 'getEventsByEstablishmentId'])->name('pro.eventsByEstablishmentId');
 
+    Route::post('pro/events', [EventController::class, 'store'])->name('pro.postEvents');
+    Route::put('pro/event/{eventId}', [EventController::class, 'update'])->name('pro.putEvent');
+
     /*
     |--------------------------------------------------------------------------
     | Booking Routes
