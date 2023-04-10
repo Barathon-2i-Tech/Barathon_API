@@ -13,6 +13,8 @@ use App\Http\Controllers\InseeController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\StatusController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\HelloMail;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +39,10 @@ Route::post('register/barathonien', [BarathonienController::class, 'store'])->na
 Route::post('register/owner', [OwnerController::class, 'store'])->name('user.register.owner');
 Route::post('register/admin', [AdministratorController::class, 'store'])->name('user.register.admin');
 Route::post('register/employee', [EmployeeController::class, 'store'])->name('user.register.employee');
+
+Route::get('send', function(){
+    Mail::to("barathon.m2i@gmail.com")->send(new HelloMail());
+});
 
 /*
 |--------------------------------------------------------------------------
