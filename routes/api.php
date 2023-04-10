@@ -11,6 +11,7 @@ use App\Http\Controllers\EstablishmentController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\InseeController;
 use App\Http\Controllers\OwnerController;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\StatusController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Mail;
@@ -40,9 +41,8 @@ Route::post('register/owner', [OwnerController::class, 'store'])->name('user.reg
 Route::post('register/admin', [AdministratorController::class, 'store'])->name('user.register.admin');
 Route::post('register/employee', [EmployeeController::class, 'store'])->name('user.register.employee');
 
-Route::get('send', function(){
-    Mail::to("barathon.m2i@gmail.com")->send(new HelloMail());
-});
+Route::get('send', [MailController::class, 'hello']);
+Route::get('pro/mail/welcome/{id}', [MailController::class, 'welcomePro']);
 
 /*
 |--------------------------------------------------------------------------

@@ -8,8 +8,10 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Owner;
+use App\Models\User;
 
-class HelloMail extends Mailable
+class WelcomePro extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -18,7 +20,7 @@ class HelloMail extends Mailable
      *
      * @return void
      */
-    public function __construct(protected $test)
+    public function __construct(protected User $user, protected Owner $owner)
     {
         //
     }
@@ -31,7 +33,7 @@ class HelloMail extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Bonjour Mail',
+            subject: 'Bienvenue sur Barathon',
         );
     }
 
@@ -43,9 +45,11 @@ class HelloMail extends Mailable
     public function content()
     {
         return new Content(
-            view: 'mail.hello',
+            view: 'mail.welcome_owner',
             with: [
-                'test' => $this->test,
+                "user" => $this->user,
+                "owner" => $this->owner,
+
             ]
         );
     }

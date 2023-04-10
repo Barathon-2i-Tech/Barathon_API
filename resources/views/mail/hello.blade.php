@@ -9,6 +9,7 @@
 <body>
     <h1>Hello, </h1>
     <p>Bonjour je suis un mail de test</p>
+    <p>test : {{$test}}</p>
     <b><p>L'équipe Barathon</p></b>
 </body>
 </html>
