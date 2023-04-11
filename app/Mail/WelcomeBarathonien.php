@@ -8,10 +8,9 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use App\Models\Owner;
 use App\Models\User;
 
-class WelcomePro extends Mailable
+class WelcomeBarathonien extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -45,7 +44,7 @@ class WelcomePro extends Mailable
     public function content()
     {
         return new Content(
-            view: 'mail.welcome_owner',
+            view: 'mail.welcome_barathonien',
             with: [
                 "user" => $this->user,
             ]

@@ -43,6 +43,8 @@ Route::post('register/employee', [EmployeeController::class, 'store'])->name('us
 
 Route::get('send', [MailController::class, 'hello']);
 Route::get('pro/mail/welcome/{id}', [MailController::class, 'welcomePro']);
+Route::get('barathonien/mail/welcome/{id}', [MailController::class, 'welcomeBarathonien']);
+Route::get('mail/change/password/{id}', [MailController::class, 'changePassword']);
 
 /*
 |--------------------------------------------------------------------------

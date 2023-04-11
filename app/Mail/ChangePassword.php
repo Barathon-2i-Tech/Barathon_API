@@ -8,10 +8,9 @@ use Illuminate\Mail\Mailable;
 use Illuminate\Mail\Mailables\Content;
 use Illuminate\Mail\Mailables\Envelope;
 use Illuminate\Queue\SerializesModels;
-use App\Models\Owner;
 use App\Models\User;
 
-class WelcomePro extends Mailable
+class ChangePassword extends Mailable
 {
     use Queueable, SerializesModels;
 
@@ -20,7 +19,7 @@ class WelcomePro extends Mailable
      *
      * @return void
      */
-    public function __construct(protected User $user)
+    public function __construct(protected User $user, protected string $password)
     {
         //
     }
@@ -33,7 +32,7 @@ class WelcomePro extends Mailable
     public function envelope()
     {
         return new Envelope(
-            subject: 'Bienvenue sur Barathon',
+            subject: 'Change Password',
         );
     }
 
@@ -45,9 +44,10 @@ class WelcomePro extends Mailable
     public function content()
     {
         return new Content(
-            view: 'mail.welcome_owner',
+            view: 'mail.change_password',
             with: [
                 "user" => $this->user,
+                "password" => $this->password,
             ]
         );
     }
