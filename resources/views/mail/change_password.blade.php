@@ -11,7 +11,7 @@
     Bonjour {{Str::upper($user->last_name)}} {{$user->first_name}},
     <br>
     <br>
-    Nous avons changer votre mot de passe !
+    Nous avons changé votre mot de passe !
     <br>
     voici le nouveau : <b>{{$password}}</b>
     <br>
