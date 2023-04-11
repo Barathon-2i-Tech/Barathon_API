@@ -9,6 +9,8 @@ use App\Mail\HelloMail;
 use App\Mail\WelcomePro;
 use App\Mail\WelcomeBarathonien;
 use App\Mail\ChangePassword;
+use App\Mail\ValidePro;
+use App\Mail\RefusePro;
 use App\Models\Owner;
 use App\Models\User;
 use Illuminate\Support\Facades\Hash;
@@ -52,6 +54,20 @@ class MailController extends Controller
         $user->password = Hash::make($newPassword);
 
         Mail::to("barathon.m2i@gmail.com")->send(new ChangePassword($user, $newPassword));
+        return $this->success(null, "MAIL SEND");
+
+    }
+
+    public function statusPro($id, $status){
+
+        $user = User::findOrFail($id);
+
+        if($status == '0'){
+            Mail::to("barathon.m2i@gmail.com")->send(new ValidePro($user));
+        }else if($status == '1'){
+            Mail::to("barathon.m2i@gmail.com")->send(new RefusePro($user));
+        }
+
         return $this->success(null, "MAIL SEND");
 
     }
