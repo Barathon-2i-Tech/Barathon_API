@@ -7,7 +7,7 @@
     <title>Change password</title>
 </head>
 <body>
-    
+
     Bonjour {{Str::upper($user->last_name)}} {{$user->first_name}},
     <br>
     <br>

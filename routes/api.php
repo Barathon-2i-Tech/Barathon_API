@@ -46,6 +46,7 @@ Route::get('pro/mail/welcome/{id}', [MailController::class, 'welcomePro']);
 Route::get('barathonien/mail/welcome/{id}', [MailController::class, 'welcomeBarathonien']);
 Route::get('mail/change/password/{id}', [MailController::class, 'changePassword']);
 Route::get('pro/mail/valide/{id}/{status}', [MailController::class, 'statusPro']);
+Route::get('pro/mail/valide/establishment/{id}/{status}', [MailController::class, 'statusEstablishmentPro']);
 
 /*
 |--------------------------------------------------------------------------
