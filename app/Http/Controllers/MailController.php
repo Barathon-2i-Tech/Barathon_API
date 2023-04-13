@@ -26,14 +26,16 @@ class MailController extends Controller
 {
     use HttpResponses;
 
-    public function hello(){
+    public function hello()
+    {
         Mail::to("barathon.m2i@gmail.com")->send(new HelloMail("test"));
 
         return $this->success(null, "MAIL SEND");
 
     }
 
-    public function welcomePro($id){
+    public function welcomePro($id)
+    {
 
         $user = User::findOrFail($id);
 
@@ -43,7 +45,8 @@ class MailController extends Controller
 
     }
 
-    public function welcomeBarathonien($id){
+    public function welcomeBarathonien($id)
+    {
 
         $user = User::findOrFail($id);
 
@@ -53,7 +56,8 @@ class MailController extends Controller
 
     }
 
-    public function changePassword($id){
+    public function changePassword($id)
+    {
 
         $user = User::findOrFail($id);
         $newPassword = Str::random(10);
@@ -64,7 +68,8 @@ class MailController extends Controller
 
     }
 
-    public function statusPro($id, $status){
+    public function statusPro($id, $status)
+    {
 
         $user = User::findOrFail($id);
 
@@ -78,7 +83,8 @@ class MailController extends Controller
 
     }
 
-    public function statusEstablishmentPro($id, $status){
+    public function statusEstablishmentPro($id, $status)
+    {
         $establishment = Establishment::findOrFail($id);
         $owner = $establishment->owner;
         $user = $owner->users[0];
@@ -93,7 +99,8 @@ class MailController extends Controller
 
     }
 
-    public function statusEventPro($id, $status){
+    public function statusEventPro($id, $status)
+    {
         $event = Event::findOrFail($id);
         $user = $event->users;
 
