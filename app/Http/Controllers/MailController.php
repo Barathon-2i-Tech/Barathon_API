@@ -73,9 +73,9 @@ class MailController extends Controller
 
         $user = User::findOrFail($id);
 
-        if ($status == '0'){
+        if ($status == '0') {
             Mail::to($user->email)->send(new ValidePro($user));
-        }elseif ($status == '1'){
+        }elseif ($status == '1') {
             Mail::to($user->email)->send(new RefusePro($user));
         }
 
@@ -89,9 +89,9 @@ class MailController extends Controller
         $owner = $establishment->owner;
         $user = $owner->users[0];
 
-        if ($status == '0'){
+        if ($status == '0') {
             Mail::to($user->email)->send(new ValideEstablishmentPro($user, $establishment));
-        }elseif ($status == '1'){
+        }elseif ($status == '1') {
             Mail::to($user->email)->send(new RefuseEstablishmentPro($user, $establishment));
         }
 
@@ -104,9 +104,9 @@ class MailController extends Controller
         $event = Event::findOrFail($id);
         $user = $event->users;
 
-        if ($status == '0'){
+        if ($status == '0') {
             Mail::to($user->email)->send(new ValideEvent($user, $event));
-        }elseif ($status == '1'){
+        }elseif ($status == '1') {
             Mail::to($user->email)->send(new RefuseEvent($user, $event));
         }
 
