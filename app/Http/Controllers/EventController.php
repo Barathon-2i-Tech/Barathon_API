@@ -20,6 +20,7 @@ class EventController extends Controller
     use HttpResponses;
 
     private const NOT_BARATHONIEN = 'the User is not a barathonien';
+    private const EVENT_NOT_FOUND = "Event not found";
 
     /**
      * Display all event by establishment ID.
@@ -121,9 +122,9 @@ class EventController extends Controller
      */
     public function update(Request $request, int $eventId,)
     {
-        
+
         $event = Event::findOrFail($eventId);
-       
+
         $request->validate([
             'event_name' => 'required|string|max:255',
             'description' => 'required|string',
@@ -136,8 +137,8 @@ class EventController extends Controller
             'user_id' => 'required|integer',
             'event_update_id' => 'nullable|integer',
         ]);
-        
-        
+
+
         $eventPending = Status::where('comment->code', 'EVENT_PENDING')->first();
 
         $event->event_name = $request->event_name;
@@ -153,21 +154,32 @@ class EventController extends Controller
         $event->event_update_id = $request->event_update_id;
 
         $event->save();
-        
+
         return $this->success([
             $event
         ], "Establishment Updated", 200);
-        
+
     }
 
     /**
      * Remove the specified resource from storage.
      *
-     * @return Response
+     * @return JsonResponse
      */
-    public function destroy(Event $event)
+    public function destroy($event_id)
     {
-        //
+        $event = Event::find($event_id);
+
+        if ($event === null) {
+            return $this->error(null, self::EVENT_NOT_FOUND, 404);
+        }
+        if ($event->deleted_at !== null) {
+            return $this->error(null, "Event already deleted", 404);
+        }
+
+        $event->delete();
+        return $this->success(null, "Event Deleted successfully");
+
     }
 
     /**

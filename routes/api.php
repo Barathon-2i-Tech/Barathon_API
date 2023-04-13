@@ -133,6 +133,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('pro/events', [EventController::class, 'store'])->name('pro.postEvents');
     Route::put('pro/event/{eventId}', [EventController::class, 'update'])->name('pro.putEvent');
+    Route::delete('/pro/event/{event_id}', [EventController::class, 'destroy'])->name('pro.event.delete');
 
     /*
     |--------------------------------------------------------------------------
