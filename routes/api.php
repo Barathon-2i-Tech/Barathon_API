@@ -146,6 +146,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         [CategoryEventController::class, 'associateCategoriesToEvent']
     )->name('event.store');
 
+    Route::get(
+        'pro/establishment/{establishmentId}/event/{eventId}',
+        [EventController::class, 'show']
+    )->name('event.show');
     /*
     |--------------------------------------------------------------------------
     | Booking Routes

@@ -110,13 +110,30 @@ public function store(Request $request)
 }
 
     /**
-     * Display the specified resource.
+     * Display the specified event.
      *
-     * @return Response
+     * @param int $establishmentId
+     * @param int $eventId
+     * @return JsonResponse
      */
-    public function show(Event $event)
+    public function show(int $establishmentId, int $eventId): JsonResponse
     {
-        //
+        // Get the specific event from the establishment
+        $event = Event::select('events.*', 'establishments.*')
+            ->join('establishments', 'establishments.establishment_id', '=', 'events.establishment_id')
+            ->where('events.establishment_id', '=', $establishmentId)
+            ->where('events.event_id', '=', $eventId)
+            ->first();
+
+        // If the event is not found
+        if (!$event) {
+            return $this->error(null, self::EVENT_NOT_FOUND, 404);
+        }
+        // Add the correct URL prefix to the poster_url
+        $event->poster_url = env('APP_URL') . Storage::url($event->poster);
+
+        // Return the event
+        return $this->success($event, "Event");
     }
 
     /**
