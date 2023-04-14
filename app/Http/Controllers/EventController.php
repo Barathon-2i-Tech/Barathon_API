@@ -39,6 +39,10 @@ class EventController extends Controller
         if ($events->isEmpty()) {
             return $this->error(null, 'No event found', 404);
         }
+         // Add the correct URL prefix to the poster_url
+        foreach ($events as $event) {
+            $event->poster_url = env('APP_URL') . Storage::url($event->poster);
+        }
 
         return $this->success($events, 'Events List');
     }
