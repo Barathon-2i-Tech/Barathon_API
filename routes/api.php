@@ -133,7 +133,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::get('pro/events/{establishmentId}', [EventController::class, 'getEventsByEstablishmentId'])->name('pro.eventsByEstablishmentId');
 
     Route::post('pro/events', [EventController::class, 'store'])->name('pro.postEvents');
-    Route::put('pro/event/{eventId}', [EventController::class, 'update'])->name('pro.putEvent');
+    Route::put('pro/establishment/{establishmentId}/event/{eventId}', [EventController::class, 'update'])->name('pro.putEvent');
     Route::delete('/pro/event/{event_id}', [EventController::class, 'destroy'])->name('pro.event.delete');
 
     Route::put(
@@ -147,7 +147,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
     )->name('event.store');
 
     Route::get(
-        'pro/establishment/{establishmentId}/event/{eventId}',
+        '/pro/establishment/{establishmentId}/event/{eventId}',
         [EventController::class, 'show']
     )->name('event.show');
     /*
