@@ -11,8 +11,11 @@ use App\Http\Controllers\EstablishmentController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\InseeController;
 use App\Http\Controllers\OwnerController;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\StatusController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\HelloMail;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,6 +40,14 @@ Route::post('register/barathonien', [BarathonienController::class, 'store'])->na
 Route::post('register/owner', [OwnerController::class, 'store'])->name('user.register.owner');
 Route::post('register/admin', [AdministratorController::class, 'store'])->name('user.register.admin');
 Route::post('register/employee', [EmployeeController::class, 'store'])->name('user.register.employee');
+
+Route::get('send', [MailController::class, 'hello']);
+Route::get('pro/mail/welcome/{id}', [MailController::class, 'welcomePro']);
+Route::get('barathonien/mail/welcome/{id}', [MailController::class, 'welcomeBarathonien']);
+Route::get('mail/change/password/{id}', [MailController::class, 'changePassword']);
+Route::get('pro/mail/valide/{id}/{status}', [MailController::class, 'statusPro']);
+Route::get('pro/mail/valide/establishment/{id}/{status}', [MailController::class, 'statusEstablishmentPro']);
+Route::get('pro/mail/valide/event/{id}/{status}', [MailController::class, 'statusEventPro']);
 
 /*
 |--------------------------------------------------------------------------
