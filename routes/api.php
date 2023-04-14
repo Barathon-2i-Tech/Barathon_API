@@ -6,6 +6,7 @@ use App\Http\Controllers\BarathonienController;
 use App\Http\Controllers\BookingController;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\CategoryEstablishmentController;
+use App\Http\Controllers\CategoryEventController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EstablishmentController;
 use App\Http\Controllers\EventController;
@@ -133,6 +134,16 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::post('pro/events', [EventController::class, 'store'])->name('pro.postEvents');
     Route::put('pro/event/{eventId}', [EventController::class, 'update'])->name('pro.putEvent');
+
+    Route::put(
+        '/pro/event/{eventId}/category',
+        [CategoryEventController::class, 'associateCategoriesToEvent']
+    )->name('event.update');
+
+    Route::post(
+        '/pro/event/{eventId}/category',
+        [CategoryEventController::class, 'associateCategoriesToEvent']
+    )->name('event.store');
 
     /*
     |--------------------------------------------------------------------------
