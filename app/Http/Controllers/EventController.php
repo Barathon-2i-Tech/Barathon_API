@@ -172,11 +172,11 @@ class EventController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Remove the specified event from database.
      */
     public function destroy(int $eventId): JsonResponse
     {
-        $event = Event::find($eventId);
+        $event = Event::withTrashed()->where('event_id', $eventId)->first();
 
         if ($event === null) {
             return $this->error(null, self::EVENT_NOT_FOUND, 404);
@@ -187,6 +187,25 @@ class EventController extends Controller
 
         $event->delete();
         return $this->success(null, "Event Deleted successfully");
+
+    }
+
+    /**
+     * Restore the specified event from database.
+     */
+    public function restore(int $eventId): JsonResponse
+    {
+        $event = Event::withTrashed()->where('event_id', $eventId)->first();
+
+        if ($event === null) {
+            return $this->error(null, self::EVENT_NOT_FOUND, 404);
+        }
+        if ($event->deleted_at === null) {
+            return $this->error(null, "Event already restored", 404);
+        }
+
+        $event->restore();
+        return $this->success(null, "Event Restored successfully");
 
     }
 
