@@ -73,6 +73,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         'establishments/list',
         [EstablishmentController::class, 'getAllEstablishments']
     )->name('admin.establishment.list');
+    Route::get('events/list', [EventController::class, 'getEventList'])->name('admin.event.list');
 
 
     /*

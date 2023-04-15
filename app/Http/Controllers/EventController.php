@@ -280,6 +280,27 @@ class EventController extends Controller
     //************************* administrator part *************************//
 
     /**
+     * Display a listing of all events
+     */
+    public function getEventList(): JsonResponse
+    {
+
+        $events = DB::table("events")
+            ->join("establishments", "events.establishment_id", "=", "establishments.establishment_id")
+            ->join("status", "events.status_id", "=", "status.status_id")
+            ->select("events.*", "establishments.trade_name", "status.comment")
+            ->orderBy('events.start_event', 'asc')
+            ->get();
+
+        if ($events->isEmpty()) {
+            return $this->error(null, 'No events found', 404);
+        }
+
+        return $this->success($events, 'Event List');
+    }
+
+
+    /**
      * Get how many events need to be validated
      */
     public function getEventsToValidate(): JsonResponse
