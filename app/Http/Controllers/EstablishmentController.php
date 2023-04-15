@@ -331,8 +331,6 @@ class EstablishmentController extends Controller
      */
     public function validateEstablishment(int $establishmentId, int $statusCode): jsonResponse
     {
-        //parse the status code
-        $statusCode = intval($statusCode);
 
         $establishment = Establishment::find($establishmentId);
 
@@ -341,12 +339,12 @@ class EstablishmentController extends Controller
         }
 
         if ($establishment->status_id === $statusCode) {
-            return $this->error(null, 'Establishment already validated', 404);
+            return $this->error(null, 'Establishment with same status', 409);
         }
 
         $establishment->status_id = $statusCode;
         $establishment->save();
-        return $this->success(null, "Validation updated");
+        return $this->success(null, "Status updated");
 
     }
 

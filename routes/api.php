@@ -73,6 +73,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         'establishments/list',
         [EstablishmentController::class, 'getAllEstablishments']
     )->name('admin.establishment.list');
+    Route::get('events/list', [EventController::class, 'getEventList'])->name('admin.event.list');
 
 
     /*
@@ -83,6 +84,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('owner-status', [StatusController::class, 'ownerStatus'])->name('owner-status');
     Route::get('establishment-status', [StatusController::class, 'establishmentStatus'])->name('establishment-status');
+    Route::get('events-status', [StatusController::class, 'eventsStatus'])->name('events-status');
 
     /*
     |--------------------------------------------------------------------------
@@ -95,6 +97,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         'admin/establishment-to-validate',
         [EstablishmentController::class, 'getEstablishmentToValidate']
     )->name('admin.establishment-to-validate');
+    Route::get(
+        'admin/event-to-validate',
+        [EventController::class, 'getEventsToValidate']
+    )->name('admin.event-to-validate');
 
     Route::put(
         'establishment/{establishment_id}/validation/{status_code}',
@@ -104,6 +110,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         'pro/{owner_id}/validation/{status_code}',
         [OwnerController::class, 'validateOwner']
     )->name('pro.validation');
+    Route::put(
+        'event/{event_id}/validation/{status_code}',
+        [EventController::class, 'validateEvent']
+    )->name('event.validation');
 
 
     /*
@@ -130,11 +140,17 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         [EventController::class, 'getEventByUserChoice']
     )->name('barathonien.eventByUserChoice');
 
-    Route::get('pro/events/{establishmentId}', [EventController::class, 'getEventsByEstablishmentId'])->name('pro.eventsByEstablishmentId');
+    Route::get(
+        'pro/events/{establishmentId}',
+        [EventController::class, 'getEventsByEstablishmentId']
+    )->name('pro.eventsByEstablishmentId');
 
     Route::post('pro/events', [EventController::class, 'store'])->name('pro.postEvents');
-    Route::put('pro/establishment/{establishmentId}/event/{eventId}', [EventController::class, 'update'])->name('pro.putEvent');
-    Route::delete('/pro/event/{event_id}', [EventController::class, 'destroy'])->name('pro.event.delete');
+    Route::put(
+        'pro/establishment/{establishmentId}/event/{eventId}',
+        [EventController::class, 'update']
+    )->name('pro.putEvent');
+    Route::delete('/pro/event/{eventId}', [EventController::class, 'destroy'])->name('pro.event.delete');
 
     Route::put(
         '/pro/event/{eventId}/category',

@@ -39,7 +39,7 @@ class EventController extends Controller
         if ($events->isEmpty()) {
             return $this->error(null, 'No event found', 404);
         }
-         // Add the correct URL prefix to the poster_url
+        // Add the correct URL prefix to the poster_url
         foreach ($events as $event) {
             $event->poster_url = env('APP_URL') . Storage::url($event->poster);
         }
@@ -48,73 +48,56 @@ class EventController extends Controller
     }
 
 
-
     /**
-     * Show the form for creating a new resource.
-     *
-     * @return Response
+     * Store a newly created resource in storage.
      */
-    public function create()
+    public function store(Request $request): JsonResponse
     {
-        //
+        $request->validate([
+            'event_name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'start_event' => 'required|date',
+            'end_event' => 'required|date',
+            'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'price' => 'nullable|numeric',
+            'capacity' => 'nullable|integer',
+            'establishment_id' => 'required|integer',
+            'user_id' => 'required|integer',
+        ]);
+
+        $eventPending = Status::where('comment->code', 'EVENT_PENDING')->first();
+
+        $eventPosterPath = null;
+
+        if ($request->hasFile('poster')) {
+            $eventPosterPath = $request->file('poster')->storePublicly('posters', 'public');
+        }
+
+        $event = Event::create([
+            'event_name' => $request->event_name,
+            'description' => $request->description,
+            'start_event' => $request->start_event,
+            'end_event' => $request->end_event,
+            'poster' => $eventPosterPath,
+            'price' => $request->price,
+            'capacity' => $request->capacity,
+            'establishment_id' => $request->establishment_id,
+            'user_id' => $request->user_id,
+            'status_id' => $eventPending->status_id,
+            'event_update_id' => null
+        ]);
+
+        $event->save();
+
+        $event->poster_url = env('APP_URL') . Storage::url($event->poster);
+
+        return $this->success([
+            $event
+        ], "event created", 201);
     }
-
-/**
- * Store a newly created resource in storage.
- *
- * @return Response
- */
-public function store(Request $request)
-{
-    $request->validate([
-        'event_name' => 'required|string|max:255',
-        'description' => 'required|string',
-        'start_event' => 'required|date',
-        'end_event' => 'required|date',
-        'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-        'price' => 'nullable|numeric',
-        'capacity' => 'nullable|integer',
-        'establishment_id' => 'required|integer',
-        'user_id' => 'required|integer',
-    ]);
-
-    $eventPending = Status::where('comment->code', 'EVENT_PENDING')->first();
-
-    $eventPosterPath = null;
-
-    if ($request->hasFile('poster')) {
-        $eventPosterPath = $request->file('poster')->storePublicly('posters', 'public');
-    }
-
-    $event = Event::create([
-        'event_name' => $request->event_name,
-        'description' => $request->description,
-        'start_event' => $request->start_event,
-        'end_event' => $request->end_event,
-        'poster' => $eventPosterPath,
-        'price' => $request->price,
-        'capacity' => $request->capacity,
-        'establishment_id' => $request->establishment_id,
-        'user_id' => $request->user_id,
-        'status_id' => $eventPending->status_id,
-        'event_update_id' => null
-    ]);
-
-    $event->save();
-
-    $event->poster_url = env('APP_URL') . Storage::url($event->poster);
-
-    return $this->success([
-        $event
-    ], "event created", 201);
-}
 
     /**
      * Display the specified event.
-     *
-     * @param int $establishmentId
-     * @param int $eventId
-     * @return JsonResponse
      */
     public function show(int $establishmentId, int $eventId): JsonResponse
     {
@@ -136,82 +119,69 @@ public function store(Request $request)
         return $this->success($event, "Event");
     }
 
+
     /**
-     * Show the form for editing the specified resource.
-     *
-     * @return Response
+     * Update the specified resource in storage.
      */
-    public function edit(Event $event)
+    public function update(Request $request, int $establishmentId, int $eventId): JsonResponse
     {
-        //
-    }
+        $event = Event::where('establishment_id', $establishmentId)
+            ->findOrFail($eventId);
 
-    /**
- * Update the specified resource in storage.
- *
- * @return Response
- */
-public function update(Request $request, int $establishmentId, int $eventId)
-{
-    $event = Event::where('establishment_id', $establishmentId)
-        ->findOrFail($eventId);
-
-    $request->validate([
-        'event_name' => 'required|string|max:255',
-        'description' => 'required|string',
-        'start_event' => 'required|date',
-        'end_event' => 'required|date',
-        'price' => 'nullable|numeric',
-        'capacity' => 'nullable|integer',
-        'establishment_id' => 'required|integer',
-        'user_id' => 'required|integer',
-        'event_update_id' => 'nullable|integer',
-    ]);
-
-    // Handle poster file upload if a new poster is present in the request
-    if ($request->hasFile('poster')) {
         $request->validate([
-            'poster' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'event_name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'start_event' => 'required|date',
+            'end_event' => 'required|date',
+            'price' => 'nullable|numeric',
+            'capacity' => 'nullable|integer',
+            'establishment_id' => 'required|integer',
+            'user_id' => 'required|integer',
+            'event_update_id' => 'nullable|integer',
         ]);
 
-        // Delete the old poster if it exists
-        if ($event->poster && Storage::disk('public')->exists($event->poster)) {
-            Storage::disk('public')->delete($event->poster);
+        // Handle poster file upload if a new poster is present in the request
+        if ($request->hasFile('poster')) {
+            $request->validate([
+                'poster' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ]);
+
+            // Delete the old poster if it exists
+            if ($event->poster && Storage::disk('public')->exists($event->poster)) {
+                Storage::disk('public')->delete($event->poster);
+            }
+
+            // Store the new poster and update the event object with the new poster path
+            $posterPath = $request->file('poster')->store('posters', 'public');
+            $event->poster = $posterPath;
         }
 
-        // Store the new poster and update the event object with the new poster path
-        $posterPath = $request->file('poster')->store('posters', 'public');
-        $event->poster = $posterPath;
+        $eventPending = Status::where('comment->code', 'EVENT_PENDING')->first();
+
+        $event->event_name = $request->event_name;
+        $event->description = $request->description;
+        $event->start_event = $request->start_event;
+        $event->end_event = $request->end_event;
+        $event->price = $request->price;
+        $event->capacity = $request->capacity;
+        $event->establishment_id = $request->establishment_id;
+        $event->user_id = $request->user_id;
+        $event->status_id = $eventPending->status_id;
+        $event->event_update_id = $request->event_update_id;
+
+        $event->save();
+
+        return $this->success([
+            $event
+        ], "Event Updated", 200);
     }
-
-    $eventPending = Status::where('comment->code', 'EVENT_PENDING')->first();
-
-    $event->event_name = $request->event_name;
-    $event->description = $request->description;
-    $event->start_event = $request->start_event;
-    $event->end_event = $request->end_event;
-    $event->price = $request->price;
-    $event->capacity = $request->capacity;
-    $event->establishment_id = $request->establishment_id;
-    $event->user_id = $request->user_id;
-    $event->status_id = $eventPending->status_id;
-    $event->event_update_id = $request->event_update_id;
-
-    $event->save();
-
-    return $this->success([
-        $event
-    ], "Event Updated", 200);
-}
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @return JsonResponse
      */
-    public function destroy($event_id)
+    public function destroy(int $eventId): JsonResponse
     {
-        $event = Event::find($event_id);
+        $event = Event::find($eventId);
 
         if ($event === null) {
             return $this->error(null, self::EVENT_NOT_FOUND, 404);
@@ -306,5 +276,57 @@ public function update(Request $request, int $establishmentId, int $eventId)
             'booking' => $booking,
             'event' => $event,
         ]);
+    }
+    //************************* administrator part *************************//
+
+    /**
+     * Display a listing of all events
+     */
+    public function getEventList(): JsonResponse
+    {
+
+        $events = DB::table("events")
+            ->join("establishments", "events.establishment_id", "=", "establishments.establishment_id")
+            ->join("status", "events.status_id", "=", "status.status_id")
+            ->select("events.*", "establishments.trade_name", "status.comment")
+            ->orderBy('events.start_event', 'asc')
+            ->get();
+
+        if ($events->isEmpty()) {
+            return $this->error(null, 'No events found', 404);
+        }
+
+        return $this->success($events, 'Event List');
+    }
+
+
+    /**
+     * Get how many events need to be validated
+     */
+    public function getEventsToValidate(): JsonResponse
+    {
+        $eventToValidate = Event::where('status_id', 9)->count();
+        return $this->success($eventToValidate, 'Event to validate');
+    }
+
+    /**
+     * Validate the event
+     */
+    public function validateEvent(int $eventId, int $statusCode): jsonResponse
+    {
+        $event = Event::find($eventId);
+
+        if (!$event) {
+            return $this->error(null, "Event not found", 404);
+        }
+
+        if ($event->status_id === $statusCode) {
+            return $this->error(null, 'Event with same status', 409);
+        }
+
+        $event->status_id = $statusCode;
+        $event->save();
+
+        return $this->success(null, 'Status updated');
     }
 }
