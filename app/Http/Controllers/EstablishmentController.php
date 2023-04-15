@@ -330,7 +330,7 @@ class EstablishmentController extends Controller
      * Validate the establishment
      */
     public function validateEstablishment(int $establishmentId, int $statusCode): jsonResponse
-    {;
+    {
 
         $establishment = Establishment::find($establishmentId);
 

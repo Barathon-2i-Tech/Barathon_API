@@ -179,9 +179,9 @@ class EventController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(int $event_id): JsonResponse
+    public function destroy(int $eventId): JsonResponse
     {
-        $event = Event::find($event_id);
+        $event = Event::find($eventId);
 
         if ($event === null) {
             return $this->error(null, self::EVENT_NOT_FOUND, 404);
