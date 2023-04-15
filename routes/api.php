@@ -106,6 +106,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         'pro/{owner_id}/validation/{status_code}',
         [OwnerController::class, 'validateOwner']
     )->name('pro.validation');
+    Route::put(
+        'event/{event_id}/validation/{status_code}',
+        [EventController::class, 'validateEvent']
+    )->name('event.validation');
 
 
     /*
