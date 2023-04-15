@@ -39,11 +39,6 @@ class EventController extends Controller
         if ($events->isEmpty()) {
             return $this->error(null, 'No event found', 404);
         }
-        // Add the correct URL prefix to the poster_url
-        foreach ($events as $event) {
-            $event->poster_url = env('APP_URL') . Storage::url($event->poster);
-        }
-
         return $this->success($events, 'Events List');
     }
 
@@ -71,7 +66,10 @@ class EventController extends Controller
 
         if ($request->hasFile('poster')) {
             $eventPosterPath = $request->file('poster')->storePublicly('posters', 'public');
+            // Ajout du chemin complet
+            $eventPosterPath = env('APP_URL') . Storage::url($eventPosterPath);
         }
+
 
         $event = Event::create([
             'event_name' => $request->event_name,
@@ -87,9 +85,9 @@ class EventController extends Controller
             'event_update_id' => null
         ]);
 
-        $event->save();
 
-        $event->poster_url = env('APP_URL') . Storage::url($event->poster);
+
+        $event->save();
 
         return $this->success([
             $event
@@ -112,9 +110,6 @@ class EventController extends Controller
         if (!$event) {
             return $this->error(null, self::EVENT_NOT_FOUND, 404);
         }
-        // Add the correct URL prefix to the poster_url
-        $event->poster_url = env('APP_URL') . Storage::url($event->poster);
-
         // Return the event
         return $this->success($event, "Event");
     }

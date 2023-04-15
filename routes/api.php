@@ -166,6 +166,10 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         '/pro/establishment/{establishmentId}/event/{eventId}',
         [EventController::class, 'show']
     )->name('event.show');
+    Route::get(
+        '/pro/event/{eventId}/category',
+        [CategoryEventController::class, 'getAllCategoriesByEventId']
+    )->name('pro.event.eventById');
     /*
     |--------------------------------------------------------------------------
     | Booking Routes

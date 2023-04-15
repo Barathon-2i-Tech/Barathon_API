@@ -33,7 +33,7 @@ class CategoryEventController extends Controller
                 ->where('categories_events.event_id', $eventId)
                 ->select(
                     'events.event_id',
-                    'events.trade_name as event_name',
+                    'events.event_name',
                     'categories.*'
                 )
                 ->get();
