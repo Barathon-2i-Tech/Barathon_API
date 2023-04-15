@@ -83,6 +83,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
 
     Route::get('owner-status', [StatusController::class, 'ownerStatus'])->name('owner-status');
     Route::get('establishment-status', [StatusController::class, 'establishmentStatus'])->name('establishment-status');
+    Route::get('events-status', [StatusController::class, 'eventsStatus'])->name('events-status');
 
     /*
     |--------------------------------------------------------------------------
@@ -95,6 +96,7 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         'admin/establishment-to-validate',
         [EstablishmentController::class, 'getEstablishmentToValidate']
     )->name('admin.establishment-to-validate');
+    Route::get('admin/event-to-validate', [EventController::class, 'getEventsToValidate'])->name('admin.event-to-validate');
 
     Route::put(
         'establishment/{establishment_id}/validation/{status_code}',

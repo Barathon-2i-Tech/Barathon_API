@@ -61,10 +61,8 @@ class EventController extends Controller
 
 /**
  * Store a newly created resource in storage.
- *
- * @return Response
  */
-public function store(Request $request)
+public function store(Request $request): JsonResponse
 {
     $request->validate([
         'event_name' => 'required|string|max:255',
@@ -111,10 +109,6 @@ public function store(Request $request)
 
     /**
      * Display the specified event.
-     *
-     * @param int $establishmentId
-     * @param int $eventId
-     * @return JsonResponse
      */
     public function show(int $establishmentId, int $eventId): JsonResponse
     {
@@ -148,10 +142,8 @@ public function store(Request $request)
 
     /**
  * Update the specified resource in storage.
- *
- * @return Response
  */
-public function update(Request $request, int $establishmentId, int $eventId)
+public function update(Request $request, int $establishmentId, int $eventId): JsonResponse
 {
     $event = Event::where('establishment_id', $establishmentId)
         ->findOrFail($eventId);
@@ -206,10 +198,8 @@ public function update(Request $request, int $establishmentId, int $eventId)
 
     /**
      * Remove the specified resource from storage.
-     *
-     * @return JsonResponse
      */
-    public function destroy($event_id)
+    public function destroy(int $event_id): JsonResponse
     {
         $event = Event::find($event_id);
 
@@ -306,5 +296,14 @@ public function update(Request $request, int $establishmentId, int $eventId)
             'booking' => $booking,
             'event' => $event,
         ]);
+    }
+
+    /**
+     * Get how many events need to be validated
+     */
+    public function getEventsToValidate(): JsonResponse
+    {
+        $eventToValidate = Event::where('status_id', 9)->count();
+        return $this->success($eventToValidate, 'Event to validate');
     }
 }
