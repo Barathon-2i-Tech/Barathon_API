@@ -176,7 +176,7 @@ class EventController extends Controller
      */
     public function destroy(int $eventId): JsonResponse
     {
-        $event = Event::withTrashed()->where('id', $eventId)->first();
+        $event = Event::withTrashed()->where('event_id', $eventId)->first();
 
 
         if ($event === null) {
