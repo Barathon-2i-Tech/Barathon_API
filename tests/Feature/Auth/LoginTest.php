@@ -2,13 +2,14 @@
 
 namespace Auth;
 
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 
 class LoginTest extends TestCase
 {
     use RefreshDatabase;
+
     /**
      * A test to check if Admin User can log in with email and password
      */

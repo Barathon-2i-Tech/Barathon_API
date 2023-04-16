@@ -2,9 +2,9 @@
 
 namespace Auth;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 
 class RegisterTest extends TestCase
@@ -15,6 +15,29 @@ class RegisterTest extends TestCase
     /**
      *************** Register without profile Test **********************************************
      */
+
+    /**
+     * A test to check if a User with the same email can't register
+     */
+    public function test_user_can_not_register_with_same_email()
+    {
+        $this->test_user_can_register_without_profile();
+
+        $this->postJson(route('user.register'), [
+            'first_name' => fake()->firstName,
+            'last_name' => fake()->lastName,
+            'email' => 'toto@gmail.com',
+            'password' => 'azertyuiop',
+            'password_confirmation' => 'azertyuiop'
+        ], [
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json'
+        ])
+            ->assertStatus(422)
+            ->assertInvalid(['email' => 'validation.unique']);
+
+
+    }
 
     /**
      * A test to check if a User without profile can register
@@ -49,29 +72,6 @@ class RegisterTest extends TestCase
             ->assertOk();
 
         $response->assertJsonStructure($structure);
-    }
-
-    /**
-     * A test to check if a User with the same email can't register
-     */
-    public function test_user_can_not_register_with_same_email()
-    {
-        $this->test_user_can_register_without_profile();
-
-        $this->postJson(route('user.register'), [
-            'first_name' => fake()->firstName,
-            'last_name' => fake()->lastName,
-            'email' => 'toto@gmail.com',
-            'password' => 'azertyuiop',
-            'password_confirmation' => 'azertyuiop'
-        ], [
-            'Accept' => 'application/json',
-            'Content-Type' => 'application/json'
-        ])
-            ->assertStatus(422)
-            ->assertInvalid(['email' => 'validation.unique']);
-
-
     }
 
     /**

@@ -12,7 +12,6 @@ use App\Traits\HttpResponses;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Http\Response;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -42,58 +41,6 @@ class EventController extends Controller
         return $this->success($events, 'Events List');
     }
 
-
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request): JsonResponse
-    {
-        $request->validate([
-            'event_name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'start_event' => 'required|date',
-            'end_event' => 'required|date',
-            'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'price' => 'nullable|numeric',
-            'capacity' => 'nullable|integer',
-            'establishment_id' => 'required|integer',
-            'user_id' => 'required|integer',
-        ]);
-
-        $eventPending = Status::where('comment->code', 'EVENT_PENDING')->first();
-
-        $eventPosterPath = null;
-
-        if ($request->hasFile('poster')) {
-            $eventPosterPath = $request->file('poster')->storePublicly('posters', 'public');
-            // Ajout du chemin complet
-            $eventPosterPath = env('APP_URL') . Storage::url($eventPosterPath);
-        }
-
-
-        $event = Event::create([
-            'event_name' => $request->event_name,
-            'description' => $request->description,
-            'start_event' => $request->start_event,
-            'end_event' => $request->end_event,
-            'poster' => $eventPosterPath,
-            'price' => $request->price,
-            'capacity' => $request->capacity,
-            'establishment_id' => $request->establishment_id,
-            'user_id' => $request->user_id,
-            'status_id' => $eventPending->status_id,
-            'event_update_id' => null
-        ]);
-
-
-
-        $event->save();
-
-        return $this->success([
-            $event
-        ], "event created", 201);
-    }
-
     /**
      * Display the specified event.
      */
@@ -113,7 +60,6 @@ class EventController extends Controller
         // Return the event
         return $this->success($event, "Event");
     }
-
 
     /**
      * Update the specified resource in storage.
@@ -169,6 +115,56 @@ class EventController extends Controller
         return $this->success([
             $event
         ], "Event Updated", 200);
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request): JsonResponse
+    {
+        $request->validate([
+            'event_name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'start_event' => 'required|date',
+            'end_event' => 'required|date',
+            'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'price' => 'nullable|numeric',
+            'capacity' => 'nullable|integer',
+            'establishment_id' => 'required|integer',
+            'user_id' => 'required|integer',
+        ]);
+
+        $eventPending = Status::where('comment->code', 'EVENT_PENDING')->first();
+
+        $eventPosterPath = null;
+
+        if ($request->hasFile('poster')) {
+            $eventPosterPath = $request->file('poster')->storePublicly('posters', 'public');
+            // Ajout du chemin complet
+            $eventPosterPath = env('APP_URL') . Storage::url($eventPosterPath);
+        }
+
+
+        $event = Event::create([
+            'event_name' => $request->event_name,
+            'description' => $request->description,
+            'start_event' => $request->start_event,
+            'end_event' => $request->end_event,
+            'poster' => $eventPosterPath,
+            'price' => $request->price,
+            'capacity' => $request->capacity,
+            'establishment_id' => $request->establishment_id,
+            'user_id' => $request->user_id,
+            'status_id' => $eventPending->status_id,
+            'event_update_id' => null
+        ]);
+
+
+        $event->save();
+
+        return $this->success([
+            $event
+        ], "event created", 201);
     }
 
     /**

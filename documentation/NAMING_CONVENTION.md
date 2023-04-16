@@ -2,7 +2,8 @@
 
 ## 1. Better Communication
 
-Building a product is always a  **Team Effort**  which requires making sure that everyone understands the  **names**  that we name, we got to name them clearly.
+Building a product is always a  **Team Effort**  which requires making sure that everyone understands the  **names**
+that we name, we got to name them clearly.
 
 ## 2. Easy Reviewing
 
@@ -35,7 +36,8 @@ Variable name must define the exact explanation of its content so it can documen
 
 👉 **Use searchable names**
 
-If a variable or constant might be seen or used in multiple places in a body of code, it is imperative to give it a search-friendly name.
+If a variable or constant might be seen or used in multiple places in a body of code, it is imperative to give it a
+search-friendly name.
 <pre>
 ❌ for (int item = 0; item < 34; item++) { s += (t[item] * 4) / 5;}
 
@@ -52,12 +54,12 @@ If a variable or constant might be seen or used in multiple places in a body of 
 </pre>
 👉 **Use one consistent language**
 
-Decide and use one natural language for naming, e.g. using mixed English and French names will be inconsistent and unreadable.
+Decide and use one natural language for naming, e.g. using mixed English and French names will be inconsistent and
+unreadable.
 
 👉 **There’s no limit to the length of the variable name**
 
 Use short enough and long enough variable names in each scope of code.
-
 
 :information_source: **Conventions commonly used in code:**
 
@@ -79,10 +81,12 @@ Words are delimited by capital letters, except the initial word.
 
 <pre>firstName
 </pre>
+
 # **Naming Conventions**
 
-Consistency and readability are key ideas that should be utilized in the naming of variables. Regardless of how you choose to name your variables, always ensure that your naming conventions are consistent throughout the code. Consistency allows others to more easily understand your code.
-
+Consistency and readability are key ideas that should be utilized in the naming of variables. Regardless of how you
+choose to name your variables, always ensure that your naming conventions are consistent throughout the code.
+Consistency allows others to more easily understand your code.
 
 👉 **Better Variables**
 
@@ -108,7 +112,9 @@ var hasKey = false;
 
 👉 **Better Functions**
 
-Functions names are written in  ****camelCase****. Always start your function name with a  ****”Verb”****  which defines what that function is trying to do in conjunction with the name of the  ****”Entity”****  being affected by this function.
+Functions names are written in  ****camelCase****. Always start your function name with a  ****”Verb”****  which defines
+what that function is trying to do in conjunction with the name of the  ****”Entity”****  being affected by this
+function.
 <pre>
 getOrder()
 fetchClaims()
@@ -118,7 +124,8 @@ connectToDatabase()
 
 👉 **Better Methods**
 
-Like functions, methods names are written in  ****camelCase****. As class name itself depict “Entity” thus suffixing the “Entity” in a function name doesn’t make sense because it becomes self-explanatory in case of class methods.
+Like functions, methods names are written in  ****camelCase****. As class name itself depict “Entity” thus suffixing the
+“Entity” in a function name doesn’t make sense because it becomes self-explanatory in case of class methods.
 
 <pre>
 class User { 
@@ -147,7 +154,8 @@ var user = new User(‘John’, ‘Doe’);
 
 👉 **Better Components**
 
-Components are widely declared with  ****PascalCase****  too. When a component gets used, it distinguishes itself from native HTML and web components, because its first letter is always written in uppercase.
+Components are widely declared with  ****PascalCase****  too. When a component gets used, it distinguishes itself from
+native HTML and web components, because its first letter is always written in uppercase.
 
 ```
 function UserProfile(user) { 
@@ -164,6 +172,7 @@ function UserProfile(user) {
      />
 </div>
 ```
+
 👉 **Better Arguments**
 
 Use self-explanatory argument label that indicates more expressively the intent of the argument.
@@ -179,7 +188,6 @@ Use self-explanatory argument label that indicates more expressively the intent 
 Two commonly used conventions for parenthesis are:  **K&R Style Parentheses** and **Allman Parentheses.**
 
 It is recommended to use **K&R Style parentheses** because they save one line and seem natural.
-
 
 👉 **K&R Style Parentheses**
 <pre>

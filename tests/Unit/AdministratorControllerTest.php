@@ -4,10 +4,8 @@ namespace Tests\Unit;
 
 use App\Models\Owner;
 use App\Models\Status;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Hash;
 use Tests\TestCase;
 
 class AdministratorControllerTest extends TestCase
@@ -157,6 +155,7 @@ class AdministratorControllerTest extends TestCase
         ]);
         $response->assertJson(['message' => 'Administrator not found']);
     }
+
     /**
      * A test to check if the update is really on an real user
      *
