@@ -45,13 +45,6 @@ class EstablishmentController extends Controller
             return $this->error(null, self::ESTABLISHMENT_NOT_FOUND, 404);
         }
 
-        // Add the correct URL prefix to the logo_url
-
-
-        foreach ($establishments as $establishment) {
-            $establishment->logo_url = env('APP_URL') . Storage::url($establishment->logo);
-        }
-
         // return the establishments list
         return $this->success($establishments, "Establishment List");
 
@@ -97,6 +90,8 @@ class EstablishmentController extends Controller
 
         if ($request->hasFile('logo')) {
             $establishmentLogoPath = $request->file('logo')->storePublicly('logos', 'public');
+
+            $establishmentLogoPath = env('APP_URL') . Storage::url($establishmentLogoPath);
         }
 
         $address = Address::create([
@@ -125,7 +120,7 @@ class EstablishmentController extends Controller
         $establishmentPending = Status::where('comment->code', 'ESTABL_PENDING')->first();
         $establishment->status_id = $establishmentPending->status_id;
         $establishment->save();
-        $establishment->logo_url = env('APP_URL') . Storage::url($establishment->logo);
+
 
         return $this->success([
             $establishment
@@ -205,10 +200,10 @@ class EstablishmentController extends Controller
             }
 
             // Store the new logo and update the establishment object with the new logo path
-            $logoPath = $request->file('logo')->store('logos', 'public');
+            $logoPath = $request->file('logo')->storePublicly('logos', 'public');
+            $logoPath = env('APP_URL') . Storage::url($logoPath);
             $establishment->logo = $logoPath;
             $establishment->save();
-            $dataEstablishment['logo'] = $logoPath;
         }
 
         // Get the data to update the establishment object and decode the opening hours

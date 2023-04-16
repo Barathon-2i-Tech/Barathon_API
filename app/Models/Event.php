@@ -13,6 +13,7 @@ class Event extends Model
 {
     use HasFactory, SoftDeletes;
 
+
     /**
      * The table associated with the model.
      *
