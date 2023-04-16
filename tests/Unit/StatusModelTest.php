@@ -15,9 +15,9 @@ class StatusModelTest extends TestCase
      */
     public function test_status_model_exist()
     {
-       $status = Status::query()->first();
+        $status = Status::query()->first();
 
-       $this->assertModelExists($status);
+        $this->assertModelExists($status);
     }
 
 

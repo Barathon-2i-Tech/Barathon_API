@@ -65,7 +65,6 @@ class UserSeeder extends Seeder
         ]);
 
 
-
         $datas = [
             [
                 'first_name' => 'John',

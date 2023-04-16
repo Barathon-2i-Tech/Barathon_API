@@ -168,7 +168,7 @@ class EstablishmentController extends Controller
 
         $request->validate([
             'trade_name' => self::STRING_VALIDATION,
-            'siret' => 'required','string','size:14',Rule::unique('establishments')->ignore($establishment),
+            'siret' => 'required', 'string', 'size:14', Rule::unique('establishments')->ignore($establishment),
             'phone' => self::PHONEVALIDATION,
             'email' => 'nullable|email|string',
             'website' => self::NULLABLE_STRING_VALIDATION,

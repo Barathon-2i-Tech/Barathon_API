@@ -30,7 +30,6 @@ class Establishment extends Model
     protected $primaryKey = 'establishment_id';
 
     /**
-
      * The attributes that should be cast.
      *
      * @var array
@@ -40,7 +39,6 @@ class Establishment extends Model
     ];
 
     /**
-
      * The attributes that are mass assignable.
      *
      * @var string[]

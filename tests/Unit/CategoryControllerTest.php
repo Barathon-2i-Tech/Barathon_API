@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class CategoryControllerTest extends TestCase
 {
@@ -27,9 +27,9 @@ class CategoryControllerTest extends TestCase
 
         $user = $this->createBarathonienUser();
         $response = $this->actingAs($user)->get(route('barathonien.topCateg'))
-        ->assertOk();
+            ->assertOk();
 
-       $response->assertJsonStructure($structure);
+        $response->assertJsonStructure($structure);
 
     }
 }
