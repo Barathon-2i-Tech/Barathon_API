@@ -16,10 +16,8 @@ class CategoryEventController extends Controller
 
     /**
      * Display all categories associate with an event
-     *
-     * @return JsonResponse
      */
-    public function getAllCategoriesByEventId(int $eventId)
+    public function getAllCategoriesByEventId(int $eventId): JsonResponse
     {
         try {
             $eventCategories = DB::table('categories_events')
