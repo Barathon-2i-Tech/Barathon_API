@@ -31,8 +31,9 @@ class EventController extends Controller
         $events = DB::table('events')
             ->join('establishments', 'events.establishment_id', '=', 'establishments.establishment_id')
             ->join('status', 'events.status_id', '=', 'status.status_id')
-            ->select('events.*', 'establishments.*', 'status.status_id', 'status.comment')
             ->where('establishments.establishment_id', $establishmentId)
+            ->where('events.deleted_at', null)
+            ->select('events.*', 'establishments.*', 'status.status_id', 'status.comment')
             ->get();
 
         if ($events->isEmpty()) {

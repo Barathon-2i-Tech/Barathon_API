@@ -37,6 +37,7 @@ class EstablishmentController extends Controller
             ->join('status', 'establishments.status_id', '=', 'status.status_id')
             ->join('addresses', 'establishments.address_id', '=', 'addresses.address_id')
             ->where('establishments.owner_id', $ownerId)
+            ->where('establishments.deleted_at', null)
             ->select('establishments.*', 'addresses.*', 'status.status_id', 'status.comment')
             ->get();
 
