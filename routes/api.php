@@ -36,8 +36,6 @@ Route::post('login', [ApiAuthController::class, 'login'])->name('user.login');
 Route::post('register', [ApiAuthController::class, 'register'])->name('user.register');
 Route::post('register/barathonien', [BarathonienController::class, 'store'])->name('user.register.barathonien');
 Route::post('register/owner', [OwnerController::class, 'store'])->name('user.register.owner');
-Route::post('register/admin', [AdministratorController::class, 'store'])->name('user.register.admin');
-Route::post('register/employee', [EmployeeController::class, 'store'])->name('user.register.employee');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::controller(InseeController::class)->group(function () {
@@ -76,6 +74,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/administrator/{user_id}', 'update')->name('administrator.update');
         Route::delete('/administrator/{user_id}', 'destroy')->name('administrator.delete');
         Route::get('/administrator/restore/{user_id}', 'restore')->name('administrator.restore');
+        Route::post('register/admin', 'store')->name('user.register.admin');
+
     });
 });
 
@@ -86,6 +86,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('employee/{user_id}', 'update')->name('employee.update');
         Route::delete('employee/{user_id}', 'destroy')->name('employee.delete');
         Route::get('employee/restore/{user_id}', 'restore')->name('employee.restore');
+        Route::post('register/employee', 'store')->name('user.register.employee');
 
     });
 });
