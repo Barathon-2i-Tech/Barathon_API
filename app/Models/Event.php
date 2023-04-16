@@ -11,7 +11,8 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Event extends Model
 {
-    use HasFactory, softDeletes;
+    use HasFactory, SoftDeletes;
+
 
     /**
      * The table associated with the model.
