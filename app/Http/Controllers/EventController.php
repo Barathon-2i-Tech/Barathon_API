@@ -78,7 +78,7 @@ class EventController extends Controller
             'capacity' => 'nullable|integer',
             'establishment_id' => 'required|integer',
             'user_id' => 'required|integer',
-            'event_update_id' => 'nullable|integer',
+            'event_update_id' => 'nullable|string',
         ]);
 
         // Handle poster file upload if a new poster is present in the request
@@ -86,34 +86,33 @@ class EventController extends Controller
             $request->validate([
                 'poster' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
-
-            // Delete the old poster if it exists
-            if ($event->poster && Storage::disk('public')->exists($event->poster)) {
-                Storage::disk('public')->delete($event->poster);
-            }
-
-            // Store the new poster and update the event object with the new poster path
+    
             $posterPath = $request->file('poster')->store('posters', 'public');
-            $event->poster = $posterPath;
+        } else {
+            $posterPath = $event->poster;
         }
 
         $eventPending = Status::where('comment->code', 'EVENT_PENDING')->first();
 
-        $event->event_name = $request->event_name;
-        $event->description = $request->description;
-        $event->start_event = $request->start_event;
-        $event->end_event = $request->end_event;
-        $event->price = $request->price;
-        $event->capacity = $request->capacity;
-        $event->establishment_id = $request->establishment_id;
-        $event->user_id = $request->user_id;
-        $event->status_id = $eventPending->status_id;
-        $event->event_update_id = $request->event_update_id;
-
-        $event->save();
-
+        $updatedEvent = new Event([
+            'event_name' => $request->event_name,
+            'description' => $request->description,
+            'start_event' => $request->start_event,
+            'end_event' => $request->end_event,
+            'poster' => $posterPath,
+            'price' => $request->price,
+            'capacity' => $request->capacity,
+            'establishment_id' => $request->establishment_id,
+            'status_id' => $eventPending->status_id,
+            'user_id' => $request->user_id,
+            'event_update_id' => $event->event_id,
+        ]);
+    
+        $updatedEvent->save();
+        $event->delete();
+    
         return $this->success([
-            $event
+            $updatedEvent
         ], "Event Updated", 200);
     }
 
