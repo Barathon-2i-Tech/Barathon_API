@@ -137,6 +137,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/categories/establishment', 'getAllEstablishmentCategories')->name('categories.establishment.all');
         Route::get('/categories/event', 'getAllEventCategories')->name('categories.event.all');
         Route::get('/categories', 'getAllCategories')->name('categories.all');
+        Route::get('/categories/{id}', 'show')->name('categories.show');
 
     });
 });
