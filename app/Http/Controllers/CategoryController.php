@@ -132,11 +132,33 @@ class CategoryController extends Controller
         return $this->success($category, "Category found");
     }
 
-
-
     public function update(Request $request, int $categoryId): JsonResponse
     {
-       //
+        $category = Category::find($categoryId);
+
+        if ($category === null) {
+            return $this->error(null, "Category not found", 404);
+        }
+
+        $request->validate([
+            'category_details.sub_category' => [
+                'required',
+                'string',
+                Rule::in(['Establishment', 'Event', 'All']),
+            ],
+            'category_details.label' => 'required|string',
+            'category_details.icon' => 'nullable|string',
+        ], [
+            'category_details.sub_category.in' => 'La sous categorie doit être Establishment, Event ou All',
+            'category_details.sub_category.required' => 'La sous categorie est requise',
+            'category_details.label.required' => 'Le label est requis',
+            'category_details.icon.string' => 'L\'icone doit être une chaine de caractères',
+        ]);
+
+        $category->category_details = json_encode($request->input('category_details'));
+        $category->save();
+
+        return $this->success($category, "Category updated successfully");
     }
 
     /**
