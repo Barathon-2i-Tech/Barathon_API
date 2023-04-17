@@ -59,6 +59,20 @@ class CategoryController extends Controller
 
     }
 
+    /**
+     * Get all categories for admin part
+     */
+    public function getAllCategories(): JsonResponse
+    {
+        $allCategories = Category::all();
+
+        if ($allCategories->isEmpty()) {
+            return $this->error(null, "No categories found", 404);
+        }
+
+        return $this->success($allCategories, "Categories List");
+    }
+
 
     /**
      * Store a newly created resource in storage.
