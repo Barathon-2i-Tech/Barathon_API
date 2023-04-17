@@ -164,13 +164,20 @@ class CategoryController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param \App\Models\Category $category
-     * @return \Illuminate\Http\Response
      */
-    public function destroy(Category $category)
+    public function destroy(int $categoryId): JsonResponse
     {
-        //
+        $category = Category::find($categoryId);
+
+        if ($category === null) {
+            return $this->error(null, "Category not found", 404);
+        }
+
+        $category->delete();
+
+        return $this->success(null, "Category deleted successfully");
     }
+
 
     /**
      * Get top ten categories

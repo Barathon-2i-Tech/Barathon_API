@@ -11,6 +11,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EstablishmentController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\InseeController;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\StatusController;
 use Illuminate\Support\Facades\Route;
@@ -38,6 +39,19 @@ Route::post('login', [ApiAuthController::class, 'login'])->name('user.login');
 Route::post('register', [ApiAuthController::class, 'register'])->name('user.register');
 Route::post('register/barathonien', [BarathonienController::class, 'store'])->name('user.register.barathonien');
 Route::post('register/owner', [OwnerController::class, 'store'])->name('user.register.owner');
+
+Route::middleware(AUTH_SANCTUM)->group(function () {
+    Route::controller(MailController::class)->group(function () {
+        Route::get('send',  'hello');
+        Route::get('pro/mail/welcome/{id}',  'welcomePro');
+        Route::get('barathonien/mail/welcome/{id}',  'welcomeBarathonien');
+        Route::get('mail/change/password/{id}',  'changePassword');
+        Route::get('pro/mail/valide/{id}/{status}',  'statusPro');
+        Route::get('pro/mail/valide/establishment/{id}/{status}',  'statusEstablishmentPro');
+        Route::get('pro/mail/valide/event/{id}/{status}', 'statusEventPro');
+        Route::post('category/mail/new/{userId}/', 'sendMailNewCategory');
+    });
+});
 
 Route::middleware(AUTH_SANCTUM)->group(function () {
     Route::controller(InseeController::class)->group(function () {
@@ -141,7 +155,7 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
         Route::get('/categories', 'getAllCategories')->name('categories.all');
         Route::get('/category/{id}', 'show')->name('categories.show');
         Route::put('/category/{id}', 'update')->name('categories.update');
-
+        Route::delete('/category/{id}', 'destroy')->name('categories.delete');
     });
 });
 
