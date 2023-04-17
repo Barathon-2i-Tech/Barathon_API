@@ -89,6 +89,8 @@ class EventController extends Controller
             ]);
     
             $posterPath = $request->file('poster')->store('posters', 'public');
+            // add path in db
+            $posterPath = env('APP_URL') . Storage::url($posterPath);
         } else {
             $posterPath = $event->poster;
         }
