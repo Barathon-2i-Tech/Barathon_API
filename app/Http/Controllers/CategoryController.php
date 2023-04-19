@@ -100,9 +100,9 @@ class CategoryController extends Controller
         }
 
         $newCategory = array(
-            'category_details.sub_category' => $request->input('category_details.sub_category'),
-            'category_details.label' => $request->input('category_details.label'),
-            'category_details.icon' => $request
+            'sub_category' => $request->input('category_details.sub_category'),
+            'label' => $request->input('category_details.label'),
+            'icon' => $request
                 ->input('category_details.icon') === null ? $beerIcon : $request->input('category_details.icon'),
         );
 
