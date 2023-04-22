@@ -82,6 +82,11 @@ class EventController extends Controller
             'event_update_id' => 'nullable|string',
         ]);
 
+        // Validate that the start and end event dates are not in the past
+        if (Carbon::parse($request->input('start_event'))->isPast() || Carbon::parse($request->input('end_event'))->isPast()) {
+            return $this->error(null, "L'événement ne peut avoir lieu dans le passé", 400);
+        }
+
         // Handle poster file upload if a new poster is present in the request
         if ($request->hasFile('poster')) {
             $request->validate([
@@ -135,6 +140,10 @@ class EventController extends Controller
             'establishment_id' => 'required|integer',
             'user_id' => 'required|integer',
         ]);
+        // Validate that the start and end event dates are not in the past
+        if (Carbon::parse($request->input('start_event'))->isPast() || Carbon::parse($request->input('end_event'))->isPast()) {
+            return $this->error(null, "L'événement ne peut avoir lieu dans le passé", 400);
+        }
 
         $eventPending = Status::where('comment->code', 'EVENT_PENDING')->first();
 
