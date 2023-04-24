@@ -56,20 +56,24 @@ class CategoryEventController extends Controller
         try {
             $event = Event::find($eventId);
             if (!$event) {
-                error_log('ERRORRR Event not found');
+                error_log('ERROR Event not found');
                 return $this->error(null, "Event not found", 404);
             }
 
             //check if the categories are in an array
             if (!is_array($request->input('options'))) {
-                error_log('ERRORRR Categories must be an array');
+                error_log('ERROR Categories must be an array');
                 return $this->error(null, "Categories must be an array", 400);
             }
 
             // check if the array length is under or equal to 4
             if (count($request->input('options')) > 4) {
-                error_log("ERRORRR You can't associate more than 4 categories to an event");
+                error_log("ERROR You can't associate more than 4 categories to an event");
                 return $this->error(null, "You can't associate more than 4 categories to an event", 400);
+            }
+            if (count($request->input('options')) == 0 ){
+                error_log("ERROR You must associate at least one category to an event");
+                return $this->error(null, "You must associate at least one category to an event", 400);
             }
 
             $event->categories()->sync($request->input('options'));
