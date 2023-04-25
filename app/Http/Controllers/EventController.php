@@ -62,6 +62,62 @@ class EventController extends Controller
         return $this->success($event, "Event");
     }
 
+
+     /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request): JsonResponse
+    {
+        $request->validate([
+            'event_name' => 'required|string|max:255',
+            'description' => 'required|string',
+            'start_event' => 'required|date',
+            'end_event' => 'required|date',
+            'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'price' => 'nullable|numeric',
+            'capacity' => 'nullable|integer',
+            'establishment_id' => 'required|integer',
+            'user_id' => 'required|integer',
+        ]);
+        // Validate that the start and end event dates are not in the past
+        if (Carbon::parse($request->input('start_event'))->isPast() || Carbon::parse($request->input('end_event'))->isPast()) {
+            return $this->error(null, "L'événement ne peut avoir lieu dans le passé", 400);
+        }
+
+        $eventPending = Status::where('comment->code', 'EVENT_PENDING')->first();
+
+        $eventPosterPath = null;
+
+        if ($request->hasFile('poster')) {
+            $eventPosterPath = $request->file('poster')->storePublicly('posters', 'public');
+            // Ajout du chemin complet
+            $eventPosterPath = env('APP_URL') . Storage::url($eventPosterPath);
+        }
+
+
+        $event = Event::create([
+            'event_name' => $request->input('event_name'),
+            'description' => $request->input('description'),
+            'start_event' => $request->input('start_event'),
+            'end_event' => $request->input('end_event'),
+            'poster' => $eventPosterPath,
+            'price' => $request->input('price'),
+            'capacity' => $request->input('capacity'),
+            'establishment_id' => $request->input('establishment_id'),
+            'user_id' => $request->input('user_id'),
+            'status_id' => $eventPending->status_id,
+            'event_update_id' => null
+        ]);
+
+
+        $event->save();
+
+        return $this->success([
+            $event
+        ], "event created", 201);
+    }
+
+
     /**
      * Update the specified resource in storage.
      */
@@ -103,16 +159,16 @@ class EventController extends Controller
         $eventPending = Status::where('comment->code', 'EVENT_PENDING')->first();
 
         $updatedEvent = new Event([
-            'event_name' => $request->event_name,
-            'description' => $request->description,
-            'start_event' => $request->start_event,
-            'end_event' => $request->end_event,
+            'event_name' => $request->input('event_name'),
+            'description' => $request->input('description'),
+            'start_event' => $request->input('start_event'),
+            'end_event' => $request->input('end_event'),
             'poster' => $posterPath,
-            'price' => $request->price,
-            'capacity' => $request->capacity,
-            'establishment_id' => $request->establishment_id,
+            'price' => $request->input('price'),
+            'capacity' => $request->input('capacity'),
+            'establishment_id' => $request->input('establishment_id'),
             'status_id' => $eventPending->status_id,
-            'user_id' => $request->user_id,
+            'user_id' => $request->input('user_id'),
             'event_update_id' => $event->event_id,
         ]);
     
@@ -124,59 +180,7 @@ class EventController extends Controller
         ], "Event Updated", 200);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request): JsonResponse
-    {
-        $request->validate([
-            'event_name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'start_event' => 'required|date',
-            'end_event' => 'required|date',
-            'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
-            'price' => 'nullable|numeric',
-            'capacity' => 'nullable|integer',
-            'establishment_id' => 'required|integer',
-            'user_id' => 'required|integer',
-        ]);
-        // Validate that the start and end event dates are not in the past
-        if (Carbon::parse($request->input('start_event'))->isPast() || Carbon::parse($request->input('end_event'))->isPast()) {
-            return $this->error(null, "L'événement ne peut avoir lieu dans le passé", 400);
-        }
 
-        $eventPending = Status::where('comment->code', 'EVENT_PENDING')->first();
-
-        $eventPosterPath = null;
-
-        if ($request->hasFile('poster')) {
-            $eventPosterPath = $request->file('poster')->storePublicly('posters', 'public');
-            // Ajout du chemin complet
-            $eventPosterPath = env('APP_URL') . Storage::url($eventPosterPath);
-        }
-
-
-        $event = Event::create([
-            'event_name' => $request->event_name,
-            'description' => $request->description,
-            'start_event' => $request->start_event,
-            'end_event' => $request->end_event,
-            'poster' => $eventPosterPath,
-            'price' => $request->price,
-            'capacity' => $request->capacity,
-            'establishment_id' => $request->establishment_id,
-            'user_id' => $request->user_id,
-            'status_id' => $eventPending->status_id,
-            'event_update_id' => null
-        ]);
-
-
-        $event->save();
-
-        return $this->success([
-            $event
-        ], "event created", 201);
-    }
 
     /**
      * Remove the specified event from database.
