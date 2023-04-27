@@ -1,6 +1,7 @@
 # What is that ?
 
-It is the set of criteria defined and built by the team, determining whether a User Story / item can be considered as treated. This helps to ensure the quality of the product.
+It is the set of criteria defined and built by the team, determining whether a User Story / item can be considered as
+treated. This helps to ensure the quality of the product.
 
 ## DOD "Barathon" criteria retained:
 

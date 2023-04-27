@@ -1,7 +1,7 @@
 # For more information: https://laravel.com/docs/sail
 version: '3'
 services:
-#Laravel Service
+    #Laravel Service
     laravel.test:
         build:
             context: ./vendor/laravel/sail/runtimes/8.1
@@ -29,7 +29,7 @@ services:
             - meilisearch
             - mailhog
 
-#Postgres Service (Database)
+    #Postgres Service (Database)
     pgsql:
         image: 'postgres:14'
         container_name: barathon-pgsql
@@ -46,11 +46,11 @@ services:
         networks:
             - barathon
         healthcheck:
-            test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}"]
+            test: [ "CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}" ]
             retries: 3
             timeout: 5s
 
-#CloudBeaver Service (DataBase Management System )
+    #CloudBeaver Service (DataBase Management System )
     CloudBeaver:
         image: dbeaver/cloudbeaver:latest
         container_name: barathon-cloudbeaver
@@ -64,7 +64,7 @@ services:
         networks:
             - barathon
 
-#MeiliSearch Service ( search engine)
+    #MeiliSearch Service ( search engine)
     meilisearch:
         image: 'getmeili/meilisearch:latest'
         container_name: barathon-meilisearch
@@ -75,11 +75,11 @@ services:
         networks:
             - barathon
         healthcheck:
-            test: ["CMD", "wget", "--no-verbose", "--spider",  "http://localhost:7700/health"]
+            test: [ "CMD", "wget", "--no-verbose", "--spider",  "http://localhost:7700/health" ]
             retries: 3
             timeout: 5s
 
-#Mailhog Service (for email testing)
+    #Mailhog Service (for email testing)
     mailhog:
         image: 'mailhog/mailhog:latest'
         container_name: barathon-mailhog

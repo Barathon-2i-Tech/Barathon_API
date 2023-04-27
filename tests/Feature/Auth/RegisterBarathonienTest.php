@@ -3,9 +3,9 @@
 namespace Auth;
 
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 
 class RegisterBarathonienTest extends TestCase
@@ -74,7 +74,7 @@ class RegisterBarathonienTest extends TestCase
             'avatar' => "myavatar.jpg"
         ])
             ->assertStatus(422)
-           ->assertJsonFragment(['message' => 'La date de naissance est obligatoire.']);
+            ->assertJsonFragment(['message' => 'La date de naissance est obligatoire.']);
     }
 
     /**

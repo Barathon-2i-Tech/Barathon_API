@@ -2,8 +2,8 @@
 
 namespace Auth;
 
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 
 class LogoutTest extends TestCase
@@ -43,7 +43,7 @@ class LogoutTest extends TestCase
             ->assertOk();
 
         $response->assertJsonStructure($structure)
-                 ->assertJsonFragment(["message" => 'You have successfully been logged out and your tokens has been removed']);
+            ->assertJsonFragment(["message" => 'You have successfully been logged out and your tokens has been removed']);
 
     }
 

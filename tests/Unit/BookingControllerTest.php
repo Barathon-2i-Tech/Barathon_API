@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class BookingControllerTest extends TestCase
 {
@@ -50,18 +50,18 @@ class BookingControllerTest extends TestCase
         $response->assertJsonStructure($structure);
     }
 
-        // test for create a booking
-        public function test_barathonien_can_delete_book_an_event()
-        {
-            $structure = [
-                "status",
-                "message",
-                "data"];
-    
-            $user = $this->createBarathonienUser();
-    
-            $response = $this->actingAs($user)->delete(route('barathonien.deleteBooking', ["id" => 1]))->assertOk();
-    
-            $response->assertJsonStructure($structure);
-        }
+    // test for create a booking
+    public function test_barathonien_can_delete_book_an_event()
+    {
+        $structure = [
+            "status",
+            "message",
+            "data"];
+
+        $user = $this->createBarathonienUser();
+
+        $response = $this->actingAs($user)->delete(route('barathonien.deleteBooking', ["id" => 1]))->assertOk();
+
+        $response->assertJsonStructure($structure);
+    }
 }

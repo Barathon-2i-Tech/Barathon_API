@@ -3,7 +3,6 @@
 namespace Tests\Unit;
 
 use App\Http\Controllers\InseeController;
-
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Http;
@@ -13,10 +12,10 @@ class InseeControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-   /**
-    * A test to check if the access token is created
-    *
-    */
+    /**
+     * A test to check if the access token is created
+     *
+     */
 
     public function test_generateToken_Returns_Valid_Access_Token(): void
     {

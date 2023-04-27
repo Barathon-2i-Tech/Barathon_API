@@ -5,10 +5,9 @@ namespace App\Http\Controllers;
 use App\Models\Establishment;
 use App\Traits\HttpResponses;
 use Exception;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
 
 class CategoryEstablishmentController extends Controller
 {

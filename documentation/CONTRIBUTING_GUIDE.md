@@ -9,7 +9,8 @@ Your branch need to be named this way :
 - `feat/<id>-<short-description>` : if your PR aims to add a new feature to the application
 - `fix/<id>-<short-description>` : if your PR aims to fix a bug or an unexpected behavior of the application
 
-Where **\<id>** represents the identification number of the feature or the bug - usually the number of your card, of the form **#xxxxxx**\
+Where **\<id>** represents the identification number of the feature or the bug - usually the number of your card, of the
+form **#xxxxxx**\
 And **\<short-description>** briefly describes the task - usually the title of your card.
 
 You can find your card on the **AzureDevOps Board**.
@@ -45,7 +46,9 @@ The header cannot be omitted and must follow this schema :
 
 ### Commit message _Body_
 
-The body is optionnal, when present, it contains deeper explaination of what the commit _is_ doing (not necessarily _how_). You can add further explainations, stating the motivation of the change, why this change was necessary, things that need to be taken into account, and so on.
+The body is optionnal, when present, it contains deeper explaination of what the commit _is_ doing (not necessarily
+_how_). You can add further explainations, stating the motivation of the change, why this change was necessary, things
+that need to be taken into account, and so on.
 
 ### Commit message _Footer_
 
@@ -59,11 +62,15 @@ Fixes #123
 
 ### 3rd party tools to help you
 
-You can use the JavaScript tool [commitizen](https://github.com/commitizen/cz-cli) to help you format your commit message.
+You can use the JavaScript tool [commitizen](https://github.com/commitizen/cz-cli) to help you format your commit
+message.
 
-You can install it globaly on your computer with the command `npm install -g commitizen` (if you have `npm` installed localy on your machine, since it is not bundle in the `Container`).
+You can install it globaly on your computer with the command `npm install -g commitizen` (if you have `npm` installed
+localy on your machine, since it is not bundle in the `Container`).
 
 **Note**: You **MUST NOT** install it in the project, so be careful to correctly add the `-g` flag.
 
-Once the script is installed, `cd` inside the project repository where you have commit message to write, and run it via `cz`, then let yourself be guided thought the steps.\
-This tool must be ran outside of the `Dev Container`, otherwise you will get an error stating that `cz` is not a know command.
+Once the script is installed, `cd` inside the project repository where you have commit message to write, and run it
+via `cz`, then let yourself be guided thought the steps.\
+This tool must be ran outside of the `Dev Container`, otherwise you will get an error stating that `cz` is not a know
+command.

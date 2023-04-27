@@ -19,7 +19,7 @@ class StatusController extends Controller
     {
         $status = Status::where('comment->code', 'LIKE', 'ESTABL%')
             ->get();
-        return $this->success($status, "Status List");
+        return $this->success($status, "Establishments Status List");
     }
 
     /**
@@ -30,6 +30,17 @@ class StatusController extends Controller
         $status = Status::where('comment->code', 'LIKE', 'OWNER%')
             ->get();
 
-        return $this->success($status, 'Status List');
+        return $this->success($status, ' Owners Status List');
+    }
+
+    /**
+     * Display a listing of all status about events.
+     */
+    public function eventsStatus(): JsonResponse
+    {
+        $status = Status::where('comment->code', 'LIKE', 'EVENT%')
+            ->get();
+
+        return $this->success($status, 'Events Status List');
     }
 }

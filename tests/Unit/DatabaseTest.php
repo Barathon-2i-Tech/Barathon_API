@@ -116,7 +116,7 @@ class DatabaseTest extends TestCase
     {
         $this->assertTrue(
             Schema::hasColumns('events', [
-                'event_id', 'event_name', 'description', 'start_event', 'end_event', 'poster', 'price', 'capacity', 'establishment_id', 'status_id', 'user_id', 'deleted_at','event_update_id', 'updated_at', 'created_at'
+                'event_id', 'event_name', 'description', 'start_event', 'end_event', 'poster', 'price', 'capacity', 'establishment_id', 'status_id', 'user_id', 'deleted_at', 'event_update_id', 'updated_at', 'created_at'
             ]));
     }
 
