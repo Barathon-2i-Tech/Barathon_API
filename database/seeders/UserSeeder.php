@@ -69,7 +69,7 @@ class UserSeeder extends Seeder
             [
                 'first_name' => 'John',
                 'last_name' => 'Doe',
-                'email' => 'barathonien@mail.fr',
+                'email' => 'barathon.m2i+barathon@gmail.com',
                 'password' => Hash::make('azertyuiop'),
                 'avatar' => $avatar,
                 'owner_id' => null,
@@ -80,7 +80,7 @@ class UserSeeder extends Seeder
             [
                 'last_name' => 'Musk',
                 'first_name' => 'Elon',
-                'email' => 'admin@mail.fr',
+                'email' => 'barathon.m2i+admin@gmail.com',
                 'password' => Hash::make('azertyuiop'),
                 'avatar' => $avatar,
                 'owner_id' => null,
@@ -91,7 +91,7 @@ class UserSeeder extends Seeder
             [
                 'last_name' => 'Doe',
                 'first_name' => 'Jane',
-                'email' => 'employee@mail.fr',
+                'email' => 'barathon.m2i+employe@gmail.com',
                 'password' => Hash::make('azertyuiop'),
                 'avatar' => $avatar,
                 'owner_id' => null,
@@ -102,7 +102,7 @@ class UserSeeder extends Seeder
             [
                 'last_name' => 'Smith',
                 'first_name' => 'John',
-                'email' => 'j.smith@mail.fr',
+                'email' => 'barathon.m2i+employes@gmail.com',
                 'password' => Hash::make('azertyuiop'),
                 'avatar' => $avatar,
                 'owner_id' => null,
@@ -113,7 +113,7 @@ class UserSeeder extends Seeder
             [
                 'last_name' => 'Rothschild',
                 'first_name' => 'Benjamin',
-                'email' => 'owner@mail.fr',
+                'email' => 'barathon.m2i+owner@gmail.com',
                 'password' => Hash::make('azertyuiop'),
                 'avatar' => $avatar,
                 'owner_id' => $ownerRothChild->owner_id,
@@ -124,7 +124,7 @@ class UserSeeder extends Seeder
             [
                 'last_name' => 'Jacobs',
                 'first_name' => 'Marc',
-                'email' => 'm.jacobs@mail.fr',
+                'email' => 'barathon.m2i+owners@gmail.com',
                 'password' => Hash::make('azertyuiop'),
                 'avatar' => $avatar,
                 'owner_id' => $ownerJacobs->owner_id,

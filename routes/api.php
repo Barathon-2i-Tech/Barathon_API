@@ -12,8 +12,11 @@ use App\Http\Controllers\EstablishmentController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\InseeController;
 use App\Http\Controllers\OwnerController;
+use App\Http\Controllers\MailController;
 use App\Http\Controllers\StatusController;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Support\Facades\Mail;
+use App\Mail\HelloMail;
 
 /*
 |--------------------------------------------------------------------------

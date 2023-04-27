@@ -47,7 +47,7 @@ class EstablishmentSeeder extends Seeder
                 'address_id' => $FaifFoifAddress->address_id,
                 'logo' => fake()->imageUrl(180, 180, 'Establishment logo', false),
                 'phone' => fake()->phoneNumber(),
-                'email' => 'etablissement@mail.fr',
+                'email' => 'barathon.m2i+establishment@gmail.com',
                 'website' => 'www.google.fr',
                 'opening' => [
                     'Lundi' => 'fermer',
@@ -67,7 +67,7 @@ class EstablishmentSeeder extends Seeder
                 'address_id' => $fantomeOperaAddress->address_id,
                 'logo' => fake()->imageUrl(180, 180, 'Establishment logo', false),
                 'phone' => '0437920388',
-                'email' => 'fantomeoperalyon@gmail.com',
+                'email' => 'barathon.m2i+establishment2@gmail.com',
                 'website' => 'www.lefantomedelopera.fr',
                 'opening' => [
                     'Lundi' => 'fermer',
@@ -87,7 +87,7 @@ class EstablishmentSeeder extends Seeder
                 'address_id' => $cafeLumiereAddress->address_id,
                 'logo' => fake()->imageUrl(180, 180, 'Establishment logo', false),
                 'phone' => "0472055598",
-                'email' => 'cafelumiere@mail.fr',
+                'email' => 'barathon.m2i+establishment3@gmail.com',
                 'website' => 'https://le-cafe-lumiere.business.site/',
                 'opening' => [
                     'Lundi' => '07h00 - 21h30',
