@@ -14,6 +14,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Facades\DB;
 
 class EventController extends Controller
 {
@@ -130,30 +131,29 @@ class EventController extends Controller
      */
     public function getEventsLocation(): JsonResponse
     {
-        // Get all establishment id in the city
-        $establishments = Establishment::with('address')->get();
-
         // Get 4th first event from the establishments by date now
         $dateNow = date('Y-m-j H:i:s');
+        
+        $establishments = Establishment::with('address')->get();
 
-        $allEvents = Event::where('start_event', '>=', $dateNow)->get();
-
-        for ($i=0; $i < count($allEvents); $i++) { 
-            $establishment = Establishment::with('address')->find($allEvents[$i]->establishment_id)->first();
+        for ($i=0; $i < count($establishments); $i++) { 
+            $events = Event::where([['start_event', '>=', $dateNow], ['establishment_id', '=', $establishments[$i]->establishment_id]])->get();
+            
             $client = new Client();
-            $res = $client->get(self::API_GOUV . "?q=" . $establishment->address->address . ", " . $establishment->address->postal_code . ", " . $establishment->address->city . "&type=housenumber&autocomplete=1");
+            $res = $client->get(self::API_GOUV . "?q=" . $establishments[$i]->address->address . ", " . $establishments[$i]->address->postal_code . ", " . $establishments[$i]->address->city . "&type=housenumber&autocomplete=1");
 
             if($res->getStatusCode() == 200){
-
-                $allEvents[$i]->latitude = json_decode($res->getBody())->features[0]->geometry->coordinates[1];
-                $allEvents[$i]->longitude = json_decode($res->getBody())->features[0]->geometry->coordinates[0];
+                $establishments[$i]->latitude = json_decode($res->getBody())->features[0]->geometry->coordinates[1];
+                $establishments[$i]->longitude = json_decode($res->getBody())->features[0]->geometry->coordinates[0];
             }
+
+            $establishments[$i]->events = $events;
             
         }
 
         // Return all events
         return $this->success([
-            'event' => $allEvents,
+            'establishments' => $establishments,
         ]);
     }
 
