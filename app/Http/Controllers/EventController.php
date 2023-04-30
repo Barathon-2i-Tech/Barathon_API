@@ -12,12 +12,15 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 
 class EventController extends Controller
 {
     use HttpResponses;
 
     private const NOT_BARATHONIEN = 'the User is not a barathonien';
+    private const API_GOUV = "https://api-adresse.data.gouv.fr/search/";
 
     /**
      * Display a listing of the resource.
@@ -115,6 +118,38 @@ class EventController extends Controller
             ->skip(0)
             ->take(4)
             ->get();
+
+        // Return all events
+        return $this->success([
+            'event' => $allEvents,
+        ]);
+    }
+
+    /**
+     * Get the events with location
+     */
+    public function getEventsLocation(): JsonResponse
+    {
+        // Get all establishment id in the city
+        $establishments = Establishment::with('address')->get();
+
+        // Get 4th first event from the establishments by date now
+        $dateNow = date('Y-m-j H:i:s');
+
+        $allEvents = Event::where('start_event', '>=', $dateNow)->get();
+
+        for ($i=0; $i < count($allEvents); $i++) { 
+            $establishment = Establishment::with('address')->find($allEvents[$i]->establishment_id)->first();
+            $client = new Client();
+            $res = $client->get(self::API_GOUV . "?q=" . $establishment->address->address . ", " . $establishment->address->postal_code . ", " . $establishment->address->city . "&type=housenumber&autocomplete=1");
+
+            if($res->getStatusCode() == 200){
+
+                $allEvents[$i]->latitude = json_decode($res->getBody())->features[0]->geometry->coordinates[1];
+                $allEvents[$i]->longitude = json_decode($res->getBody())->features[0]->geometry->coordinates[0];
+            }
+            
+        }
 
         // Return all events
         return $this->success([

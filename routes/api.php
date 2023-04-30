@@ -102,6 +102,12 @@ Route::group(['middleware' => ['auth:sanctum']], function () {
         [EventController::class, 'getEventsByUserCity']
     )->name('barathonien.eventsByUserCity');
 
+    //Get the events with location
+    Route::get(
+        'barathonien/events',
+        [EventController::class, 'getEventsLocation']
+    )->name('barathonien.eventslocation');
+
     //get Events booking by the User
     Route::get(
         'barathonien/{id}/booking/events',
