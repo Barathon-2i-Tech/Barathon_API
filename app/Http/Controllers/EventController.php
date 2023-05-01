@@ -133,7 +133,7 @@ class EventController extends Controller
     {
         // Get 4th first event from the establishments by date now
         $dateNow = date('Y-m-j H:i:s');
-        
+
         $establishments = Establishment::with('address')->get();
 
         for ($i=0; $i < count($establishments); $i++) { 
@@ -151,9 +151,29 @@ class EventController extends Controller
             
         }
 
-        // Return all events
+        $dateOneWeek = strtotime($dateNow);
+        $dateOneWeek = strtotime("+7 day",$dateOneWeek);
+        $dateOneWeek = date('Y-m-j H:i:s', $dateOneWeek);
+
+        $allEvents = Event::where([['start_event', '>=', $dateNow], ['start_event', '<=', $dateOneWeek]])->get();
+
+        for ($i=0; $i < count($allEvents); $i++) { 
+            $establishment = Establishment::with('address')->find($allEvents[$i]->establishment_id)->first();
+            $client = new Client();
+            $res = $client->get(self::API_GOUV . "?q=" . $establishment->address->address . ", " . $establishment->address->postal_code . ", " . $establishment->address->city . "&type=housenumber&autocomplete=1");
+
+            if($res->getStatusCode() == 200){
+
+                $allEvents[$i]->latitude = json_decode($res->getBody())->features[0]->geometry->coordinates[1];
+                $allEvents[$i]->longitude = json_decode($res->getBody())->features[0]->geometry->coordinates[0];
+            }
+
+        }
+
+        // Return all establishments
         return $this->success([
             'establishments' => $establishments,
+            'events' => $allEvents
         ]);
     }
 
