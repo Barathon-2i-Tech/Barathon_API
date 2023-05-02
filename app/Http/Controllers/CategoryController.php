@@ -61,7 +61,7 @@ class CategoryController extends Controller
      */
     public function getAllCategories(): JsonResponse
     {
-        $allCategories = Category::all();
+        $allCategories = Category::withTrashed()->get();
 
         if ($allCategories->isEmpty()) {
             return $this->error(null, "No categories found", 404);
