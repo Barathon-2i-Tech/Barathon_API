@@ -178,6 +178,22 @@ class CategoryController extends Controller
         return $this->success(null, "Category deleted successfully");
     }
 
+    /**
+     * Restore the specified resource from storage.
+     */
+    public function restore(int $categoryId): JsonResponse
+    {
+        $category = Category::withTrashed()->find($categoryId);
+
+
+        if ($category === null) {
+            return $this->error(null, "Category not found", 404);
+        }
+
+        $category->restore();
+
+        return $this->success(null, "Category restored successfully");
+    }
 
     /**
      * Get top ten categories

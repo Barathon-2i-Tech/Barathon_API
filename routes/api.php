@@ -156,6 +156,7 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
         Route::get('/category/{id}', 'show')->name('categories.show');
         Route::put('/category/{id}', 'update')->name('categories.update');
         Route::delete('/category/{id}', 'destroy')->name('categories.delete');
+        Route::get('/category/restore/{id}', 'restore')->name('categories.restore');
     });
 });
 
