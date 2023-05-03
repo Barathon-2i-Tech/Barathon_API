@@ -7,6 +7,7 @@ use App\Models\Establishment;
 use App\Models\Owner;
 use App\Models\Status;
 use Illuminate\Database\Eloquent\Factories\Factory;
+use Illuminate\Support\Facades\Crypt;
 
 /**
  * @extends Factory<Establishment>
@@ -23,6 +24,7 @@ class EstablishmentFactory extends Factory
         $ownerId = Owner::all('owner_id')->first();
         $establValid = Status::where('comment->code', 'ESTABL_VALID')->first();
         $address = Address::all('address_id')->first();
+        $code = rand(1000, 9999);
 
         return [
             'trade_name' => fake()->company,
@@ -41,6 +43,7 @@ class EstablishmentFactory extends Factory
                 'Samedi' => '17h00 - 01h00',
                 'Dimanche' => '17h00 - 01h00',
             ],
+            'validation_code' => Crypt::encryptString($code),
             'owner_id' => $ownerId->owner_id,
             'status_id' => $establValid->status_id,
         ];

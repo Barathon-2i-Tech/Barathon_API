@@ -11,6 +11,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Crypt;
 
 class EstablishmentController extends Controller
 {
@@ -44,6 +45,10 @@ class EstablishmentController extends Controller
         // if the establishments list is empty
         if ($establishments->isEmpty()) {
             return $this->error(null, self::ESTABLISHMENT_NOT_FOUND, 404);
+        }
+
+        foreach ($establishments as $establishment) {
+            $establishment->validation_code =  Crypt::decryptString($establishment->validation_code);
         }
 
         // return the establishments list

@@ -13,7 +13,7 @@ return new class extends Migration {
             $table->foreign('user_id')->references('user_id')->on('users');
             $table->foreignId('event_id');
             $table->foreign('event_id')->references('event_id')->on('events');
-            $table->boolean('isFav')->default(false);
+            $table->boolean('ticket')->default(false);
         });
     }
 

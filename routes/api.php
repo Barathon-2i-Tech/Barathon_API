@@ -166,9 +166,12 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
 
 Route::middleware(AUTH_SANCTUM)->group(function () {
     Route::controller(CategoryEstablishmentController::class)->group(function () {
-        Route::get('/categories/establishment/{establishmentId}', 'getAllCategoriesByEstablishmentId')->name('categories.establishment');
-        Route::put('/pro/establishment/{establishment_id}/category', 'associateCategoriesToEstablishment')->name('categories.update');
-        Route::post('/pro/establishment/{establishment_id}/category', 'associateCategoriesToEstablishment')->name('categories.store');
+        Route::get('/categories/establishment/{establishmentId}', 'getAllCategoriesByEstablishmentId')
+            ->name('categories.establishment');
+        Route::put('/pro/establishment/{establishment_id}/category', 'associateCategoriesToEstablishment')
+            ->name('categories.update');
+        Route::post('/pro/establishment/{establishment_id}/category', 'associateCategoriesToEstablishment')
+            ->name('categories.store');
 
     });
 });
@@ -178,6 +181,11 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
         Route::post('/barathonien/booking', 'store')->name('barathonien.postBooking');
         Route::delete('/barathonien/booking/{id}', 'destroy')->name('barathonien.deleteBooking');
     });
+});
+
+Route::controller(BookingController::class)->group(function () {
+    Route::post('/pro/book/{id}', 'valideTicket')->name('pro.getEventandUser');
+    Route::get('/pro/event/{idEvent}/barathonien/{id}', 'getEventandUser')->name('pro.valideTicket');
 });
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
