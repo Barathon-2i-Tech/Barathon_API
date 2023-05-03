@@ -169,8 +169,7 @@ class OwnerControllerTest extends TestCase
         $response = $this->actingAs($administrator)->put(route('owner.update', $owner->user_id), [
             'first_name' => 'Benjamin',
             'last_name' => 'Rothschild',
-            'email' => 'owner@mail.fr',
-            'phone' => '0102030405',])
+            'email' => 'barathon.m2i+owner@gmail.com'])
             ->assertOk();
         $response->assertJsonStructure([
             'status',

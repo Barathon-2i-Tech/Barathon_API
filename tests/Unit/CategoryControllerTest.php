@@ -32,4 +32,26 @@ class CategoryControllerTest extends TestCase
        $response->assertJsonStructure($structure);
 
     }
+
+    /**
+     * A test to get all categories
+     *
+     * @return void
+     */
+    public function test_get_all_administrators(): void
+    {
+        //$structure = self::STRUCTURE;
+
+        $administrator = $this->createAdminUser();
+
+        $response = $this->actingAs($administrator)->get(route('categories.establishment.all'))
+            ->assertOk();
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data',
+        ]);
+        $response->assertJson(['message' => 'Categories List']);
+
+    }
 }

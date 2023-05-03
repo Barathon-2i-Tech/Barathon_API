@@ -191,10 +191,9 @@ class AdministratorControllerTest extends TestCase
         $administrator = $this->createAdminUser();
 
         $response = $this->actingAs($user)->put(route('administrator.update', $administrator->user_id), [
-            'first_name' => 'Elon',
             'last_name' => 'Musk',
-            'email' => 'admin@mail.fr',
-            'superAdmin' => true])
+            'first_name' => 'Elon',
+            'email' => 'barathon.m2i+admin@gmail.com'])
             ->assertOk();
         $response->assertJsonStructure([
             'status',

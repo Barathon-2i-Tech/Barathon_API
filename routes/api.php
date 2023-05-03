@@ -33,34 +33,34 @@ use Illuminate\Support\Facades\Route;
 | Register and Login Methods
 |--------------------------------------------------------------------------
 */
-const AUTH_SANCTUM = 'auth:sanctum';
+
 
 Route::post('login', [ApiAuthController::class, 'login'])->name('user.login');
 Route::post('register', [ApiAuthController::class, 'register'])->name('user.register');
 Route::post('register/barathonien', [BarathonienController::class, 'store'])->name('user.register.barathonien');
 Route::post('register/owner', [OwnerController::class, 'store'])->name('user.register.owner');
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(MailController::class)->group(function () {
-        Route::get('send',  'hello');
-        Route::get('pro/mail/welcome/{id}',  'welcomePro');
-        Route::get('barathonien/mail/welcome/{id}',  'welcomeBarathonien');
-        Route::get('mail/change/password/{id}',  'changePassword');
-        Route::get('pro/mail/valide/{id}/{status}',  'statusPro');
-        Route::get('pro/mail/valide/establishment/{id}/{status}',  'statusEstablishmentPro');
+        Route::get('send', 'hello');
+        Route::get('pro/mail/welcome/{id}', 'welcomePro');
+        Route::get('barathonien/mail/welcome/{id}', 'welcomeBarathonien');
+        Route::get('mail/change/password/{id}', 'changePassword');
+        Route::get('pro/mail/valide/{id}/{status}', 'statusPro');
+        Route::get('pro/mail/valide/establishment/{id}/{status}', 'statusEstablishmentPro');
         Route::get('pro/mail/valide/event/{id}/{status}', 'statusEventPro');
         Route::post('category/mail/new/{userId}/', 'sendMailNewCategory');
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(InseeController::class)->group(function () {
         Route::get('/check-siren/{siren}', 'getSiren')->name('check-siren');
         Route::get('/check-siret/{siret}', 'getSiret')->name('check-siret');
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(BarathonienController::class)->group(function () {
         Route::get('/barathonien/list', 'getBarathonienList')->name('barathonien.list');
         Route::get('/barathonien/{user_id}', 'show')->name('barathonien.show');
@@ -70,7 +70,7 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(OwnerController::class)->group(function () {
         Route::get('/pro/list', 'getOwnerList')->name('owner.list');
         Route::get('/admin/pro-to-validate', 'getOwnerToValidate')->name('admin.pro-to-validate');
@@ -83,7 +83,7 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(AdministratorController::class)->group(function () {
         Route::get('/administrator/list', 'getAdministratorList')->name('administrator.list');
         Route::get('/administrator/{user_id}', 'show')->name('administrator.show');
@@ -95,7 +95,7 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(EmployeeController::class)->group(function () {
         Route::get('/employee/list', 'getEmployeeList')->name('employee.list');
         Route::get('employee/{user_id}', 'show')->name('employee.show');
@@ -107,7 +107,7 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(EstablishmentController::class)->group(function () {
         Route::get('/establishments/list', 'getAllEstablishments')->name('admin.establishment.list');
         Route::get('/admin/establishment-to-validate', 'getEstablishmentToValidate')->name('admin.establishment-to-validate');
@@ -122,7 +122,7 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(EventController::class)->group(function () {
         Route::get('/events/list', 'getEventList')->name('admin.event.list');
         Route::get('/admin/event-to-validate', 'getEventsToValidate')->name('admin.event-to-validate');
@@ -138,7 +138,7 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(StatusController::class)->group(function () {
         Route::get('/owner-status', 'ownerStatus')->name('owner-status');
         Route::get('/establishment-status', 'establishmentStatus')->name('establishment-status');
@@ -146,7 +146,7 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(CategoryController::class)->group(function () {
         Route::get('/barathonien/top/categories', 'getTopTenCategories')->name('barathonien.topCateg');
         Route::post('/category/create', 'store')->name('categories.store');
@@ -160,14 +160,14 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(CategoryEventController::class)->group(function () {
         Route::put('/pro/event/{eventId}/category', 'associateCategoriesToEvent')->name('event.toCategory');
         Route::get('/pro/event/{eventId}/category', 'getAllCategoriesByEventId')->name('pro.event.eventById');
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(CategoryEstablishmentController::class)->group(function () {
         Route::get('/categories/establishment/{establishmentId}', 'getAllCategoriesByEstablishmentId')->name('categories.establishment');
         Route::put('/pro/establishment/{establishment_id}/category', 'associateCategoriesToEstablishment')->name('categories.update');
@@ -176,13 +176,13 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(BookingController::class)->group(function () {
         Route::post('/barathonien/booking', 'store')->name('barathonien.postBooking');
         Route::delete('/barathonien/booking/{id}', 'destroy')->name('barathonien.deleteBooking');
     });
 });
 
-Route::group(['middleware' => [AUTH_SANCTUM]], function () {
+Route::group(['middleware' => ['auth:sanctum']], function () {
     Route::post('/logout', [ApiAuthController::class, 'logout'])->name('user.logout');
 });

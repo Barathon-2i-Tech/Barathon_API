@@ -181,10 +181,11 @@ class BarathonienControllerTest extends TestCase
         $response = $this->actingAs($administrator)->put(route('barathonien.update', $barathonien->user_id), [
             'first_name' => 'John',
             'last_name' => 'Doe',
-            'email' => 'barathonien@mail.fr',
-            'address' => '20 boulevard eugene deruelle',
-            'postal_code' => '69003',
-            'city' => 'Lyon'
+            'email' => 'barathon.m2i+barathon@gmail.com',
+            'address' => "20 boulevard eugene deruelle",
+            'postal_code' => "69003",
+            'city' => "Lyon",
+
         ])
             ->assertOk();
         $response->assertJsonStructure([

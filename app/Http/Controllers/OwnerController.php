@@ -167,6 +167,8 @@ class OwnerController extends Controller
         $userChanges = $user->getChanges();
         $ownerChanges = $owner->getChanges();
 
+
+
         if (empty($userChanges) && empty($ownerChanges)) {
             return $this->success(null, 'Owner not updated');
         }
