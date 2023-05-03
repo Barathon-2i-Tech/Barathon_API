@@ -78,7 +78,7 @@ class OwnerController extends Controller
             'last_name' => $request->input('last_name'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
-            'avatar' => 'https://picsum.photos/180',
+            'avatar' => 'https://img.freepik.com/free-photo/tasty-american-beer-arrangement_23-2148907580.jpg?w=740&t=st=1683116391~exp=1683116991~hmac=584918e27d013319c35203ce268841f480637965556343c6173885ba806453f2',
         ]);
 
         $owner = Owner::create([
@@ -122,56 +122,69 @@ class OwnerController extends Controller
      */
     public function update(Request $request, int $userId): JsonResponse
     {
-        //get the user given in parameter
-        $user = User::find($userId);
+        
+    //get the user given in parameter
+    $user = User::find($userId);
 
-        if ($user === null) {
-            return $this->error(null, self::OWNERNOTFOUND, 404);
-        }
+    if ($user === null) {
+        return $this->error(null, self::OWNERNOTFOUND, 404);
+    }
 
-        // check if the user is an owner
-        if ($user->owner_id === null) {
-            return $this->error(null, self::OWNERNOTFOUND, 404);
-        }
+    // check if the user is an owner
+    if ($user->owner_id === null) {
+        return $this->error(null, self::OWNERNOTFOUND, 404);
+    }
 
-        // validate the request
-        $request->validate([
-            'first_name' => self::STRINGVALIDATION,
-            'last_name' => self::STRINGVALIDATION,
-            'email' => [
-                'required',
-                'string',
-                'email',
-                Rule::unique('users')->ignore($user), // Ignore the user given in parameter
-            ],
-            'company_name' => 'nullable|string|max:255',
-            'phone' => self::PHONEVALIDATION,
-        ], [
-            'first_name.required' => 'Le prénom est obligatoire.',
-            'last_name.required' => 'Le nom est obligatoire.',
-            'email.required' => "L'adresse e-mail est obligatoire.",
-            'email.email' => "L'adresse e-mail n'est pas valide.",
-            'email.unique' => "L'adresse e-mail est déjà utilisée.",
-            'phone.required' => 'Le numéro de téléphone est obligatoire.',
-            'phone.regex' => 'Le numéro de téléphone n\'est pas valide.',
-        ]);
+    // validate the request
+    $request->validate([
+        'first_name' => self::STRINGVALIDATION,
+        'last_name' => self::STRINGVALIDATION,
+        'email' => [
+            'required',
+            'string',
+            'email',
+            Rule::unique('users')->ignore($user), // Ignore the user given in parameter
+        ],
+        'company_name' => 'nullable|string|max:255',
+        'phone' => self::PHONEVALIDATION,
+        'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+    ], [
+        'first_name.required' => 'Le prénom est obligatoire.',
+        'last_name.required' => 'Le nom est obligatoire.',
+        'email.required' => "L'adresse e-mail est obligatoire.",
+        'email.email' => "L'adresse e-mail n'est pas valide.",
+        'email.unique' => "L'adresse e-mail est déjà utilisée.",
+        'phone.required' => 'Le numéro de téléphone est obligatoire.',
+        'phone.regex' => 'Le numéro de téléphone n\'est pas valide.',
+    ]);
+    
+     // Handle avatar file upload if a new avatar is present in the request
+     if ($request->hasFile('avatar')) {
+        $avatarPath = $request->file('avatar')->store('avatars', 'public');
+        // add path in db
+        $avatarPath = env('APP_URL') . Storage::url($avatarPath);
+    } else {
+        $avatarPath = $user->avatar;
+    }
 
-        $user->fill($request->only(['first_name', 'last_name', 'email']));
-        $user->save();
+    $user->fill($request->only(['first_name', 'last_name', 'email']));
+    $user->avatar = $avatarPath;
+    $user->save();
 
-        // Update the owner data
-        $owner = Owner::find($user->owner_id);
-        $owner->fill($request->only(['company_name', 'phone']));
-        $owner->save();
+    // Récupérez l'instance $owner avant de l'utiliser
+    $owner = Owner::find($user->owner_id);
+    // Update the owner data
+    $owner->fill($request->only(['company_name', 'phone']));
+    $owner->save();
 
-        $userChanges = $user->getChanges();
-        $ownerChanges = $owner->getChanges();
+    $userChanges = $user->getChanges();
+    $ownerChanges = $owner->getChanges();
 
-        if (empty($userChanges) && empty($ownerChanges)) {
-            return $this->success(null, 'Owner not updated');
-        }
+    if (empty($userChanges) && empty($ownerChanges)) {
+        return $this->success(null, 'Owner not updated');
+    }
 
-        return $this->success([$user, $owner], 'Owner Updated');
+    return $this->success([$user, $owner], 'Owner Updated');
     }
 
     /**
@@ -219,6 +232,43 @@ class OwnerController extends Controller
         User::withTrashed()->where('user_id', $userId)->restore();
 
         return $this->success(null, 'Owner Restored');
+    }
+    /**
+     * Update owner password.
+     */
+    public function updateOwnerPassword(Request $request, int $userId): JsonResponse
+    {
+        // Check if the user exists
+        $user = User::find($userId);
+        if ($user === null) {
+            return $this->error(null, self::USERNOTFOUND, 404);
+        }
+
+        // Check if the user is an owner
+        if ($user->owner_id === null) {
+            return $this->error(null, self::OWNERNOTFOUND, 404);
+        }
+
+        // Validate the request data
+        $request->validate([
+            'password' => 'required|string',
+            'new_password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'password.required' => 'L\'ancien mot de passe est obligatoire.',
+            'new_password.required' => 'Le nouveau mot de passe est obligatoire.',
+            'new_password.confirmed' => 'Les mots de passe ne correspondent pas.',
+        ]);
+
+        // Check if the old password is correct
+        if (!Hash::check($request->input('password'), $user->password)) {
+            return $this->error(null, 'L\'ancien mot de passe est incorrect.', 401);
+        }
+
+        // Update the user's password
+        $user->password = Hash::make($request->input('new_password'));
+        $user->save();
+
+        return $this->success(null, 'Mot de passe mis à jour');
     }
 
     /**

@@ -78,6 +78,7 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
         Route::put('/pro/{owner_id}/validation/{status_code}', 'validateOwner')->name('pro.validation');
         Route::get('pro/{user_id}', 'show')->name('owner.show');
         Route::put('pro/{user_id}', 'update')->name('owner.update');
+        Route::put('pro/{user_id}/password', 'updateOwnerPassword')->name('owner.update-owner-password');
         Route::delete('pro/{user_id}', 'destroy')->name('owner.delete');
         Route::get('pro/restore/{user_id}', 'restore')->name('owner.restore');
 
