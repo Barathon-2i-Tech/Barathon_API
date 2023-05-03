@@ -14,6 +14,9 @@ class CategoryController extends Controller
     use HttpResponses;
 
     private const CATEGORIES_LIST = "Categories List";
+    private const CATEGORY_NOT_FOUND = "Category not found";
+
+    private const SUB_CATEGORY = 'category_details->sub_category';
 
     private const BEER_ICON = "<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'><path d='M32 64c0-17.7 14.3-32 32-32H352c17.7 0 32 14.3 32 32V96h51.2c42.4 0 76.8 34.4 76.8 76.8V274.9c0 30.4-17.9 57.9-45.6 70.2L384 381.7V416c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V64zM384 311.6l56.4-25.1c4.6-2.1 7.6-6.6 7.6-11.7V172.8c0-7.1-5.7-12.8-12.8-12.8H384V311.6zM160 144c0-8.8-7.2-16-16-16s-16 7.2-16 16V368c0 8.8 7.2 16 16 16s16-7.2 16-16V144zm64 0c0-8.8-7.2-16-16-16s-16 7.2-16 16V368c0 8.8 7.2 16 16 16s16-7.2 16-16V144zm64 0c0-8.8-7.2-16-16-16s-16 7.2-16 16V368c0 8.8 7.2 16 16 16s16-7.2 16-16V144z'/></svg>";
 
@@ -24,8 +27,8 @@ class CategoryController extends Controller
     public function getAllEstablishmentCategories(): JsonResponse
     {
         $allEstablishmentCategories = Category::where(function ($query) {
-            $query->where('category_details->sub_category', 'Establishment')
-                ->orWhere('category_details->sub_category', 'All');
+            $query->where(self::SUB_CATEGORY, 'Establishment')
+                ->orWhere(self::SUB_CATEGORY, 'All');
         })
             ->get();
 
@@ -43,8 +46,8 @@ class CategoryController extends Controller
     public function getAllEventCategories(): JsonResponse
     {
         $allEventCategories = Category::where(function ($query) {
-            $query->where('category_details->sub_category', 'Event')
-                ->orWhere('category_details->sub_category', 'All');
+            $query->where(self::SUB_CATEGORY, 'Event')
+                ->orWhere(self::SUB_CATEGORY, 'All');
         })
             ->get();
 
@@ -94,7 +97,7 @@ class CategoryController extends Controller
                 'category_details.icon.string' => 'L\'icone doit être une chaine de caractères',
             ]);
 
-        
+
         $newCategory = array(
             'sub_category' => $request->input('category_details.sub_category'),
             'label' => $request->input('category_details.label'),
@@ -122,7 +125,7 @@ class CategoryController extends Controller
         $category = Category::find($categoryId);
 
         if ($category === null) {
-            return $this->error(null, "Category not found", 404);
+            return $this->error(null, self::CATEGORY_NOT_FOUND, 404);
         }
 
         return $this->success($category, "Category found");
@@ -133,7 +136,7 @@ class CategoryController extends Controller
         $category = Category::find($categoryId);
 
         if ($category === null) {
-            return $this->error(null, "Category not found", 404);
+            return $this->error(null, self::CATEGORY_NOT_FOUND, 404);
         }
 
         $request->validate([
@@ -151,7 +154,7 @@ class CategoryController extends Controller
                 'category_details.icon.string' => 'L\'icone doit être une chaine de caractères',
             ]);
 
-               
+
         $updateCategory = array(
             'sub_category' => $request->input('category_details.sub_category'),
             'label' => $request->input('category_details.label'),
@@ -174,10 +177,14 @@ class CategoryController extends Controller
      */
     public function destroy(int $categoryId): JsonResponse
     {
-        $category = Category::find($categoryId);
+        $category = Category::withTrashed()->find($categoryId);
 
         if ($category === null) {
-            return $this->error(null, "Category not found", 404);
+            return $this->error(null, self::CATEGORY_NOT_FOUND, 404);
+        }
+
+        if ($category->trashed()) {
+            return $this->error(null, "Category already deleted", 404);
         }
 
         $category->delete();
@@ -194,7 +201,11 @@ class CategoryController extends Controller
 
 
         if ($category === null) {
-            return $this->error(null, "Category not found", 404);
+            return $this->error(null, self::CATEGORY_NOT_FOUND, 404);
+        }
+
+        if (!$category->trashed()) {
+            return $this->error(null, "Category already restored", 404);
         }
 
         $category->restore();
