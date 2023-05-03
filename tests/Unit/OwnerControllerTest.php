@@ -2,6 +2,8 @@
 
 namespace Tests\Unit;
 
+use App\Models\Owner;
+use App\Models\Status;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -346,5 +348,100 @@ class OwnerControllerTest extends TestCase
             'data'
         ]);
         $response->assertJson(['message' => 'Owner Restored']);
+    }
+
+    /**
+     * A test to change the status to validate of a owner
+     *
+     */
+    public function test_to_change_the_status_to_validate_of_a_owner(): void
+    {
+        $administrator = $this->createAdminUser();
+        $ownerPending = Status::where('comment->code', 'OWNER_PENDING')->first();
+        $owner = Owner::create([
+            'siren' => '123456789',
+            'kbis' => 'kbis.pdf',
+            'phone' => '0606060606',
+            'company_name' => 'My company',
+            'status_id' => $ownerPending->status_id,
+        ]);
+
+        $response = $this->actingAs($administrator)->put(route('pro.validation', [$owner->owner_id, 1]))
+            ->assertOk();
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+        $response->assertJson(['message' => 'Status updated']);
+    }
+
+    /**
+     * A test to change the status of a owner on a non existing owner
+     *
+     */
+    public function test_to_change_the_status_of_a_owner_on_non_existing_owner(): void
+    {
+        $administrator = $this->createAdminUser();
+        $fakeOwnerId = 1000;
+
+        $response = $this->actingAs($administrator)->put(route('pro.validation', [$fakeOwnerId, 1]))
+            ->assertNotFound();
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+        $response->assertJson(['message' => 'Owner not found']);
+    }
+
+    /**
+     * A test to change the status of a owner on a validated owner
+     */
+    public function test_to_change_the_status_of_a_owner_on_a_validated_owner(): void
+    {
+        $administrator = $this->createAdminUser();
+        $owner = $this->createOwnerUser();
+
+        $response = $this->actingAs($administrator)->put(route('pro.validation', [$owner->owner_id, 1]))
+            ->assertStatus(409);
+
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+        $response->assertJson(['message' => 'Owner with same status']);
+    }
+
+    /**
+     * A test to change throw a error when validated the owner
+     *
+     */
+    public function test_to_throw_a_error_when_validated_owner(): void
+    {
+        $administrator = $this->createAdminUser();
+        $owner = $this->createOwnerUser();
+
+        $this->actingAs($administrator)->put(route('pro.validation', [$owner->owner_id, 124]))
+            ->assertStatus(500);
+    }
+
+    /**
+     * A test to get how many owners need to be validated
+     *
+     */
+    public function test_to_get_how_many_owners_need_to_be_validated(): void
+    {
+        $administrator = $this->createAdminUser();
+
+        $response = $this->actingAs($administrator)->get(route('admin.pro-to-validate'))
+            ->assertOk();
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+        $response->assertJson(['message' => 'Owner to validate']);
     }
 }

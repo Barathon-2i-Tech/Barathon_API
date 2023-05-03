@@ -270,4 +270,7 @@ class OwnerController extends Controller
         $ownerToValidate = Owner::where('status_id', 3)->count();
         return $this->success($ownerToValidate, 'Owner to validate');
     }
+
+
+
 }
