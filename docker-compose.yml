@@ -1,7 +1,7 @@
 # For more information: https://laravel.com/docs/sail
 version: '3'
 services:
-#Laravel Service
+    #Laravel Service
     laravel.test:
         build:
             context: ./vendor/laravel/sail/runtimes/8.1
@@ -27,7 +27,7 @@ services:
         depends_on:
             - pgsql
 
-#Postgres Service (Database)
+    #Postgres Service (Database)
     pgsql:
         image: 'postgres:14'
         container_name: barathon-pgsql
@@ -44,11 +44,11 @@ services:
         networks:
             - barathon
         healthcheck:
-            test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}"]
+            test: [ "CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}" ]
             retries: 3
             timeout: 5s
 
-#CloudBeaver Service (DataBase Management System )
+    #CloudBeaver Service (DataBase Management System )
     CloudBeaver:
         image: dbeaver/cloudbeaver:latest
         container_name: barathon-cloudbeaver
@@ -61,7 +61,6 @@ services:
             - cloudbeaver:/opt/cloudbeaver/workspace
         networks:
             - barathon
-
 
 networks:
     barathon:

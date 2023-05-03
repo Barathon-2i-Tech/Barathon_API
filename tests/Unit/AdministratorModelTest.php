@@ -15,9 +15,9 @@ class AdministratorModelTest extends TestCase
      */
     public function test_administrator_model_exist()
     {
-       $administrator = Administrator::query()->first();
+        $administrator = Administrator::query()->first();
 
-       $this->assertModelExists($administrator);
+        $this->assertModelExists($administrator);
     }
 
 

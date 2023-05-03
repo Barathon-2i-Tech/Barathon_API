@@ -3,8 +3,6 @@
 namespace Tests\Unit;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class EmployeeControllerTest extends TestCase
@@ -200,7 +198,7 @@ class EmployeeControllerTest extends TestCase
         $employee = $this->createEmployeeUser();
         $administrator = $this->createAdminUser();
 
-       $this->actingAs($administrator)->put(route('employee.update', $employee->user_id), [])
+        $this->actingAs($administrator)->put(route('employee.update', $employee->user_id), [])
             ->assertStatus(302);
     }
 

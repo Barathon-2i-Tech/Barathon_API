@@ -17,7 +17,7 @@ class BarathonienModelTest extends TestCase
     {
         $barathonien = Barathonien::query()->first();
 
-       $this->assertModelExists($barathonien);
+        $this->assertModelExists($barathonien);
     }
 
 

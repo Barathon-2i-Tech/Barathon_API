@@ -3,7 +3,6 @@
 namespace Tests\Unit;
 
 use App\Http\Controllers\InseeController;
-
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Http;
@@ -17,6 +16,7 @@ class InseeControllerTest extends TestCase
     * A test to check if the access token is created
     * FIXME: API DOWN
     */
+
 
 //    public function test_generateToken_Returns_Valid_Access_Token(): void
 //    {

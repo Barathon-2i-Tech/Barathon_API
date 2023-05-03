@@ -253,13 +253,13 @@ class OwnerController extends Controller
         }
 
         if ($owner->status_id === $statusCode) {
-            return $this->error(null, 'Owner already validated', 404);
+            return $this->error(null, 'Owner with same status', 409);
         }
 
         $owner->status_id = $statusCode;
         $owner->save();
 
-        return $this->success(null, 'Validation updated');
+        return $this->success(null, 'Status updated');
     }
 
     /**

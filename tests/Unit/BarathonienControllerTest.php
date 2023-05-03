@@ -2,12 +2,7 @@
 
 namespace Tests\Unit;
 
-use App\Models\Booking;
-use App\Models\Owner;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 class BarathonienControllerTest extends TestCase

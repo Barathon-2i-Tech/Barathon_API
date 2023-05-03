@@ -2,8 +2,8 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
 
 class EventControllerTest extends TestCase
 {
@@ -25,10 +25,10 @@ class EventControllerTest extends TestCase
 
         $user = $this->createBarathonienUser();
 
-       $response = $this->actingAs($user)->get(route('barathonien.eventsByUserCity', ["id" => $user->user_id]))
-       ->assertOk();
+        $response = $this->actingAs($user)->get(route('barathonien.eventsByUserCity', ["id" => $user->user_id]))
+            ->assertOk();
 
-       $response->assertJsonStructure($structure);
+        $response->assertJsonStructure($structure);
 
     }
 
@@ -46,10 +46,10 @@ class EventControllerTest extends TestCase
 
         $user = $this->createAdminUser();
 
-       $response = $this->actingAs($user)->get(route('barathonien.eventsByUserCity', ["id" => $user->user_id]))
-       ->assertStatus(500);
+        $response = $this->actingAs($user)->get(route('barathonien.eventsByUserCity', ["id" => $user->user_id]))
+            ->assertStatus(500);
 
-       $response->assertJsonStructure($structure);
+        $response->assertJsonStructure($structure);
 
     }
 
@@ -70,10 +70,10 @@ class EventControllerTest extends TestCase
 
         $user = $this->createBarathonienUser();
 
-       $response = $this->actingAs($user)->get(route('barathonien.eventsBookByUser', ["id" => $user->user_id]))
-       ->assertOk();
+        $response = $this->actingAs($user)->get(route('barathonien.eventsBookByUser', ["id" => $user->user_id]))
+            ->assertOk();
 
-       $response->assertJsonStructure($structure);
+        $response->assertJsonStructure($structure);
 
     }
 
@@ -91,10 +91,10 @@ class EventControllerTest extends TestCase
 
         $user = $this->createAdminUser();
 
-       $response = $this->actingAs($user)->get(route('barathonien.eventsBookByUser', ["id" => $user->user_id]))
-       ->assertStatus(500);
+        $response = $this->actingAs($user)->get(route('barathonien.eventsBookByUser', ["id" => $user->user_id]))
+            ->assertStatus(500);
 
-       $response->assertJsonStructure($structure);
+        $response->assertJsonStructure($structure);
 
     }
 
@@ -115,13 +115,13 @@ class EventControllerTest extends TestCase
 
         $user = $this->createBarathonienUser();
 
-       $response = $this->actingAs($user)->get(route('barathonien.eventByUserChoice', ["idevent" => 1, "iduser" => $user->user_id]))
-       ->assertOk();
+        $response = $this->actingAs($user)->get(route('barathonien.eventByUserChoice', ["idevent" => 1, "iduser" => $user->user_id]))
+            ->assertOk();
 
-       $response->assertJsonStructure($structure);
+        $response->assertJsonStructure($structure);
 
     }
-    
+
     /**
      * A Test for check if a user other than an Barathonien can execute this route
      *
@@ -136,10 +136,10 @@ class EventControllerTest extends TestCase
 
         $user = $this->createAdminUser();
 
-       $response = $this->actingAs($user)->get(route('barathonien.eventByUserChoice', ["idevent" => 1, "iduser" => $user->user_id]))
-       ->assertStatus(500);
+        $response = $this->actingAs($user)->get(route('barathonien.eventByUserChoice', ["idevent" => 1, "iduser" => $user->user_id]))
+            ->assertStatus(500);
 
-       $response->assertJsonStructure($structure);
+        $response->assertJsonStructure($structure);
 
     }
 

@@ -4,55 +4,20 @@ namespace App\Http\Controllers;
 
 use App\Traits\HttpResponses;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 
 class InseeController extends Controller
 {
     use HttpResponses;
 
-    private string $apiKey;
     private const BASE_URL = 'https://api.insee.fr/entreprises/sirene/V3/';
-
+    private string $apiKey;
 
     public function __construct()
     {
         // initialise the API key for the INSEE API SIRENE
         $this->apiKey = base64_encode(env('INSEE_CONSUMER_KEY') . ':' . env('INSEE_CONSUMER_SECRET'));
-    }
-
-    /**
-     * Generate a valid access token for the SIRENE API of INSEE.
-     * (subscription required to use this API)
-     */
-    public function generateToken(): string
-    {
-        $client = new Client();
-        $result = $client->post('https://api.insee.fr/token', [
-            'headers' => [
-                'Content-Type' => 'application/x-www-form-urlencoded',
-                'Authorization' => 'Basic ' . $this->apiKey,
-            ],
-            'form_params' => [
-                'grant_type' => 'client_credentials',
-            ],
-        ]);
-
-        $result = json_decode($result->getBody());
-        return $result->access_token;
-    }
-
-    public function checkStatusCodeFromApi($response): JsonResponse
-    {
-        return match ($response->getStatusCode()) {
-            401 => $this->error(null, 'Unauthorized', 401),
-            403 => $this->error(null, 'Access forbidden', 403),
-            404 => $this->error(null, 'Not found', 404),
-            429 => $this->error(null, 'Too many requests', 429),
-            default => $this->error(null, 'Internal server error', $response->getStatusCode()),
-        };
     }
 
     /**
@@ -102,6 +67,38 @@ class InseeController extends Controller
             return $this->success($dataFetch->uniteLegale, 'Siren found');
         }
 
+    }
+
+    /**
+     * Generate a valid access token for the SIRENE API of INSEE.
+     * (subscription required to use this API)
+     */
+    public function generateToken(): string
+    {
+        $client = new Client();
+        $result = $client->post('https://api.insee.fr/token', [
+            'headers' => [
+                'Content-Type' => 'application/x-www-form-urlencoded',
+                'Authorization' => 'Basic ' . $this->apiKey,
+            ],
+            'form_params' => [
+                'grant_type' => 'client_credentials',
+            ],
+        ]);
+
+        $result = json_decode($result->getBody());
+        return $result->access_token;
+    }
+
+    public function checkStatusCodeFromApi($response): JsonResponse
+    {
+        return match ($response->getStatusCode()) {
+            401 => $this->error(null, 'Unauthorized', 401),
+            403 => $this->error(null, 'Access forbidden', 403),
+            404 => $this->error(null, 'Not found', 404),
+            429 => $this->error(null, 'Too many requests', 429),
+            default => $this->error(null, 'Internal server error', $response->getStatusCode()),
+        };
     }
 
     /**

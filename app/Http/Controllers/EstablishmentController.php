@@ -37,19 +37,13 @@ class EstablishmentController extends Controller
             ->join('status', 'establishments.status_id', '=', 'status.status_id')
             ->join('addresses', 'establishments.address_id', '=', 'addresses.address_id')
             ->where('establishments.owner_id', $ownerId)
+            ->where('establishments.deleted_at', null)
             ->select('establishments.*', 'addresses.*', 'status.status_id', 'status.comment')
             ->get();
 
         // if the establishments list is empty
         if ($establishments->isEmpty()) {
             return $this->error(null, self::ESTABLISHMENT_NOT_FOUND, 404);
-        }
-
-        // Add the correct URL prefix to the logo_url
-
-
-        foreach ($establishments as $establishment) {
-            $establishment->logo_url = env('APP_URL') . Storage::url($establishment->logo);
         }
 
         // return the establishments list
@@ -97,6 +91,8 @@ class EstablishmentController extends Controller
 
         if ($request->hasFile('logo')) {
             $establishmentLogoPath = $request->file('logo')->storePublicly('logos', 'public');
+
+            $establishmentLogoPath = env('APP_URL') . Storage::url($establishmentLogoPath);
         }
 
         $address = Address::create([
@@ -125,7 +121,7 @@ class EstablishmentController extends Controller
         $establishmentPending = Status::where('comment->code', 'ESTABL_PENDING')->first();
         $establishment->status_id = $establishmentPending->status_id;
         $establishment->save();
-        $establishment->logo_url = env('APP_URL') . Storage::url($establishment->logo);
+
 
         return $this->success([
             $establishment
@@ -173,7 +169,7 @@ class EstablishmentController extends Controller
 
         $request->validate([
             'trade_name' => self::STRING_VALIDATION,
-            'siret' => 'required','string','size:14',Rule::unique('establishments')->ignore($establishment),
+            'siret' => 'required', 'string', 'size:14', Rule::unique('establishments')->ignore($establishment),
             'phone' => self::PHONEVALIDATION,
             'email' => 'nullable|email|string',
             'website' => self::NULLABLE_STRING_VALIDATION,
@@ -205,10 +201,10 @@ class EstablishmentController extends Controller
             }
 
             // Store the new logo and update the establishment object with the new logo path
-            $logoPath = $request->file('logo')->store('logos', 'public');
+            $logoPath = $request->file('logo')->storePublicly('logos', 'public');
+            $logoPath = env('APP_URL') . Storage::url($logoPath);
             $establishment->logo = $logoPath;
             $establishment->save();
-            $dataEstablishment['logo'] = $logoPath;
         }
 
         // Get the data to update the establishment object and decode the opening hours
@@ -331,8 +327,6 @@ class EstablishmentController extends Controller
      */
     public function validateEstablishment(int $establishmentId, int $statusCode): jsonResponse
     {
-        //parse the status code
-        $statusCode = intval($statusCode);
 
         $establishment = Establishment::find($establishmentId);
 
@@ -341,12 +335,12 @@ class EstablishmentController extends Controller
         }
 
         if ($establishment->status_id === $statusCode) {
-            return $this->error(null, 'Establishment already validated', 404);
+            return $this->error(null, 'Establishment with same status', 409);
         }
 
         $establishment->status_id = $statusCode;
         $establishment->save();
-        return $this->success(null, "Validation updated");
+        return $this->success(null, "Status updated");
 
     }
 

@@ -4,7 +4,6 @@ namespace Database\Seeders;
 
 use App\Models\Address;
 use App\Models\Establishment;
-use App\Models\Owner;
 use App\Models\Status;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -37,9 +36,9 @@ class EstablishmentSeeder extends Seeder
             'city' => "Decines Charpieu"
         ]);
 
-        $ownerRothschild = User::where ('last_name', 'Rothschild')->first();
+        $ownerRothschild = User::where('last_name', 'Rothschild')->first();
 
-        $ownerJacobs = User::where ('last_name', 'Jacobs')->first();
+        $ownerJacobs = User::where('last_name', 'Jacobs')->first();
 
         $datas = [
             [
