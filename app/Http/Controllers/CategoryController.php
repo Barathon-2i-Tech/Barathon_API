@@ -40,7 +40,7 @@ class CategoryController extends Controller
     }
 
     /**
-     * Get all categories with sub_category = Establishment || All
+     * Get all categories with sub_category = Event || All
      *
      */
     public function getAllEventCategories(): JsonResponse
