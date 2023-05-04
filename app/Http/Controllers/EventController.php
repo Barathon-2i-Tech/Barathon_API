@@ -45,25 +45,34 @@ class EventController extends Controller
     /**
      * Display the specified event.
      */
-    public function show(int $establishmentId, int $eventId): JsonResponse
+    public function show(int $eventId): JsonResponse
     {
         // Get the specific event from the establishment
-        $event = Event::select('events.*', 'establishments.*')
-            ->join('establishments', 'establishments.establishment_id', '=', 'events.establishment_id')
-            ->where('events.establishment_id', '=', $establishmentId)
-            ->where('events.event_id', '=', $eventId)
-            ->first();
+//        $event = Event::select('events.*', 'establishments.*')
+//            ->join('establishments', 'establishments.establishment_id', '=', 'events.establishment_id')
+//            ->where('events.establishment_id', '=', $establishmentId)
+//            ->where('events.event_id', '=', $eventId)
+//            ->first();
 
-        // If the event is not found
+
+        $event = Event::find($eventId);
+
+        $eventHistory = array($event);
+
+        while ($event->event_update_id != null) {
+            $event = Event::withTrashed()->find($event->event_update_id);
+            $eventHistory[] = $event;
+        }
+
         if (!$event) {
             return $this->error(null, self::EVENT_NOT_FOUND, 404);
         }
-        // Return the event
-        return $this->success($event, "Event");
+
+        return $this->success($eventHistory, "Event");
     }
 
 
-     /**
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request): JsonResponse
@@ -148,7 +157,7 @@ class EventController extends Controller
             $request->validate([
                 'poster' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             ]);
-    
+
             $posterPath = $request->file('poster')->store('posters', 'public');
             // add path in db
             $posterPath = env('APP_URL') . Storage::url($posterPath);
@@ -171,15 +180,14 @@ class EventController extends Controller
             'user_id' => $request->input('user_id'),
             'event_update_id' => $event->event_id,
         ]);
-    
+
         $updatedEvent->save();
         $event->delete();
-    
+
         return $this->success([
             $updatedEvent
         ], "Event Updated", 200);
     }
-
 
 
     /**

@@ -73,9 +73,9 @@ class Event extends Model
     /**
      * Get the event associated with the event update
      */
-    public function eventParent(): BelongsTo
+    public function eventUpdate(): HasMany
     {
-        return $this->belongsTo(Event::class, 'event_update_id');
+        return $this->hasMany(Event::class, 'event_update_id');
     }
 
     /**
