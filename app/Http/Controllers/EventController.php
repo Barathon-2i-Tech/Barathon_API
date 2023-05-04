@@ -43,36 +43,6 @@ class EventController extends Controller
     }
 
     /**
-     * Display the specified event.
-     */
-    public function show(int $eventId): JsonResponse
-    {
-        // Get the specific event from the establishment
-//        $event = Event::select('events.*', 'establishments.*')
-//            ->join('establishments', 'establishments.establishment_id', '=', 'events.establishment_id')
-//            ->where('events.establishment_id', '=', $establishmentId)
-//            ->where('events.event_id', '=', $eventId)
-//            ->first();
-
-
-        $event = Event::find($eventId);
-
-        $eventHistory = array($event);
-
-        while ($event->event_update_id != null) {
-            $event = Event::withTrashed()->find($event->event_update_id);
-            $eventHistory[] = $event;
-        }
-
-        if (!$event) {
-            return $this->error(null, self::EVENT_NOT_FOUND, 404);
-        }
-
-        return $this->success($eventHistory, "Event");
-    }
-
-
-    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request): JsonResponse
@@ -124,6 +94,40 @@ class EventController extends Controller
         return $this->success([
             $event
         ], "event created", 201);
+    }
+
+
+    /**
+     * Display the specified event.
+     */
+    public function show(int $eventId): JsonResponse
+    {
+        // Get the specific event from the establishment
+//        $event = Event::select('events.*', 'establishments.*')
+//            ->join('establishments', 'establishments.establishment_id', '=', 'events.establishment_id')
+//            ->where('events.establishment_id', '=', $establishmentId)
+//            ->where('events.event_id', '=', $eventId)
+//            ->first();
+
+
+        $event = Event::leftJoin('establishments', 'events.establishment_id', '=', 'establishments.establishment_id')
+            ->where('events.event_id', '=', $eventId)
+            ->orderByRaw('COALESCE(events.updated_at, events.created_at) DESC')
+            ->select('events.*', 'establishments.trade_name')
+            ->first();
+
+        if (!$event) {
+            return $this->error(null, self::EVENT_NOT_FOUND, 404);
+        }
+
+        // Récupérer l'historique de l'événement
+        $eventHistory = array($event);
+
+        while ($event->event_update_id != null) {
+            $event = Event::withTrashed()->find($event->event_update_id);
+            $eventHistory[] = $event;
+        }
+        return $this->success($eventHistory, "Event found");
     }
 
 
