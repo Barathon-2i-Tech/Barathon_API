@@ -46,7 +46,7 @@ return [
     |
     */
 
-    'expiration' => 2880, //expire after 48 hours
+    'expiration' => 480, //expire after 8 hours, recommended by ANSSI
 
     /*
     |--------------------------------------------------------------------------
