@@ -50,7 +50,7 @@ class BookingControllerTest extends TestCase
         $response->assertJsonStructure($structure);
     }
 
-    // test for create a booking
+    // test for delete a booking
     public function test_barathonien_can_delete_book_an_event()
     {
         $structure = [
@@ -60,10 +60,25 @@ class BookingControllerTest extends TestCase
 
         $user = $this->createBarathonienUser();
 
-        $response = $this->actingAs($user)->get(route('pro.deletgetEventandUsereBooking', ["id" => 1]))->assertOk();
+        $response = $this->actingAs($user)->delete(route('barathonien.deleteBooking', ["id" => 1]))->assertOk();
 
         $response->assertJsonStructure($structure);
     }
+
+        // test for delete a booking if booking is null
+        public function test_barathonien_can_delete_book_an_event_if_book_is_null()
+        {
+            $structure = [
+                "status",
+                "message",
+                "data"];
+    
+            $user = $this->createBarathonienUser();
+    
+            $response = $this->actingAs($user)->delete(route('barathonien.deleteBooking', ["id" => 9999999]))->assertStatus(404);
+    
+            $response->assertJsonStructure($structure);
+        }
 
     // test for Get the event and the user details.
     public function test_barathonien_get_his_event_book()
@@ -119,5 +134,48 @@ class BookingControllerTest extends TestCase
 
         $response->assertJsonStructure($structure);
     }
+
+    // test for validate ticket barathonien
+    public function test_validate_ticket_barathonien()
+    {
+        $structure = [
+            "status",
+            "message",
+            "data",];
+
+        $user = $this->createBarathonienUser();
+
+        $response = $this->actingAs($user)->postJson(route('pro.valideTicket', ["id" => 1]), [
+            'code' => "0000",
+        ], [
+            'Accept' => 'application/json',
+            'Content-Type' => 'application/json'
+        ])
+            ->assertOk();
+
+        $response->assertJsonStructure($structure);
+    }
+
+        // test for validate ticket barathonien if code is not valid
+        public function test_validate_ticket_barathonien_if_wrong_code()
+        {
+            $structure = [
+                "status",
+                "message",
+                "data",];
+    
+            $user = $this->createBarathonienUser();
+    
+            $response = $this->actingAs($user)->postJson(route('pro.valideTicket', ["id" => 1]), [
+                'code' => "1000",
+            ], [
+                'Accept' => 'application/json',
+                'Content-Type' => 'application/json'
+            ])
+                ->assertStatus(404);
+    
+            $response->assertJsonStructure($structure);
+        }
+
 
 }

@@ -24,7 +24,7 @@ class EstablishmentFactory extends Factory
         $ownerId = Owner::all('owner_id')->first();
         $establValid = Status::where('comment->code', 'ESTABL_VALID')->first();
         $address = Address::all('address_id')->first();
-        $code = rand(1000, 9999);
+        $code = 0000;
 
         return [
             'trade_name' => fake()->company,

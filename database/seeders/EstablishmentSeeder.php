@@ -41,7 +41,7 @@ class EstablishmentSeeder extends Seeder
 
         $ownerJacobs = User::where('last_name', 'Jacobs')->first();
 
-        $code = rand(1000,9999);
+        $code = 0000;
 
         $datas = [
             [
