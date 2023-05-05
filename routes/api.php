@@ -29,7 +29,7 @@ use App\Mail\HelloMail;
 |
 */
 
-const AUTH_SANCTUM = 'auth:sanctum';
+
 
 /*
 |--------------------------------------------------------------------------
@@ -41,7 +41,7 @@ Route::post('register', [ApiAuthController::class, 'register'])->name('user.regi
 Route::post('register/barathonien', [BarathonienController::class, 'store'])->name('user.register.barathonien');
 Route::post('register/owner', [OwnerController::class, 'store'])->name('user.register.owner');
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(MailController::class)->group(function () {
         Route::get('send',  'hello');
         Route::get('pro/mail/welcome/{id}',  'welcomePro');
@@ -54,14 +54,14 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(InseeController::class)->group(function () {
         Route::get('/check-siren/{siren}', 'getSiren')->name('check-siren');
         Route::get('/check-siret/{siret}', 'getSiret')->name('check-siret');
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(BarathonienController::class)->group(function () {
         Route::get('/barathonien/list', 'getBarathonienList')->name('barathonien.list');
         Route::get('/barathonien/{user_id}', 'show')->name('barathonien.show');
@@ -71,7 +71,7 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(OwnerController::class)->group(function () {
         Route::get('/pro/list', 'getOwnerList')->name('owner.list');
         Route::get('/admin/pro-to-validate', 'getOwnerToValidate')->name('admin.pro-to-validate');
@@ -84,7 +84,7 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(AdministratorController::class)->group(function () {
         Route::get('/administrator/list', 'getAdministratorList')->name('administrator.list');
         Route::get('/administrator/{user_id}', 'show')->name('administrator.show');
@@ -96,7 +96,7 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(EmployeeController::class)->group(function () {
         Route::get('/employee/list', 'getEmployeeList')->name('employee.list');
         Route::get('employee/{user_id}', 'show')->name('employee.show');
@@ -108,7 +108,7 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(EstablishmentController::class)->group(function () {
         Route::get('/establishments/list', 'getAllEstablishments')->name('admin.establishment.list');
         Route::get('/admin/establishment-to-validate', 'getEstablishmentToValidate')->name('admin.establishment-to-validate');
@@ -123,7 +123,7 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(EventController::class)->group(function () {
         Route::get('/events/list', 'getEventList')->name('admin.event.list');
         Route::get('/admin/event-to-validate', 'getEventsToValidate')->name('admin.event-to-validate');
@@ -139,7 +139,7 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(StatusController::class)->group(function () {
         Route::get('/owner-status', 'ownerStatus')->name('owner-status');
         Route::get('/establishment-status', 'establishmentStatus')->name('establishment-status');
@@ -147,7 +147,7 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(CategoryController::class)->group(function () {
         Route::get('/barathonien/top/categories', 'getTopTenCategories')->name('barathonien.topCateg');
         Route::post('/pro/category/create', 'store')->name('categories.store');
@@ -157,14 +157,14 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(CategoryEventController::class)->group(function () {
         Route::put('/pro/event/{eventId}/category', 'associateCategoriesToEvent')->name('event.toCategory');
         Route::get('/pro/event/{eventId}/category', 'getAllCategoriesByEventId')->name('pro.event.eventById');
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(CategoryEstablishmentController::class)->group(function () {
         Route::get('/categories/establishment/{establishmentId}', 'getAllCategoriesByEstablishmentId')
             ->name('categories.establishment');
@@ -176,7 +176,7 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
     });
 });
 
-Route::middleware(AUTH_SANCTUM)->group(function () {
+Route::middleware('auth:sanctum')->group(function () {
     Route::controller(BookingController::class)->group(function () {
         Route::post('/barathonien/booking', 'store')->name('barathonien.postBooking');
         Route::delete('/barathonien/booking/{id}', 'destroy')->name('barathonien.deleteBooking');
@@ -184,8 +184,8 @@ Route::middleware(AUTH_SANCTUM)->group(function () {
 });
 
 Route::controller(BookingController::class)->group(function () {
-    Route::post('/pro/book/{id}', 'valideTicket')->name('pro.getEventandUser');
-    Route::get('/pro/event/{idEvent}/barathonien/{id}', 'getEventandUser')->name('pro.valideTicket');
+    Route::post('/pro/book/{id}', 'valideTicket')->name('pro.valideTicket');
+    Route::get('/pro/event/{idEvent}/barathonien/{id}', 'getEventandUser')->name('pro.getEventandUser');
 });
 
 Route::group(['middleware' => ['auth:sanctum']], function () {
