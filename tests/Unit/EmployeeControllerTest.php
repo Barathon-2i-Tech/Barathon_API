@@ -177,8 +177,8 @@ class EmployeeControllerTest extends TestCase
         $response = $this->actingAs($administrator)->put(route('employee.update', $employee->user_id), [
             'first_name' => 'Jane',
             'last_name' => 'Doe',
-            'email' => 'employee@mail.fr',
-        ])
+            'email' => 'barathon.m2i+employe@gmail.com',
+            ])
             ->assertOk();
         $response->assertJsonStructure([
             'status',
