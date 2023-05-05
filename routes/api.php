@@ -134,7 +134,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/pro/events', 'store')->name('pro.postEvents');
         Route::put('/pro/establishment/{establishmentId}/event/{eventId}', 'update')->name('pro.putEvent');
         Route::delete('/pro/event/{eventId}', 'destroy')->name('pro.event.delete');
-        Route::get('/pro/establishment/event/{eventId}', 'show')->name('event.show');
+        Route::get('/pro/establishment/{establishmentId}/event/{eventId}', 'show')->name('event.show');
+        Route::get('admin/event/{eventId}/history', 'showEventWithHistory')->name('event.show.history');
     });
 });
 
