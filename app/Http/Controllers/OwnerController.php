@@ -147,7 +147,6 @@ class OwnerController extends Controller
         ],
         'company_name' => 'nullable|string|max:255',
         'phone' => self::PHONEVALIDATION,
-        'avatar' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
     ], [
         'first_name.required' => 'Le prénom est obligatoire.',
         'last_name.required' => 'Le nom est obligatoire.',
@@ -160,6 +159,9 @@ class OwnerController extends Controller
     
      // Handle avatar file upload if a new avatar is present in the request
      if ($request->hasFile('avatar')) {
+        $request->validate([
+            'avatar' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
         $avatarPath = $request->file('avatar')->store('avatars', 'public');
         // add path in db
         $avatarPath = env('APP_URL') . Storage::url($avatarPath);
@@ -233,43 +235,7 @@ class OwnerController extends Controller
 
         return $this->success(null, 'Owner Restored');
     }
-    /**
-     * Update owner password.
-     */
-    public function updateOwnerPassword(Request $request, int $userId): JsonResponse
-    {
-        // Check if the user exists
-        $user = User::find($userId);
-        if ($user === null) {
-            return $this->error(null, self::USERNOTFOUND, 404);
-        }
-
-        // Check if the user is an owner
-        if ($user->owner_id === null) {
-            return $this->error(null, self::OWNERNOTFOUND, 404);
-        }
-
-        // Validate the request data
-        $request->validate([
-            'password' => 'required|string',
-            'new_password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
-        ], [
-            'password.required' => 'L\'ancien mot de passe est obligatoire.',
-            'new_password.required' => 'Le nouveau mot de passe est obligatoire.',
-            'new_password.confirmed' => 'Les mots de passe ne correspondent pas.',
-        ]);
-
-        // Check if the old password is correct
-        if (!Hash::check($request->input('password'), $user->password)) {
-            return $this->error(null, 'L\'ancien mot de passe est incorrect.', 401);
-        }
-
-        // Update the user's password
-        $user->password = Hash::make($request->input('new_password'));
-        $user->save();
-
-        return $this->success(null, 'Mot de passe mis à jour');
-    }
+   
 
     /**
      * Display a listing of all owners

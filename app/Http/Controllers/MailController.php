@@ -31,7 +31,6 @@ class MailController extends Controller
         Mail::to("barathon.m2i@gmail.com")->send(new HelloMail("test"));
 
         return $this->success(null, "MAIL SEND");
-
     }
 
     public function welcomePro($id)
@@ -42,7 +41,6 @@ class MailController extends Controller
         Mail::to($user->email)->send(new WelcomePro($user));
 
         return $this->success(null, self::MAIL_RETURN_MESSAGE);
-
     }
 
     public function welcomeBarathonien($id)
@@ -53,19 +51,30 @@ class MailController extends Controller
         Mail::to($user->email)->send(new WelcomeBarathonien($user));
 
         return $this->success(null, self::MAIL_RETURN_MESSAGE);
-
     }
 
-    public function changePassword($id)
+    public function changePassword(Request $request)
     {
 
-        $user = User::findOrFail($id);
+        $request->validate([
+            'email' => [
+                'required',
+                'string',
+                'email',
+            ],
+        ], [
+            'email.required' => "L'adresse e-mail est obligatoire.",
+            'email.email' => "L'adresse e-mail n'est pas valide.",
+        ]);
+       
+        $user = User::where('email', $request->input('email'))->firstOrFail();
         $newPassword = Str::random(10);
         $user->password = Hash::make($newPassword);
 
+        $user->save();
+
         Mail::to($user->email)->send(new ChangePassword($user, $newPassword));
         return $this->success(null, self::MAIL_RETURN_MESSAGE);
-
     }
 
     public function statusPro($id, $status)
@@ -75,12 +84,11 @@ class MailController extends Controller
 
         if ($status == '0') {
             Mail::to($user->email)->send(new ValidePro($user));
-        }elseif ($status == '1') {
+        } elseif ($status == '1') {
             Mail::to($user->email)->send(new RefusePro($user));
         }
 
         return $this->success(null, self::MAIL_RETURN_MESSAGE);
-
     }
 
     public function statusEstablishmentPro($id, $status)
@@ -91,12 +99,11 @@ class MailController extends Controller
 
         if ($status == '0') {
             Mail::to($user->email)->send(new ValideEstablishmentPro($user, $establishment));
-        }elseif ($status == '1') {
+        } elseif ($status == '1') {
             Mail::to($user->email)->send(new RefuseEstablishmentPro($user, $establishment));
         }
 
         return $this->success(null, self::MAIL_RETURN_MESSAGE);
-
     }
 
     public function statusEventPro($id, $status)
@@ -106,11 +113,10 @@ class MailController extends Controller
 
         if ($status == '0') {
             Mail::to($user->email)->send(new ValideEvent($user, $event));
-        }elseif ($status == '1') {
+        } elseif ($status == '1') {
             Mail::to($user->email)->send(new RefuseEvent($user, $event));
         }
 
         return $this->success(null, self::MAIL_RETURN_MESSAGE);
-
     }
 }
