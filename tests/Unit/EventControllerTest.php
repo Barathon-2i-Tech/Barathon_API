@@ -78,6 +78,32 @@ class EventControllerTest extends TestCase
     }
 
     /**
+     * A Test for check if we can have the events and establishments with lat and long
+     *
+     */
+    public function test_get_events_and_establishment_with_location()
+    {
+
+        $structure = [
+            "status",
+            "message",
+            "data" => [
+                "establishments",
+                "events"
+            ]];
+
+        $user = $this->createBarathonienUser();
+
+       $response = $this->actingAs($user)->get(route('barathonien.eventslocation'))
+       ->assertOk();
+
+       $response->assertJsonStructure($structure);
+
+    }
+
+
+
+    /**
      * A Test for check if a user other than an Barathonien can execute this route
      *
      */
