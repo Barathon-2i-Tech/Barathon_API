@@ -9,20 +9,20 @@
 <body>
 Cher(e) {{Str::upper($user->last_name)}} {{$user->first_name}},
 
-Nous sommes ravis de vous accueillir parmi les utilisateurs de notre plateforme Barathon. Nous sommes convaincus que
-vous allez apprécier les nombreuses fonctionnalités et avantages offerts par notre application.
+<p>Nous sommes ravis de vous accueillir parmi les utilisateurs de notre plateforme Barathon. Nous sommes convaincus que
+vous allez apprécier les nombreuses fonctionnalités et avantages offerts par notre application.</p>
 
-Sur Barathon, vous pouvez découvrir les événements à proximité de chez vous et y participer en toute simplicité. Vous
+<p>Sur Barathon, vous pouvez découvrir les événements à proximité de chez vous et y participer en toute simplicité. Vous
 pouvez également bénéficier d'avantages exclusifs en passant par notre application lors de vos sorties. Nous sommes
-convaincus que vous allez rapidement trouver les événements qui correspondent à vos goûts et vos envies.
+convaincus que vous allez rapidement trouver les événements qui correspondent à vos goûts et vos envies.</p>
 
-Nous sommes engagés à offrir une expérience utilisateur de qualité à tous nos utilisateurs et nous espérons que vous
-apprécierez notre plateforme et notre communauté.
+<p>Nous sommes engagés à offrir une expérience utilisateur de qualité à tous nos utilisateurs et nous espérons que vous
+apprécierez notre plateforme et notre communauté.</p>
 
-Nous vous souhaitons une excellente expérience sur notre plateforme et sommes convaincus que vous y trouverez de
-nombreux événements passionnants.
+<p>Nous vous souhaitons une excellente expérience sur notre plateforme et sommes convaincus que vous y trouverez de
+nombreux événements passionnants.</p>
 
-Cordialement,
+Cordialement,<br/>
 L'équipe de Barathon
 
 </body>
