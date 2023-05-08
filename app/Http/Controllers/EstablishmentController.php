@@ -120,6 +120,7 @@ class EstablishmentController extends Controller
             'opening' => $opening,
             'owner_id' => $ownerId,
             'address_id' => $address->address_id,
+            'validation_code' => Crypt::encryptString(rand(1000, 9999));
             'status_id' => $establPending
         ]);
 
