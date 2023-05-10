@@ -2,24 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Establishment;
-use App\Models\Event;
-use Illuminate\Http\Request;
-use App\Traits\HttpResponses;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\HelloMail;
-use App\Mail\WelcomePro;
-use App\Mail\WelcomeBarathonien;
 use App\Mail\ChangePassword;
-use App\Mail\ValidePro;
+use App\Mail\HelloMail;
+use App\Mail\NewCategory;
+use App\Mail\RefuseEstablishmentPro;
+use App\Mail\RefuseEvent;
 use App\Mail\RefusePro;
 use App\Mail\ValideEstablishmentPro;
-use App\Mail\RefuseEstablishmentPro;
 use App\Mail\ValideEvent;
-use App\Mail\RefuseEvent;
-use App\Models\Owner;
+use App\Mail\ValidePro;
+use App\Mail\WelcomeBarathonien;
+use App\Mail\WelcomePro;
+use App\Models\Establishment;
+use App\Models\Event;
 use App\Models\User;
+use App\Traits\HttpResponses;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Illuminate\Support\Str;
 
 class MailController extends Controller
@@ -118,5 +118,30 @@ class MailController extends Controller
         }
 
         return $this->success(null, self::MAIL_RETURN_MESSAGE);
+    }
+
+    /**
+     * Send mail to administrator
+     */
+    public function sendMailNewCategory(Request $request, int $userId)
+    {
+        $user = User::findOrFail($userId);
+
+        $request->validate([
+            'category_name' => 'required|string',
+            'category_visibility' => 'required|string',
+        ], [
+            'category_name.required' => 'Le nom de la catégorie est requis',
+            'category_name.string' => 'Le nom de la catégorie doit être une chaine de caractères',
+            'category_visibility.required' => 'La visibilité de la catégorie est requise',
+            'category_visibility.string' => 'La visibilité de la catégorie doit être une chaine de caractères',
+        ]);
+        $categoryName = $request->input('category_name');
+        $categoryVisibility = $request->input('category_visibility');
+
+        $mail = new NewCategory($user, $categoryName, $categoryVisibility);
+        Mail::to('barathon.m2i@gmail.com')->send($mail);
+
+        return $this->success(null, "Demande envoyée avec succès");
     }
 }

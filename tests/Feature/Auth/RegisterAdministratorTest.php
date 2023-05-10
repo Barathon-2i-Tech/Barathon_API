@@ -31,8 +31,9 @@ class RegisterAdministratorTest extends TestCase
                 ],
                 "token"
             ]];
+        $administrator = $this->createAdminUser();
 
-        $response = $this->postJson(route('user.register.admin'), [
+        $response = $this->actingAs($administrator)->postJson(route('user.register.admin'), [
             'first_name' => 'Pierre',
             'last_name' => 'Dupont',
             'email' => 'toto@gmail.com',

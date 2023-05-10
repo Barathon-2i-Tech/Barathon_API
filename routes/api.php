@@ -11,12 +11,10 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\EstablishmentController;
 use App\Http\Controllers\EventController;
 use App\Http\Controllers\InseeController;
-use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\MailController;
+use App\Http\Controllers\OwnerController;
 use App\Http\Controllers\StatusController;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\Mail;
-use App\Mail\HelloMail;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,7 +26,6 @@ use App\Mail\HelloMail;
 | is assigned the "api" middleware group. Enjoy building your API!
 |
 */
-
 
 
 /*
@@ -48,8 +45,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(MailController::class)->group(function () {
         Route::get('send',  'hello');
         Route::get('pro/mail/welcome/{id}',  'welcomePro');
-        Route::get('barathonien/mail/welcome/{id}',  'welcomeBarathonien');
-        
+        Route::get('barathonien/mail/welcome/{id}',  'welcomeBarathonien');   
         Route::get('pro/mail/valide/{id}/{status}',  'statusPro');
         Route::get('pro/mail/valide/establishment/{id}/{status}',  'statusEstablishmentPro');
         Route::get('pro/mail/valide/event/{id}/{status}', 'statusEventPro');
@@ -149,9 +145,14 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::controller(CategoryController::class)->group(function () {
         Route::get('/barathonien/top/categories', 'getTopTenCategories')->name('barathonien.topCateg');
-        Route::post('/pro/category/create', 'store')->name('categories.store');
+        Route::post('/category/create', 'store')->name('categories.store');
         Route::get('/categories/establishment', 'getAllEstablishmentCategories')->name('categories.establishment.all');
         Route::get('/categories/event', 'getAllEventCategories')->name('categories.event.all');
+        Route::get('/categories', 'getAllCategories')->name('categories.all');
+        Route::get('/category/{id}', 'show')->name('categories.show');
+        Route::put('/category/{id}', 'update')->name('categories.update');
+        Route::delete('/category/{id}', 'destroy')->name('categories.delete');
+        Route::get('/category/restore/{id}', 'restore')->name('categories.restore');
     });
 });
 
@@ -165,8 +166,8 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::controller(CategoryEstablishmentController::class)->group(function () {
         Route::get('/categories/establishment/{establishmentId}', 'getAllCategoriesByEstablishmentId')->name('categories.establishment');
-        Route::put('/pro/establishment/{establishment_id}/category', 'associateCategoriesToEstablishment')->name('categories.update');
-        Route::post('/pro/establishment/{establishment_id}/category', 'associateCategoriesToEstablishment')->name('categories.store');
+        Route::put('/pro/establishment/{establishment_id}/category', 'associateCategoriesToEstablishment')->name('categories.establishment.update');
+        Route::post('/pro/establishment/{establishment_id}/category', 'associateCategoriesToEstablishment')->name('categories.establishment.store');
     });
 });
 

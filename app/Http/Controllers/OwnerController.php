@@ -182,6 +182,7 @@ class OwnerController extends Controller
     $userChanges = $user->getChanges();
     $ownerChanges = $owner->getChanges();
 
+
     if (empty($userChanges) && empty($ownerChanges)) {
         return $this->success(null, 'Owner not updated');
     }
@@ -284,4 +285,7 @@ class OwnerController extends Controller
         $ownerToValidate = Owner::where('status_id', 3)->count();
         return $this->success($ownerToValidate, 'Owner to validate');
     }
+
+
+
 }
