@@ -20,7 +20,9 @@ class OwnerController extends Controller
     private const STRINGVALIDATION = 'required|string|max:255';
     private const OWNERNOTFOUND = 'Owner not found';
     private const USERNOTFOUND = 'User not found';
-    private const AVATARURL = 'https://img.freepik.com/free-photo/tasty-american-beer-arrangement_23-2148907580.jpg?w=740&t=st=1683116391~exp=1683116991~hmac=584918e27d013319c35203ce268841f480637965556343c6173885ba806453f2';
+    private const AVATARURL_PART1 = 'https://img.freepik.com/free-photo/tasty-american-beer-arrangement_23-2148907580.jpg?w=740&t=st=';
+    private const AVATARURL_PART2 = '1683116391~exp=1683116991~hmac=584918e27d013319c35203ce268841f480637965556343c6173885ba806453f2';
+    private const AVATARURL = self::AVATARURL_PART1 . self::AVATARURL_PART2;
     private const PHONEVALIDATION = ['regex:/^([0-9\s\-\+\(\)]*)$/', 'min:10'];
 
     /**
