@@ -43,11 +43,11 @@ Route::post('mail/change/password',  [MailController::class, 'changePassword']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::controller(MailController::class)->group(function () {
-        Route::get('send',  'hello');
-        Route::get('pro/mail/welcome/{id}',  'welcomePro');
-        Route::get('barathonien/mail/welcome/{id}',  'welcomeBarathonien');   
-        Route::get('pro/mail/valide/{id}/{status}',  'statusPro');
-        Route::get('pro/mail/valide/establishment/{id}/{status}',  'statusEstablishmentPro');
+        Route::get('send', 'hello');
+        Route::get('pro/mail/welcome/{id}', 'welcomePro');
+        Route::get('barathonien/mail/welcome/{id}', 'welcomeBarathonien');   
+        Route::get('pro/mail/valide/{id}/{status}', 'statusPro');
+        Route::get('pro/mail/valide/establishment/{id}/{status}', 'statusEstablishmentPro');
         Route::get('pro/mail/valide/event/{id}/{status}', 'statusEventPro');
         Route::post('category/mail/new/{userId}/', 'sendMailNewCategory');
     });
