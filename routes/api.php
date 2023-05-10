@@ -38,14 +38,14 @@ Route::post('login', [ApiAuthController::class, 'login'])->name('user.login');
 Route::post('register', [ApiAuthController::class, 'register'])->name('user.register');
 Route::post('register/barathonien', [BarathonienController::class, 'store'])->name('user.register.barathonien');
 Route::post('register/owner', [OwnerController::class, 'store'])->name('user.register.owner');
-Route::post('mail/change/password',  [MailController::class, 'changePassword']);
+Route::post('mail/change/password', [MailController::class, 'changePassword']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::controller(MailController::class)->group(function () {
         Route::get('send', 'hello');
         Route::get('pro/mail/welcome/{id}', 'welcomePro');
-        Route::get('barathonien/mail/welcome/{id}', 'welcomeBarathonien');   
+        Route::get('barathonien/mail/welcome/{id}', 'welcomeBarathonien');
         Route::get('pro/mail/valide/{id}/{status}', 'statusPro');
         Route::get('pro/mail/valide/establishment/{id}/{status}', 'statusEstablishmentPro');
         Route::get('pro/mail/valide/event/{id}/{status}', 'statusEventPro');
