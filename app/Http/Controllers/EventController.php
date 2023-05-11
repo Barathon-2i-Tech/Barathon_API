@@ -113,7 +113,7 @@ class EventController extends Controller
         $event->save();
 
         return $this->success([
-            $event
+            'event' => $event
         ], "event created", 201);
     }
 
@@ -176,7 +176,7 @@ class EventController extends Controller
         $event->delete();
     
         return $this->success([
-            $updatedEvent
+            "event" => $updatedEvent
         ], "Event Updated", 200);
     }
 
