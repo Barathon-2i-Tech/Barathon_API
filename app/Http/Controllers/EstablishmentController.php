@@ -96,9 +96,9 @@ class EstablishmentController extends Controller
         }
 
         $address = Address::create([
-            'address' => $request->address,
-            'postal_code' => $request->postal_code,
-            'city' => $request->city
+            'address' => $request->input('address'),
+            'postal_code' => $request->input('postal_code'),
+            'city' => $request->input('city')
         ]);
 
         // Decodage de la valeur de la clé "opening" en JSON
@@ -106,12 +106,12 @@ class EstablishmentController extends Controller
 
 
         $establishment = Establishment::create([
-            'trade_name' => $request->trade_name,
-            'siret' => $request->siret,
+            'trade_name' => $request->input('trade_name'),
+            'siret' => $request->input('siret'),
             'logo' => $establishmentLogoPath,
-            'phone' => $request->phone,
+            'phone' => $request->input('phone'),
             'email' => $request->email,
-            'website' => $request->website,
+            'website' => $request->input('website'),
             'opening' => $opening,
             'owner_id' => $ownerId,
             'address_id' => $address->address_id,
@@ -254,7 +254,7 @@ class EstablishmentController extends Controller
         } else {
             // Refresh the establishment data from the database before returning
             $establishment->refresh();
-            return $this->success($establishment, "Establishment Updated");
+            return $this->success([$establishment, $address], "Establishment Updated");
         }
 
     }
