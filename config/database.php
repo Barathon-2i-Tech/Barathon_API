@@ -82,7 +82,7 @@ return [
             'driver' => 'pgsql',
             'url' => env('DATABASE_URL'),
             'host' => env('DB_HOST_SIRENE', '127.0.0.1'),
-            'port' => env('DB_PORT_SIRENE', '5433'),
+            'port' => env('DB_PORT_SIRENE', '5432'),
             'database' => env('DB_DATABASE_SIRENE', 'forge'),
             'username' => env('DB_USERNAME_SIRENE', 'forge'),
             'password' => env('DB_PASSWORD_SIRENE', ''),
