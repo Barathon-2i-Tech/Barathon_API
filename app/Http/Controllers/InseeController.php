@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Sirene;
 use App\Traits\HttpResponses;
 use GuzzleHttp\Client;
 use Illuminate\Http\JsonResponse;
@@ -59,7 +60,8 @@ class InseeController extends Controller
 
         // checking response return by INSEE API SIRENE
         if ($response->getStatusCode() !== 200) {
-            return $this->checkStatusCodeFromApi($response);
+           // return $this->checkStatusCodeFromApi($response);
+            return $this->getSirenFromLocal($siren);
         } else {
             // getting the body of the HTTP response and decoding it to JSON
             $dataFetch = json_decode($response->getBody());
@@ -137,5 +139,11 @@ class InseeController extends Controller
             $dataFetch = json_decode($response->getBody());
             return $this->success($dataFetch->etablissement, 'Siret found');
         }
+    }
+
+    public function getSirenFromLocal(string $siren)
+    {
+        $response = Sirene::where('siren', $siren)->get();
+        return $this->success($response, "siren found from local database");
     }
 }
