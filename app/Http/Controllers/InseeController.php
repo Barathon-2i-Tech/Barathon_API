@@ -60,8 +60,8 @@ class InseeController extends Controller
 
         // checking response return by INSEE API SIRENE
         if ($response->getStatusCode() !== 200) {
-           // return $this->checkStatusCodeFromApi($response);
-            return $this->getSirenFromLocal($siren);
+           return $this->checkStatusCodeFromApi($response);
+
         } else {
             // getting the body of the HTTP response and decoding it to JSON
             $dataFetch = json_decode($response->getBody());

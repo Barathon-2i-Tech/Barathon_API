@@ -56,6 +56,7 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::controller(InseeController::class)->group(function () {
         Route::get('/check-siren/{siren}', 'getSiren')->name('check-siren');
+        Route::get('/check-siren-local/{siren}', 'getSirenFromLocal')->name('check-siren-local');
         Route::get('/check-siret/{siret}', 'getSiret')->name('check-siret');
     });
 });
