@@ -29,10 +29,13 @@ class EstablishmentController extends Controller
      * @return JsonResponse
      *
      */
-    public function getEstablishmentListByOwnerId(int $ownerId): JsonResponse
+    public function getEstablishmentListByOwnerId(Request $request, int $ownerId): JsonResponse
     {
+        $user = $request->user();
+        if ($user->owner->owner_id !== $ownerId) {
+            return response()->json(['error' => 'This action is unauthorized.'], 403);
+        }
         // get all establishments from the owner
-
         $establishments = DB::table('establishments')
             ->join('status', 'establishments.status_id', '=', 'status.status_id')
             ->join('addresses', 'establishments.address_id', '=', 'addresses.address_id')
@@ -60,7 +63,13 @@ class EstablishmentController extends Controller
      */
     public function store(Request $request, int $ownerId): JsonResponse
     {
-
+        // Récupérez l'utilisateur authentifié
+        $user = $request->user();
+        // Vérifiez si l'utilisateur authentifié est le propriétaire des établissements
+        if ($user->owner->owner_id !== $ownerId) {
+            // Si l'utilisateur n'est pas le propriétaire des établissements, retournez une réponse HTTP 403 (Interdit)
+            return response()->json(['error' => 'This action is unauthorized.'], 403);
+        }
 
         $request->validate([
             'trade_name' => self::STRING_VALIDATION,
@@ -136,8 +145,16 @@ class EstablishmentController extends Controller
      * @param $establishmentId
      * @return JsonResponse
      */
-    public function show(int $ownerId, int $establishmentId): JsonResponse
+    public function show(Request $request, int $ownerId, int $establishmentId): JsonResponse
     {
+
+        // Récupérez l'utilisateur authentifié
+        $user = $request->user();
+        // Vérifiez si l'utilisateur authentifié est le propriétaire des établissements
+        if ($user->owner->owner_id !== $ownerId) {
+            // Si l'utilisateur n'est pas le propriétaire des établissements, retournez une réponse HTTP 403 (Interdit)
+            return response()->json(['error' => 'This action is unauthorized.'], 403);
+        }
 
         // get all establishments from the owner
         $establishments = Establishment::select('establishments.*', 'addresses.*', 'owners.*', 'status.*')
@@ -163,9 +180,16 @@ class EstablishmentController extends Controller
     public function update(Request $request, int $ownerId, int $establishmentId): JsonResponse
     {
 
+        // Récupérez l'utilisateur authentifié
+        $user = $request->user();
         // Find the establishment by its owner ID and establishment ID
         $establishment = Establishment::where('owner_id', $ownerId)
             ->findOrFail($establishmentId);
+        // Vérifiez si l'utilisateur authentifié est le propriétaire de l'établissement
+        if ($user->owner->owner_id !== $establishment->owner_id) {
+            // Si l'utilisateur n'est pas le propriétaire de l'établissement, retournez une réponse HTTP 403 (Interdit)
+            return response()->json(['error' => 'This action is unauthorized.'], 403);
+        }
 
         $request->validate([
             'trade_name' => self::STRING_VALIDATION,
@@ -263,8 +287,16 @@ class EstablishmentController extends Controller
     /**
      * Deleting the establishment ( softDelete )
      */
-    public function destroy(int $ownerId, int $establishmentId): JsonResponse
+    public function destroy(Request $request, int $ownerId, int $establishmentId): JsonResponse
     {
+        // Récupérez l'utilisateur authentifié
+        $user = $request->user();
+
+        // Vérifiez si l'utilisateur authentifié est le propriétaire des établissements
+        if ($user->owner->owner_id !== $ownerId) {
+            // Si l'utilisateur n'est pas le propriétaire des établissements, retournez une réponse HTTP 403 (Interdit)
+            return response()->json(['error' => 'This action is unauthorized.'], 403);
+        }
 
         $establishment = Establishment::withTrashed()->where('owner_id', $ownerId)
             ->where('establishment_id', $establishmentId)
@@ -285,8 +317,13 @@ class EstablishmentController extends Controller
     /**
      * Restoring the establishment
      */
-    public function restore(int $ownerId, int $establishmentId): JsonResponse
+    public function restore(Request $request, int $ownerId, int $establishmentId): JsonResponse
     {
+        $user = $request->user();
+        if ($user->owner->owner_id !== $ownerId) {
+            return response()->json(['error' => 'This action is unauthorized.'], 403);
+        }
+
         $establishment = Establishment::withTrashed()->where('owner_id', $ownerId)
             ->where('establishment_id', $establishmentId)
             ->first();
