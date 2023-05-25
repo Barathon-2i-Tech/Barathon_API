@@ -43,32 +43,59 @@ class InseeController extends Controller
             return $this->error(null, $validator->errors(), 400);
         }
 
-        //generating acces token
-        $tokenGenerated = $this->generateToken();
-
-        // instantiation of the Guzzle HTTP client
         $client = new Client();
 
-        // sending http get request
-        $response = $client->get(self::BASE_URL . 'siren/' . $sirenToCheck, [
-            'headers' => [
-                'Accept' => "application/json",
-                'Authorization' => 'Bearer ' . $tokenGenerated,
-            ],
-            'http_errors' => false,
-        ]);
+        $hostAvailable = $this->checkHost();
 
-        // checking response return by INSEE API SIRENE
-        if ($response->getStatusCode() !== 200) {
-           return $this->checkStatusCodeFromApi($response);
+        if ($hostAvailable) {
+            $result = $client->post('https://api.insee.fr/token', [
+                'headers' => [
+                    'Content-Type' => 'application/x-www-form-urlencoded',
+                    'Authorization' => 'Basic ' . $this->apiKey,
+                ],
+                'form_params' => [
+                    'grant_type' => 'client_credentials',
+                ],
+            ]);
 
+            $result = json_decode($result->getBody());
+
+            // sending http get request
+            $response = $client->get(self::BASE_URL . 'siren/' . $sirenToCheck, [
+                'headers' => [
+                    'Accept' => "application/json",
+                    'Authorization' => 'Bearer ' . $result->access_token,
+                ],
+                'http_errors' => false,
+            ]);
+
+            // checking response return by INSEE API SIRENE
+            if ($response->getStatusCode() !== 200) {
+                return $this->checkStatusCodeFromApi($response);
+            } else {
+                // getting the body of the HTTP response and decoding it to JSON
+                $dataFetch = json_decode($response->getBody());
+                // returning a JSON response with the company information
+                return $this->success($dataFetch->uniteLegale, 'Siren found');
+            }
         } else {
-            // getting the body of the HTTP response and decoding it to JSON
-            $dataFetch = json_decode($response->getBody());
-            // returning a JSON response with the company information
-            return $this->success($dataFetch->uniteLegale, 'Siren found');
+            // Call getSirenFromLocal as a fallback
+            return $this->getSirenFromLocal($siren);
         }
 
+    }
+
+    public function checkHost(): bool
+    {
+        $host = 'api.insee.fr';
+        $isHostResolvable = false;
+        $ipAddress = gethostbyname($host);
+
+        if ($ipAddress !== $host) {
+            $isHostResolvable = true;
+        }
+
+        return $isHostResolvable;
     }
 
     /**
@@ -78,6 +105,7 @@ class InseeController extends Controller
     public function generateToken(): string
     {
         $client = new Client();
+
         $result = $client->post('https://api.insee.fr/token', [
             'headers' => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
@@ -120,6 +148,7 @@ class InseeController extends Controller
             return $this->error(null, $validator->errors()->first(), 400);
         }
 
+
         //generate token
         $tokenGenerated = $this->generateToken();
 
@@ -132,6 +161,7 @@ class InseeController extends Controller
             'http_errors' => false,
         ]);
 
+
         // Check errors return by INSEE API SIRENE
         if ($response->getStatusCode() !== 200) {
             return $this->checkStatusCodeFromApi($response);
@@ -141,9 +171,22 @@ class InseeController extends Controller
         }
     }
 
-    public function getSirenFromLocal(string $siren)
+    public function getSirenFromLocal(string $siren): JsonResponse
     {
-        $response = Sirene::where('siren', $siren)->get();
-        return $this->success($response, "siren found from local database");
+        $response = Sirene::where('siren', $siren)
+            ->where('etablissementsiege', true)
+            ->select(
+                'siren', 'etatadministratifetablissement', 'denominationusuelleetablissement', 'enseigne1etablissement',
+                'enseigne2etablissement', 'enseigne3etablissement', 'codecedexetablissement', 'codecommuneetablissement',
+                'codepaysetrangeretablissement', 'codepostaletablissement', 'complementadresseetablissement',
+                'distributionspecialeetablissement', 'indicerepetitionetablissement', 'libellecedexetablissement',
+                'libellecommuneetablissement', 'libellecommuneetrangeretablissement', 'libellepaysetrangeretablissement',
+                'libellevoieetablissement', 'numerovoieetablissement', 'typevoieetablissement')
+            ->get();
+        if ($response->isEmpty()) {
+            return $this->error(null, 'Siren not found in local database', 404);
+        } else {
+            return $this->success($response, "siren found from local database");
+        }
     }
 }
