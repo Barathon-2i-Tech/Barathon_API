@@ -5,7 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Sirene extends Model
+class Siret extends Model
 {
     use HasFactory;
 
@@ -19,5 +19,5 @@ class Sirene extends Model
      *
      * @var string
      */
-    protected $table = 'sirene';
+    protected $table = 'siret';
 }

@@ -12,7 +12,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::connection('pgsql_db_sirene')->create('sirene', function (Blueprint $table) {
+        Schema::connection('pgsql_db_sirene')->create('siret', function (Blueprint $table) {
             $table->string('siren', 9);
             $table->string('nic', 5);
             $table->string('siret', 14);
@@ -69,6 +69,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::connection('pgsql_db_sirene')->dropIfExists('sirene');
+        Schema::connection('pgsql_db_sirene')->dropIfExists('siret');
     }
 };

@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Sirene;
+use App\Models\Siren;
+use App\Models\Siret;
 use App\Traits\HttpResponses;
 use GuzzleHttp\Client;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class InseeController extends Controller
@@ -28,7 +30,7 @@ class InseeController extends Controller
      */
     public function checkHost(): bool
     {
-    //   $host = 'api.insee.fr';
+      // $host = 'api.insee.fr';
         $host = 'google'; //only for testing purpose
         $isHostResolvable = false;
         $ipAddress = gethostbyname($host);
@@ -178,26 +180,47 @@ class InseeController extends Controller
 
     public function getSirenFromLocal(string $siren): JsonResponse
     {
-        $response = Sirene::where('siren', $siren)
-            ->where('etablissementsiege', true)
+        $response = DB::connection('pgsql_db_sirene')->table('siren')
+            ->join('siret', 'siren.siren', '=', 'siret.siren')
             ->select(
-                'siren', 'etatadministratifetablissement', 'denominationusuelleetablissement', 'enseigne1etablissement',
-                'enseigne2etablissement', 'enseigne3etablissement', 'codecedexetablissement', 'codecommuneetablissement',
-                'codepaysetrangeretablissement', 'codepostaletablissement', 'complementadresseetablissement',
-                'distributionspecialeetablissement', 'indicerepetitionetablissement', 'libellecedexetablissement',
-                'libellecommuneetablissement', 'libellecommuneetrangeretablissement', 'libellepaysetrangeretablissement',
-                'libellevoieetablissement', 'numerovoieetablissement', 'typevoieetablissement')
+                'siren.siren',
+                'siren.denominationUniteLegale',
+                'siren.denominationUsuelle1UniteLegale',
+                'siren.denominationUsuelle2UniteLegale',
+                'siren.denominationUsuelle3UniteLegale',
+                'siren.etatAdministratifUniteLegale',
+                'siren.nomUniteLegale',
+                'siren.nomUsageUniteLegale',
+                'siren.prenom1UniteLegale',
+                'siren.prenom2UniteLegale',
+                'siren.prenomUsuelUniteLegale',
+                'siret.codecedexetablissement',
+                'siret.codepaysetrangeretablissement',
+                'siret.codepostaletablissement',
+                'siret.complementadresseetablissement',
+                'siret.distributionspecialeetablissement',
+                'siret.indicerepetitionetablissement',
+                'siret.libellecedexetablissement',
+                'siret.libellecommuneetablissement',
+                'siret.libellecommuneetrangeretablissement',
+                'siret.libellepaysetrangeretablissement',
+                'siret.libellevoieetablissement',
+                'siret.numerovoieetablissement',
+                'siret.typevoieetablissement'
+            )
+            ->where('siren.siren', $siren)
+            ->where('siret.etablissementsiege', true)
             ->get();
-        if ($response->isEmpty()) {
+        if (empty($response)) {
             return $this->error(null, 'Siren not found in local database', 404);
         } else {
-            return $this->success($response, "siren found from local database");
+            return $this->success($response, "Siren found from local database");
         }
     }
 
     public function getSiretFromLocal(string $siret)
     {
-        $response = Sirene::where('siret', $siret)
+        $response = Siret::where('siret', $siret)
             ->select(
                 'siren', 'etatadministratifetablissement', 'denominationusuelleetablissement', 'enseigne1etablissement',
                 'enseigne2etablissement', 'enseigne3etablissement', 'codecedexetablissement', 'codecommuneetablissement',
