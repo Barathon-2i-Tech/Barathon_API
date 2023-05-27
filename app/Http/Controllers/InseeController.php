@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Siren;
 use App\Models\Siret;
 use App\Traits\HttpResponses;
 use GuzzleHttp\Client;
@@ -30,7 +29,7 @@ class InseeController extends Controller
      */
     public function checkHost(): bool
     {
-      // $host = 'api.insee.fr';
+        // $host = 'api.insee.fr';
         $host = 'google'; //only for testing purpose
         $isHostResolvable = false;
         $ipAddress = gethostbyname($host);
@@ -223,13 +222,14 @@ class InseeController extends Controller
         $response = Siret::where('siret', $siret)
             ->select(
                 'siren', 'etatadministratifetablissement', 'denominationusuelleetablissement', 'enseigne1etablissement',
-                'enseigne2etablissement', 'enseigne3etablissement', 'codecedexetablissement', 'codecommuneetablissement',
+                'enseigne2etablissement', 'enseigne3etablissement', 'codecedexetablissement',
                 'codepaysetrangeretablissement', 'codepostaletablissement', 'complementadresseetablissement',
                 'distributionspecialeetablissement', 'indicerepetitionetablissement', 'libellecedexetablissement',
-                'libellecommuneetablissement', 'libellecommuneetrangeretablissement', 'libellepaysetrangeretablissement',
-                'libellevoieetablissement', 'numerovoieetablissement', 'typevoieetablissement')
+                'libellecommuneetablissement', 'libellecommuneetrangeretablissement',
+                'libellepaysetrangeretablissement', 'libellevoieetablissement', 'numerovoieetablissement',
+                'typevoieetablissement')
             ->get();
-        if ($response->isEmpty()) {
+        if (empty($response)) {
             return $this->error(null, 'Siret not found in local database', 404);
         } else {
             return $this->success($response, "siret found from local database");
