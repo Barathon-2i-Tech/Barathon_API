@@ -63,11 +63,11 @@ class EstablishmentController extends Controller
      */
     public function store(Request $request, int $ownerId): JsonResponse
     {
-        // Récupérez l'utilisateur authentifié
+        // catch authentificated user
         $user = $request->user();
-        // Vérifiez si l'utilisateur authentifié est le propriétaire des établissements
+        // verify match
         if ($user->owner->owner_id !== $ownerId) {
-            // Si l'utilisateur n'est pas le propriétaire des établissements, retournez une réponse HTTP 403 (Interdit)
+            // error message
             return response()->json(['error' => 'This action is unauthorized.'], 403);
         }
 
@@ -179,15 +179,12 @@ class EstablishmentController extends Controller
      */
     public function update(Request $request, int $ownerId, int $establishmentId): JsonResponse
     {
-
-        // Récupérez l'utilisateur authentifié
         $user = $request->user();
         // Find the establishment by its owner ID and establishment ID
         $establishment = Establishment::where('owner_id', $ownerId)
             ->findOrFail($establishmentId);
-        // Vérifiez si l'utilisateur authentifié est le propriétaire de l'établissement
+
         if ($user->owner->owner_id !== $establishment->owner_id) {
-            // Si l'utilisateur n'est pas le propriétaire de l'établissement, retournez une réponse HTTP 403 (Interdit)
             return response()->json(['error' => 'This action is unauthorized.'], 403);
         }
 
