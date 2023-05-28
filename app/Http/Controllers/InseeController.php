@@ -29,8 +29,8 @@ class InseeController extends Controller
      */
     public function checkHost(): bool
     {
-        // $host = 'api.insee.fr';
-        $host = 'google'; //only for testing purpose
+        $host = 'api.insee.fr';
+       // $host = 'google'; //only for testing purpose
         $isHostResolvable = false;
         $ipAddress = gethostbyname($host);
 
@@ -106,7 +106,7 @@ class InseeController extends Controller
 
             // sending http get request with the token generated
             $client = new Client();
-            $response = $client->get(self::BASE_URL . 'siren/' . $sirenToCheck, [
+            $response = $client->get(self::BASE_URL . 'siren/' . $sirenToCheck.'?champs=identificationStandardUniteLegale', [
                 'headers' => [
                     'Accept' => "application/json",
                     'Authorization' => 'Bearer ' . $tokenGenerated,
@@ -121,7 +121,7 @@ class InseeController extends Controller
                 // getting the body of the HTTP response and decoding it to JSON
                 $dataFetch = json_decode($response->getBody());
                 // returning a JSON response with the company information
-                return $this->success($dataFetch->uniteLegale, 'Siren found');
+                return $this->success(['local'=> false, $dataFetch->uniteLegale], 'Siren found');
             }
         } else {
             // Call getSirenFromLocal as a fallback
@@ -155,7 +155,7 @@ class InseeController extends Controller
             $tokenGenerated = $this->generateToken();
 
             $client = new Client();
-            $response = $client->get(self::BASE_URL . 'siret/' . $siretToCheck, [
+            $response = $client->get(self::BASE_URL . 'siret/' . $siretToCheck.'?champs=identificationStandardEtablissement', [
                 'headers' => [
                     'Accept' => "application/json",
                     'Authorization' => 'Bearer ' . $tokenGenerated,
@@ -169,7 +169,7 @@ class InseeController extends Controller
                 return $this->checkStatusCodeFromApi($response);
             } else {
                 $dataFetch = json_decode($response->getBody());
-                return $this->success($dataFetch->etablissement, 'Siret found');
+                return $this->success(['local'=> false, $dataFetch->etablissement], 'Siret found');
             }
         } else {
             // Call getSiretFromLocal as a fallback
@@ -213,7 +213,7 @@ class InseeController extends Controller
         if (empty($response)) {
             return $this->error(null, 'Siren not found in local database', 404);
         } else {
-            return $this->success($response, "Siren found from local database");
+            return $this->success(['local'=> true, $response], "Siren found from local database");
         }
     }
 
@@ -232,7 +232,7 @@ class InseeController extends Controller
         if (empty($response)) {
             return $this->error(null, 'Siret not found in local database', 404);
         } else {
-            return $this->success($response, "siret found from local database");
+            return $this->success(['local'=> true, $response], "siret found from local database");
         }
     }
 }
