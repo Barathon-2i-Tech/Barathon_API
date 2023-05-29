@@ -2,10 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Siret;
 use App\Traits\HttpResponses;
 use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -30,6 +28,7 @@ class InseeController extends Controller
     public function checkHost(): bool
     {
         $host = 'api.insee.fr';
+        // $host = 'google';
         $isHostResolvable = false;
         $ipAddress = gethostbyname($host);
 
@@ -230,28 +229,33 @@ class InseeController extends Controller
      */
     public function getSiretFromLocal(string $siret)
     {
-        $response = Siret::where('siret', $siret)
+
+        $response = DB::connection('pgsql_db_sirene')->table('siret')
+            ->join('siren', 'siret.siren', '=', 'siren.siren')
             ->select(
-                'siren',
-                'siret',
-                'etatadministratifetablissement',
-                'denominationusuelleetablissement',
-                'enseigne1etablissement',
-                'enseigne2etablissement',
-                'enseigne3etablissement',
-                'codepaysetrangeretablissement',
-                'codepostaletablissement',
-                'complementadresseetablissement',
-                'distributionspecialeetablissement',
-                'indicerepetitionetablissement',
-                'libellecedexetablissement',
-                'libellecommuneetablissement',
-                'libellecommuneetrangeretablissement',
-                'libellepaysetrangeretablissement',
-                'libellevoieetablissement',
-                'numerovoieetablissement',
-                'typevoieetablissement'
+                'siret.siren',
+                'siret.siret',
+                'siret.etablissementSiege',
+                'siret.etatAdministratifEtablissement',
+                'siret.denominationUsuelleEtablissement',
+                'siret.enseigne1Etablissement',
+                'siret.enseigne2Etablissement',
+                'siret.enseigne3Etablissement',
+                'siret.codePaysEtrangerEtablissement',
+                'siret.codePostalEtablissement',
+                'siret.complementAdresseEtablissement',
+                'siret.distributionSpecialeEtablissement',
+                'siret.indiceRepetitionEtablissement',
+                'siret.libelleCedexEtablissement',
+                'siret.libelleCommuneEtablissement',
+                'siret.libelleCommuneEtrangerEtablissement',
+                'siret.libellePaysEtrangerEtablissement',
+                'siret.libelleVoieEtablissement',
+                'siret.numeroVoieEtablissement',
+                'siret.typeVoieEtablissement',
+                'siren.denominationUniteLegale'
             )
+            ->where('siret.siret', $siret)
             ->get();
         if (empty($response)) {
             return $this->error(null, 'Siret not found in local database', 404);
