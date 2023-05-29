@@ -7,7 +7,7 @@
     <title>Notification de changement de mot de passe</title>
 </head>
 <body>
-Cher(e) {{Str::upper($user->last_name)}} {{$user->first_name}},
+Cher(e) {{$user->first_name}} {{Str::upper($user->last_name)}},
 
 <p>Nous souhaitons vous informer que nous avons récemment procédé à un changement de mot de passe pour votre compte. Par
 mesure de sécurité, nous avons généré un nouveau mot de passe pour votre compte que vous trouverez ci-dessous :</p>

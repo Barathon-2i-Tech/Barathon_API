@@ -7,7 +7,7 @@
     <title>Bienvenue sur Barathon</title>
 </head>
 <body>
-Cher(e) {{Str::upper($user->last_name)}} {{$user->first_name}},
+Cher(e) {{$user->first_name}} {{Str::upper($user->last_name)}},
 
 <p>Nous sommes ravis de vous accueillir parmi les utilisateurs de notre plateforme Barathon. Nous sommes convaincus que
 vous allez apprécier les nombreuses fonctionnalités et avantages offerts par notre application.</p>

@@ -7,7 +7,7 @@
     <title>Bienvenue sur Barathon</title>
 </head>
 <body>
-Cher(e) {{Str::upper($user->last_name)}} {{$user->first_name}},
+Cher(e) {{$user->first_name}} {{Str::upper($user->last_name)}},
 
 <p>Nous sommes ravis de vous accueillir parmi les propriétaires d'établissements référencés sur notre plateforme Barathon .</p>
 <p>Nous sommes convaincus que notre plateforme vous permettra de promouvoir efficacement vos établissements et vos

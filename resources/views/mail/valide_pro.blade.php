@@ -7,7 +7,7 @@
     <title>Validation de votre inscription professionnelle</title>
 </head>
 <body>
-Cher(e) {{Str::upper($user->last_name)}} {{$user->first_name}},
+Cher(e) {{$user->first_name}} {{Str::upper($user->last_name)}},
 
 <p>Nous avons le plaisir de vous informer que votre inscription a été validée avec succès sur notre
 plateforme. Vous pouvez maintenant ajouter vos établissements.</p>

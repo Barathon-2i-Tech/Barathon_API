@@ -7,7 +7,7 @@
     <title>Refus de votre établissement</title>
 </head>
 <body>
-Cher(e) {{Str::upper($user->last_name)}} {{$user->first_name}},
+Cher(e) {{$user->first_name}} {{Str::upper($user->last_name)}},
 
 <p>Nous vous informons que nous avons rencontré un problème lors de la vérification de votre établissement
 "{{ $establishment->trade_name }}", qui empêche l'activation de celui-ci. Nous vous prions de nous excuser pour la gêne

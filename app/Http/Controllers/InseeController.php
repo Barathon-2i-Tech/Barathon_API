@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Siret;
 use App\Traits\HttpResponses;
 use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -25,12 +26,10 @@ class InseeController extends Controller
     /**
      * Check if the host (Insee API) is resolvable.
      *
-     * @return bool
      */
     public function checkHost(): bool
     {
         $host = 'api.insee.fr';
-       // $host = 'google'; //only for testing purpose
         $isHostResolvable = false;
         $ipAddress = gethostbyname($host);
 
@@ -63,6 +62,10 @@ class InseeController extends Controller
         return $result->access_token;
     }
 
+    /**
+     * Check the status code return by the INSEE API SIRENE.
+     *
+     */
     public function checkStatusCodeFromApi($response): JsonResponse
     {
         return match ($response->getStatusCode()) {
@@ -106,7 +109,7 @@ class InseeController extends Controller
 
             // sending http get request with the token generated
             $client = new Client();
-            $response = $client->get(self::BASE_URL . 'siren/' . $sirenToCheck.'?champs=identificationStandardUniteLegale', [
+            $response = $client->get(self::BASE_URL . 'siren/' . $sirenToCheck . '?champs=identificationStandardUniteLegale', [
                 'headers' => [
                     'Accept' => "application/json",
                     'Authorization' => 'Bearer ' . $tokenGenerated,
@@ -121,7 +124,7 @@ class InseeController extends Controller
                 // getting the body of the HTTP response and decoding it to JSON
                 $dataFetch = json_decode($response->getBody());
                 // returning a JSON response with the company information
-                return $this->success(['local'=> false, $dataFetch->uniteLegale], 'Siren found');
+                return $this->success(['local' => false, 'response' => $dataFetch->uniteLegale], 'Siren found');
             }
         } else {
             // Call getSirenFromLocal as a fallback
@@ -155,7 +158,7 @@ class InseeController extends Controller
             $tokenGenerated = $this->generateToken();
 
             $client = new Client();
-            $response = $client->get(self::BASE_URL . 'siret/' . $siretToCheck.'?champs=identificationStandardEtablissement', [
+            $response = $client->get(self::BASE_URL . 'siret/' . $siretToCheck . '?champs=identificationStandardEtablissement', [
                 'headers' => [
                     'Accept' => "application/json",
                     'Authorization' => 'Bearer ' . $tokenGenerated,
@@ -169,7 +172,7 @@ class InseeController extends Controller
                 return $this->checkStatusCodeFromApi($response);
             } else {
                 $dataFetch = json_decode($response->getBody());
-                return $this->success(['local'=> false, $dataFetch->etablissement], 'Siret found');
+                return $this->success(['local' => false, 'response' => $dataFetch->etablissement], 'Siret found');
             }
         } else {
             // Call getSiretFromLocal as a fallback
@@ -177,12 +180,17 @@ class InseeController extends Controller
         }
     }
 
+    /**
+     * Retrieve information about a company using its SIREN number.
+     * This method is used as a fallback if the INSEE API is not available.
+     */
     public function getSirenFromLocal(string $siren): JsonResponse
     {
         $response = DB::connection('pgsql_db_sirene')->table('siren')
             ->join('siret', 'siren.siren', '=', 'siret.siren')
             ->select(
                 'siren.siren',
+                'siren.sexeUniteLegale',
                 'siren.denominationUniteLegale',
                 'siren.denominationUsuelle1UniteLegale',
                 'siren.denominationUsuelle2UniteLegale',
@@ -193,7 +201,6 @@ class InseeController extends Controller
                 'siren.prenom1UniteLegale',
                 'siren.prenom2UniteLegale',
                 'siren.prenomUsuelUniteLegale',
-                'siret.codecedexetablissement',
                 'siret.codepaysetrangeretablissement',
                 'siret.codepostaletablissement',
                 'siret.complementadresseetablissement',
@@ -213,26 +220,43 @@ class InseeController extends Controller
         if (empty($response)) {
             return $this->error(null, 'Siren not found in local database', 404);
         } else {
-            return $this->success(['local'=> true, $response], "Siren found from local database");
+            return $this->success(['local' => true, 'response' => $response[0]], "Siren found from local database");
         }
     }
 
+    /**
+     * Retrieve information about a company using its SIRET number from local database.
+     * This method is used as a fallback if the INSEE API is not available.
+     */
     public function getSiretFromLocal(string $siret)
     {
         $response = Siret::where('siret', $siret)
             ->select(
-                'siren', 'etatadministratifetablissement', 'denominationusuelleetablissement', 'enseigne1etablissement',
-                'enseigne2etablissement', 'enseigne3etablissement', 'codecedexetablissement',
-                'codepaysetrangeretablissement', 'codepostaletablissement', 'complementadresseetablissement',
-                'distributionspecialeetablissement', 'indicerepetitionetablissement', 'libellecedexetablissement',
-                'libellecommuneetablissement', 'libellecommuneetrangeretablissement',
-                'libellepaysetrangeretablissement', 'libellevoieetablissement', 'numerovoieetablissement',
-                'typevoieetablissement')
+                'siren',
+                'siret',
+                'etatadministratifetablissement',
+                'denominationusuelleetablissement',
+                'enseigne1etablissement',
+                'enseigne2etablissement',
+                'enseigne3etablissement',
+                'codepaysetrangeretablissement',
+                'codepostaletablissement',
+                'complementadresseetablissement',
+                'distributionspecialeetablissement',
+                'indicerepetitionetablissement',
+                'libellecedexetablissement',
+                'libellecommuneetablissement',
+                'libellecommuneetrangeretablissement',
+                'libellepaysetrangeretablissement',
+                'libellevoieetablissement',
+                'numerovoieetablissement',
+                'typevoieetablissement'
+            )
             ->get();
         if (empty($response)) {
             return $this->error(null, 'Siret not found in local database', 404);
         } else {
-            return $this->success(['local'=> true, $response], "siret found from local database");
+            return $this->success(['local' => true, 'response' => $response[0]], "siret found from local database");
         }
     }
 }
