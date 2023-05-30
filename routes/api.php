@@ -28,6 +28,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 
+
 /*
 |--------------------------------------------------------------------------
 | Register and Login Methods
@@ -176,6 +177,11 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/barathonien/booking', 'store')->name('barathonien.postBooking');
         Route::delete('/barathonien/booking/{id}', 'destroy')->name('barathonien.deleteBooking');
     });
+});
+
+Route::controller(BookingController::class)->group(function () {
+    Route::post('/pro/book/{id}', 'valideTicket')->name('pro.valideTicket');
+    Route::get('/pro/event/{idEvent}/barathonien/{id}', 'getEventandUser')->name('pro.getEventandUser');
 });
 
 Route::group(['middleware' => ['auth:sanctum']], function () {

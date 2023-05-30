@@ -32,7 +32,7 @@ class Booking extends Model
     protected $fillable = [
         'user_id',
         'event_id',
-        'isFav',
+        'ticket',
     ];
 
     protected $hidden = ['pivot'];
