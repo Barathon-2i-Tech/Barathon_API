@@ -20,7 +20,11 @@ class OwnerController extends Controller
     private const STRINGVALIDATION = 'required|string|max:255';
     private const OWNERNOTFOUND = 'Owner not found';
     private const USERNOTFOUND = 'User not found';
-
+    private const AVATARURL_P1 = 'https://img.freepik.com/free-photo/tasty-american-';
+    private const AVATARURL_P2 = 'beer-arrangement_23-2148907580.jpg?w=740&t=st=';
+    private const AVATARURL_P3 = '1683116391~exp=1683116991~';
+    private const AVATARURL_P4 = 'hmac=584918e27d013319c35203ce268841f480637965556343c6173885ba806453f2';
+    private const AVATARURL = self::AVATARURL_P1 . self::AVATARURL_P2 . self::AVATARURL_P3 . self::AVATARURL_P4;
     private const PHONEVALIDATION = ['regex:/^([0-9\s\-\+\(\)]*)$/', 'min:10'];
 
     /**
@@ -78,7 +82,7 @@ class OwnerController extends Controller
             'last_name' => $request->input('last_name'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
-            'avatar' => 'https://picsum.photos/180',
+            'avatar' => self::AVATARURL,
         ]);
 
         $owner = Owner::create([
@@ -122,58 +126,72 @@ class OwnerController extends Controller
      */
     public function update(Request $request, int $userId): JsonResponse
     {
-        //get the user given in parameter
-        $user = User::find($userId);
+        
+    //get the user given in parameter
+    $user = User::find($userId);
 
-        if ($user === null) {
-            return $this->error(null, self::OWNERNOTFOUND, 404);
-        }
+    if ($user === null) {
+        return $this->error(null, self::OWNERNOTFOUND, 404);
+    }
 
-        // check if the user is an owner
-        if ($user->owner_id === null) {
-            return $this->error(null, self::OWNERNOTFOUND, 404);
-        }
+    // check if the user is an owner
+    if ($user->owner_id === null) {
+        return $this->error(null, self::OWNERNOTFOUND, 404);
+    }
 
-        // validate the request
+    // validate the request
+    $request->validate([
+        'first_name' => self::STRINGVALIDATION,
+        'last_name' => self::STRINGVALIDATION,
+        'email' => [
+            'required',
+            'string',
+            'email',
+            Rule::unique('users')->ignore($user), // Ignore the user given in parameter
+        ],
+        'company_name' => 'nullable|string|max:255',
+        'phone' => self::PHONEVALIDATION,
+    ], [
+        'first_name.required' => 'Le prénom est obligatoire.',
+        'last_name.required' => 'Le nom est obligatoire.',
+        'email.required' => "L'adresse e-mail est obligatoire.",
+        'email.email' => "L'adresse e-mail n'est pas valide.",
+        'email.unique' => "L'adresse e-mail est déjà utilisée.",
+        'phone.required' => 'Le numéro de téléphone est obligatoire.',
+        'phone.regex' => 'Le numéro de téléphone n\'est pas valide.',
+    ]);
+    
+     // Handle avatar file upload if a new avatar is present in the request
+     if ($request->hasFile('avatar')) {
         $request->validate([
-            'first_name' => self::STRINGVALIDATION,
-            'last_name' => self::STRINGVALIDATION,
-            'email' => [
-                'required',
-                'string',
-                'email',
-                Rule::unique('users')->ignore($user), // Ignore the user given in parameter
-            ],
-            'company_name' => 'nullable|string|max:255',
-            'phone' => self::PHONEVALIDATION,
-        ], [
-            'first_name.required' => 'Le prénom est obligatoire.',
-            'last_name.required' => 'Le nom est obligatoire.',
-            'email.required' => "L'adresse e-mail est obligatoire.",
-            'email.email' => "L'adresse e-mail n'est pas valide.",
-            'email.unique' => "L'adresse e-mail est déjà utilisée.",
-            'phone.required' => 'Le numéro de téléphone est obligatoire.',
-            'phone.regex' => 'Le numéro de téléphone n\'est pas valide.',
+            'avatar' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
         ]);
+        $avatarPath = $request->file('avatar')->store('avatars', 'public');
+        // add path in db
+        $avatarPath = env('APP_URL') . Storage::url($avatarPath);
+    } else {
+        $avatarPath = $user->avatar;
+    }
 
-        $user->fill($request->only(['first_name', 'last_name', 'email']));
-        $user->save();
+    $user->fill($request->only(['first_name', 'last_name', 'email']));
+    $user->avatar = $avatarPath;
+    $user->save();
 
-        // Update the owner data
-        $owner = Owner::find($user->owner_id);
-        $owner->fill($request->only(['company_name', 'phone']));
-        $owner->save();
+    // Récupérez l'instance $owner avant de l'utiliser
+    $owner = Owner::find($user->owner_id);
+    // Update the owner data
+    $owner->fill($request->only(['company_name', 'phone']));
+    $owner->save();
 
-        $userChanges = $user->getChanges();
-        $ownerChanges = $owner->getChanges();
+    $userChanges = $user->getChanges();
+    $ownerChanges = $owner->getChanges();
 
 
+    if (empty($userChanges) && empty($ownerChanges)) {
+        return $this->success(null, 'Owner not updated');
+    }
 
-        if (empty($userChanges) && empty($ownerChanges)) {
-            return $this->success(null, 'Owner not updated');
-        }
-
-        return $this->success([$user, $owner], 'Owner Updated');
+    return $this->success([$user, $owner], 'Owner Updated');
     }
 
     /**
@@ -222,6 +240,7 @@ class OwnerController extends Controller
 
         return $this->success(null, 'Owner Restored');
     }
+   
 
     /**
      * Display a listing of all owners

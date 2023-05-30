@@ -2,6 +2,8 @@
 
 namespace Tests\Feature;
 
+
+use App\Http\Controllers\InseeController;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Support\Facades\Http;
