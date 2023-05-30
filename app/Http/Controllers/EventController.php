@@ -51,6 +51,35 @@ class EventController extends Controller
     }
 
     /**
+     * Display the specified event.
+     */
+    public function show(Request $request, int $establishmentId, int $eventId): JsonResponse
+    {
+        // Check if the current authenticated user is the owner of the establishment
+        $user = $request->user();
+        $establishment = Establishment::find($establishmentId);
+
+        if ($user->owner_id !== $establishment->owner_id) {
+            return response()->json(['error' => 'Unauthorized'], 403);
+        }
+
+        // Get the specific event from the establishment
+        $event = Event::select('events.*', 'establishments.*')
+            ->join('establishments', 'establishments.establishment_id', '=', 'events.establishment_id')
+            ->where('events.establishment_id', '=', $establishmentId)
+            ->where('events.event_id', '=', $eventId)
+            ->first();
+
+        // If the event is not found
+        if (!$event) {
+            return $this->error(null, self::EVENT_NOT_FOUND, 404);
+        }
+        // Return the event
+        return $this->success($event, "Event");
+    }
+
+
+    /**
      * Store a newly created resource in storage.
      */
     public function store(Request $request): JsonResponse
@@ -110,35 +139,6 @@ class EventController extends Controller
             'event' => $event
         ], "event created", 201);
     }
-
-    /**
-     * Display the specified event.
-     */
-    public function show(Request $request, int $establishmentId, int $eventId): JsonResponse
-    {
-        // Check if the current authenticated user is the owner of the establishment
-        $user = $request->user();
-        $establishment = Establishment::find($establishmentId);
-
-        if ($user->owner_id !== $establishment->owner_id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
-
-        // Get the specific event from the establishment
-        $event = Event::select('events.*', 'establishments.*')
-            ->join('establishments', 'establishments.establishment_id', '=', 'events.establishment_id')
-            ->where('events.establishment_id', '=', $establishmentId)
-            ->where('events.event_id', '=', $eventId)
-            ->first();
-
-        // If the event is not found
-        if (!$event) {
-            return $this->error(null, self::EVENT_NOT_FOUND, 404);
-        }
-        // Return the event
-        return $this->success($event, "Event");
-    }
-
 
 
     /**
