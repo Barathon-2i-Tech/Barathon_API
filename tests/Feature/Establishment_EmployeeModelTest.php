@@ -1,6 +1,8 @@
 <?php
 
 
+namespace Tests\Feature;
+
 use App\Models\Establishment_Employee;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;

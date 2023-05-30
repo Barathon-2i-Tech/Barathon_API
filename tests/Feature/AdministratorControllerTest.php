@@ -1,9 +1,7 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature;
 
-use App\Models\Owner;
-use App\Models\Status;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;

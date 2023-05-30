@@ -27,7 +27,7 @@ class InseeController extends Controller
      */
     public function checkHost(): bool
     {
-        $host = 'api.insee.fr';
+       $host = 'api.insee.fr';
         // $host = 'google';
         $isHostResolvable = false;
         $ipAddress = gethostbyname($host);
@@ -200,21 +200,21 @@ class InseeController extends Controller
                 'siren.prenom1UniteLegale',
                 'siren.prenom2UniteLegale',
                 'siren.prenomUsuelUniteLegale',
-                'siret.codepaysetrangeretablissement',
-                'siret.codepostaletablissement',
-                'siret.complementadresseetablissement',
-                'siret.distributionspecialeetablissement',
-                'siret.indicerepetitionetablissement',
-                'siret.libellecedexetablissement',
-                'siret.libellecommuneetablissement',
-                'siret.libellecommuneetrangeretablissement',
-                'siret.libellepaysetrangeretablissement',
-                'siret.libellevoieetablissement',
-                'siret.numerovoieetablissement',
-                'siret.typevoieetablissement'
+                'siret.codePaysEtrangerEtablissement',
+                'siret.codePostalEtablissement',
+                'siret.complementAdresseEtablissement',
+                'siret.distributionSpecialeEtablissement',
+                'siret.indiceRepetitionEtablissement',
+                'siret.libelleCedexEtablissement',
+                'siret.libelleCommuneEtablissement',
+                'siret.libelleCommuneEtrangerEtablissement',
+                'siret.libellePaysEtrangerEtablissement',
+                'siret.libelleVoieEtablissement',
+                'siret.numeroVoieEtablissement',
+                'siret.typeVoieEtablissement'
             )
             ->where('siren.siren', $siren)
-            ->where('siret.etablissementsiege', true)
+            ->where('siret.etablissementSiege', true)
             ->get();
         if (empty($response)) {
             return $this->error(null, 'Siren not found in local database', 404);
