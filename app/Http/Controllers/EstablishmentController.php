@@ -11,12 +11,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Crypt;
+use Illuminate\Support\Facades\Log;
 
 class EstablishmentController extends Controller
 {
     use HttpResponses;
 
     private const ESTABLISHMENT_NOT_FOUND = "Establishment not found";
+    private const UNAUTHORIZED_ACTION = "This action is unauthorized.";
     private const STRING_VALIDATION = 'required|string|max:255';
     private const ADDRESS_ERROR = "L\'adresse est invalide";
     private const PHONEVALIDATION = ['regex:/^([0-9\s\-\+\(\)]*)$/', 'min:10'];
@@ -29,10 +32,13 @@ class EstablishmentController extends Controller
      * @return JsonResponse
      *
      */
-    public function getEstablishmentListByOwnerId(int $ownerId): JsonResponse
+    public function getEstablishmentListByOwnerId(Request $request, int $ownerId): JsonResponse
     {
+        $user = $request->user();
+        if ($user->owner->owner_id !== $ownerId) {
+            return response()->json(['error' => self::UNAUTHORIZED_ACTION], 403);
+        }
         // get all establishments from the owner
-
         $establishments = DB::table('establishments')
             ->join('status', 'establishments.status_id', '=', 'status.status_id')
             ->join('addresses', 'establishments.address_id', '=', 'addresses.address_id')
@@ -44,6 +50,10 @@ class EstablishmentController extends Controller
         // if the establishments list is empty
         if ($establishments->isEmpty()) {
             return $this->error(null, self::ESTABLISHMENT_NOT_FOUND, 404);
+        }
+
+        foreach ($establishments as $establishment) {
+            $establishment->validation_code =  Crypt::decryptString($establishment->validation_code);
         }
 
         // return the establishments list
@@ -60,7 +70,13 @@ class EstablishmentController extends Controller
      */
     public function store(Request $request, int $ownerId): JsonResponse
     {
-
+        // catch authentificated user
+        $user = $request->user();
+        // verify match
+        if ($user->owner->owner_id !== $ownerId) {
+            // error message
+            return response()->json(['error' => self::UNAUTHORIZED_ACTION], 403);
+        }
 
         $request->validate([
             'trade_name' => self::STRING_VALIDATION,
@@ -96,16 +112,19 @@ class EstablishmentController extends Controller
         }
 
         $address = Address::create([
-            'address' => $request->address,
-            'postal_code' => $request->postal_code,
-            'city' => $request->city
+            'address' => $request->input('address'),
+            'postal_code' => $request->input('postal_code'),
+            'city' => $request->input('city')
         ]);
 
         // Decodage de la valeur de la clé "opening" en JSON
         $opening = json_decode($request->opening, true);
 
+        
 
-        $establishment = Establishment::create([
+        $validationCode = Crypt::encryptString(random_int(1000, 9999));
+        Log::info('Generated validation code: ' . $validationCode);
+        Log::info('Establishment data: ' . json_encode([
             'trade_name' => $request->trade_name,
             'siret' => $request->siret,
             'logo' => $establishmentLogoPath,
@@ -115,6 +134,25 @@ class EstablishmentController extends Controller
             'opening' => $opening,
             'owner_id' => $ownerId,
             'address_id' => $address->address_id,
+            'validation_code' => $validationCode,
+            'status_id' => $establPending
+        ]));
+
+
+
+
+
+        $establishment = Establishment::create([
+            'trade_name' => $request->input('trade_name'),
+            'siret' => $request->input('siret'),
+            'logo' => $establishmentLogoPath,
+            'phone' => $request->input('phone'),
+            'email' => $request->email,
+            'website' => $request->input('website'),
+            'opening' => $opening,
+            'owner_id' => $ownerId,
+            'address_id' => $address->address_id,
+            'validation_code' => $validationCode,
             'status_id' => $establPending
         ]);
 
@@ -136,8 +174,16 @@ class EstablishmentController extends Controller
      * @param $establishmentId
      * @return JsonResponse
      */
-    public function show(int $ownerId, int $establishmentId): JsonResponse
+    public function show(Request $request, int $ownerId, int $establishmentId): JsonResponse
     {
+
+        // Récupérez l'utilisateur authentifié
+        $user = $request->user();
+        // Vérifiez si l'utilisateur authentifié est le propriétaire des établissements
+        if ($user->owner->owner_id !== $ownerId) {
+            // Si l'utilisateur n'est pas le propriétaire des établissements, retournez une réponse HTTP 403 (Interdit)
+            return response()->json(['error' => self::UNAUTHORIZED_ACTION], 403);
+        }
 
         // get all establishments from the owner
         $establishments = Establishment::select('establishments.*', 'addresses.*', 'owners.*', 'status.*')
@@ -162,10 +208,14 @@ class EstablishmentController extends Controller
      */
     public function update(Request $request, int $ownerId, int $establishmentId): JsonResponse
     {
-
+        $user = $request->user();
         // Find the establishment by its owner ID and establishment ID
         $establishment = Establishment::where('owner_id', $ownerId)
             ->findOrFail($establishmentId);
+
+        if ($user->owner->owner_id !== $establishment->owner_id) {
+            return response()->json(['error' => self::UNAUTHORIZED_ACTION], 403);
+        }
 
         $request->validate([
             'trade_name' => self::STRING_VALIDATION,
@@ -254,7 +304,7 @@ class EstablishmentController extends Controller
         } else {
             // Refresh the establishment data from the database before returning
             $establishment->refresh();
-            return $this->success($establishment, "Establishment Updated");
+            return $this->success([$establishment, $address], "Establishment Updated");
         }
 
     }
@@ -263,8 +313,16 @@ class EstablishmentController extends Controller
     /**
      * Deleting the establishment ( softDelete )
      */
-    public function destroy(int $ownerId, int $establishmentId): JsonResponse
+    public function destroy(Request $request, int $ownerId, int $establishmentId): JsonResponse
     {
+        // Récupérez l'utilisateur authentifié
+        $user = $request->user();
+
+        // Vérifiez si l'utilisateur authentifié est le propriétaire des établissements
+        if ($user->owner->owner_id !== $ownerId) {
+            // Si l'utilisateur n'est pas le propriétaire des établissements, retournez une réponse HTTP 403 (Interdit)
+            return response()->json(['error' => self::UNAUTHORIZED_ACTION], 403);
+        }
 
         $establishment = Establishment::withTrashed()->where('owner_id', $ownerId)
             ->where('establishment_id', $establishmentId)
@@ -285,8 +343,13 @@ class EstablishmentController extends Controller
     /**
      * Restoring the establishment
      */
-    public function restore(int $ownerId, int $establishmentId): JsonResponse
+    public function restore(Request $request, int $ownerId, int $establishmentId): JsonResponse
     {
+        $user = $request->user();
+        if ($user->owner->owner_id !== $ownerId) {
+            return response()->json(['error' => self::UNAUTHORIZED_ACTION], 403);
+        }
+
         $establishment = Establishment::withTrashed()->where('owner_id', $ownerId)
             ->where('establishment_id', $establishmentId)
             ->first();

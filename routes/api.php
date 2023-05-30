@@ -28,24 +28,25 @@ use Illuminate\Support\Facades\Route;
 */
 
 
+
 /*
 |--------------------------------------------------------------------------
 | Register and Login Methods
 |--------------------------------------------------------------------------
 */
 
-
 Route::post('login', [ApiAuthController::class, 'login'])->name('user.login');
 Route::post('register', [ApiAuthController::class, 'register'])->name('user.register');
 Route::post('register/barathonien', [BarathonienController::class, 'store'])->name('user.register.barathonien');
 Route::post('register/owner', [OwnerController::class, 'store'])->name('user.register.owner');
+Route::post('mail/change/password', [MailController::class, 'changePassword']);
+
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::controller(MailController::class)->group(function () {
         Route::get('send', 'hello');
         Route::get('pro/mail/welcome/{id}', 'welcomePro');
         Route::get('barathonien/mail/welcome/{id}', 'welcomeBarathonien');
-        Route::get('mail/change/password/{id}', 'changePassword');
         Route::get('pro/mail/valide/{id}/{status}', 'statusPro');
         Route::get('pro/mail/valide/establishment/{id}/{status}', 'statusEstablishmentPro');
         Route::get('pro/mail/valide/event/{id}/{status}', 'statusEventPro');
@@ -79,7 +80,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('pro/{user_id}', 'update')->name('owner.update');
         Route::delete('pro/{user_id}', 'destroy')->name('owner.delete');
         Route::get('pro/restore/{user_id}', 'restore')->name('owner.restore');
-
     });
 });
 
@@ -91,7 +91,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/administrator/{user_id}', 'destroy')->name('administrator.delete');
         Route::get('/administrator/restore/{user_id}', 'restore')->name('administrator.restore');
         Route::post('register/admin', 'store')->name('user.register.admin');
-
     });
 });
 
@@ -103,7 +102,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('employee/{user_id}', 'destroy')->name('employee.delete');
         Route::get('employee/restore/{user_id}', 'restore')->name('employee.restore');
         Route::post('register/employee', 'store')->name('user.register.employee');
-
     });
 });
 
@@ -118,7 +116,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/pro/{owner_id}/establishment/', 'store')->name('establishment.store');
         Route::delete('/pro/{owner_id}/establishment/{establishment_id}', 'destroy')->name('establishment.delete');
         Route::get('/pro/{owner_id}/establishment/{establishment_id}/restore', 'restore')->name('establishment.restore');
-
     });
 });
 
@@ -172,7 +169,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/categories/establishment/{establishmentId}', 'getAllCategoriesByEstablishmentId')->name('categories.establishment');
         Route::put('/pro/establishment/{establishment_id}/category', 'associateCategoriesToEstablishment')->name('categories.establishment.update');
         Route::post('/pro/establishment/{establishment_id}/category', 'associateCategoriesToEstablishment')->name('categories.establishment.store');
-
     });
 });
 
@@ -183,6 +179,14 @@ Route::middleware('auth:sanctum')->group(function () {
     });
 });
 
+Route::controller(BookingController::class)->group(function () {
+    Route::post('/pro/book/{id}', 'valideTicket')->name('pro.valideTicket');
+    Route::get('/pro/event/{idEvent}/barathonien/{id}', 'getEventandUser')->name('pro.getEventandUser');
+});
+
 Route::group(['middleware' => ['auth:sanctum']], function () {
-    Route::post('/logout', [ApiAuthController::class, 'logout'])->name('user.logout');
+    Route::controller(ApiAuthController::class)->group(function () {
+        Route::post('/logout', 'logout')->name('user.logout');
+        Route::put('user/{user_id}/password', 'updateUserPassword')->name('user.update-user-password');
+    });
 });

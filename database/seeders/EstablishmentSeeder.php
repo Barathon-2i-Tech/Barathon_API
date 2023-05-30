@@ -7,6 +7,7 @@ use App\Models\Establishment;
 use App\Models\Status;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Crypt;
 
 class EstablishmentSeeder extends Seeder
 {
@@ -40,6 +41,8 @@ class EstablishmentSeeder extends Seeder
 
         $ownerJacobs = User::where('last_name', 'Jacobs')->first();
 
+        $code = 0000;
+
         $datas = [
             [
                 'trade_name' => 'Fait Foif',
@@ -58,6 +61,7 @@ class EstablishmentSeeder extends Seeder
                     'Samedi' => '17h00 - 01h00',
                     'Dimanche' => '17h00 - 01h00',
                 ],
+                'validation_code' => Crypt::encryptString($code),
                 'owner_id' => $ownerRothschild->owner_id,
                 'status_id' => $establValid->status_id,
             ],
@@ -78,6 +82,7 @@ class EstablishmentSeeder extends Seeder
                     'Samedi' => '18h00 - 01h00',
                     'Dimanche' => 'fermer',
                 ],
+                'validation_code' => Crypt::encryptString($code),
                 'owner_id' => $ownerJacobs->owner_id,
                 'status_id' => $establPending->status_id,
             ],
@@ -98,6 +103,7 @@ class EstablishmentSeeder extends Seeder
                     'Samedi' => '10h30 - 20h00',
                     'Dimanche' => '08h00 - 18h00',
                 ],
+                'validation_code' => Crypt::encryptString($code),
                 'owner_id' => $ownerRothschild->owner_id,
                 'status_id' => $establPending->status_id,
             ],
