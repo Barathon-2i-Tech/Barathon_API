@@ -57,6 +57,8 @@ Route::middleware('auth:sanctum')->group(function () {
 Route::middleware('auth:sanctum')->group(function () {
     Route::controller(InseeController::class)->group(function () {
         Route::get('/check-siren/{siren}', 'getSiren')->name('check-siren');
+        Route::get('/check-siren-local/{siren}', 'getSirenFromLocal')->name('check-siren-local');
+        Route::get('/check-siret-local/{siret}', 'getSiretFromLocal')->name('check-siret-local');
         Route::get('/check-siret/{siret}', 'getSiret')->name('check-siret');
     });
 });
@@ -132,6 +134,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::put('/pro/establishment/{establishmentId}/event/{eventId}', 'update')->name('pro.putEvent');
         Route::delete('/pro/event/{eventId}', 'destroy')->name('pro.event.delete');
         Route::get('/pro/establishment/{establishmentId}/event/{eventId}', 'show')->name('event.show');
+        Route::get('admin/event/{eventId}/history', 'showEventWithHistory')->name('event.show.history');
     });
 });
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -176,6 +176,4 @@ class BookingControllerTest extends TestCase
     
             $response->assertJsonStructure($structure);
         }
-
-
 }

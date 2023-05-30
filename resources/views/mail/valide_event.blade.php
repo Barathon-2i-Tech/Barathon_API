@@ -7,23 +7,23 @@
     <title>Validation de votre événement</title>
 </head>
 <body>
-Cher(e) {{Str::upper($user->last_name)}} {{$user->first_name}},
+Cher(e) {{$user->first_name}} {{Str::upper($user->last_name)}},
 
-Nous sommes heureux de vous informer que votre événement "{{ $event->event_name }}" a été validé avec succès et est
+<p>Nous sommes heureux de vous informer que votre événement "{{ $event->event_name }}" a été validé avec succès et est
 désormais accessible à tous les utilisateurs de notre plateforme. Nous vous remercions pour votre confiance et votre
-engagement.
+engagement.</p>
 
-Nous sommes convaincus que votre événement apportera une réelle valeur ajoutée à notre communauté et nous sommes
-impatients de voir les utilisateurs profiter de votre événement.
+<p>Nous sommes convaincus que votre événement apportera une réelle valeur ajoutée à notre communauté et nous sommes
+impatients de voir les utilisateurs profiter de votre événement.</p>
 
-Nous tenons à vous rappeler que nous prenons très au sérieux la qualité et la pertinence des événements référencés sur
+<p>Nous tenons à vous rappeler que nous prenons très au sérieux la qualité et la pertinence des événements référencés sur
 notre plateforme. Nous surveillons en permanence les activités suspectes et les commentaires des utilisateurs, pour
-garantir une expérience optimale à tous les utilisateurs.
+garantir une expérience optimale à tous les utilisateurs.</p>
 
-Nous vous souhaitons une excellente expérience sur notre plateforme et sommes convaincus que votre événement sera un
-véritable succès.
+<p>Nous vous souhaitons une excellente expérience sur notre plateforme et sommes convaincus que votre événement sera un
+véritable succès.</p>
 
-Cordialement,
+Cordialement,<br/>
 L'équipe de Barathon
 
 </body>

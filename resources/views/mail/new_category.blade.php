@@ -9,7 +9,7 @@
 <body>
 <h2>Nouvelle demande d'ajout de catégorie</h2>
 <p>Bonjour,</p>
-<p>L'utilisateur {{Str::upper($user->last_name)}} {{$user->first_name}} souhaiterai créer une nouvelle categorie.</p>
+<p>L'utilisateur {{$user->first_name}} {{Str::upper($user->last_name)}} souhaiterai créer une nouvelle categorie.</p>
 
 <p>Voici les détails de la catégorie :</p>
 <ul>

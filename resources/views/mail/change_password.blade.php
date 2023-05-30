@@ -7,20 +7,20 @@
     <title>Notification de changement de mot de passe</title>
 </head>
 <body>
-Cher(e) {{Str::upper($user->last_name)}} {{$user->first_name}},
+Cher(e) {{$user->first_name}} {{Str::upper($user->last_name)}},
 
-Nous souhaitons vous informer que nous avons récemment procédé à un changement de mot de passe pour votre compte. Par
-mesure de sécurité, nous avons généré un nouveau mot de passe pour votre compte que vous trouverez ci-dessous :
+<p>Nous souhaitons vous informer que nous avons récemment procédé à un changement de mot de passe pour votre compte. Par
+mesure de sécurité, nous avons généré un nouveau mot de passe pour votre compte que vous trouverez ci-dessous :</p>
 
-Nouveau mot de passe : <b>{{$password}}</b>
+<p>Nouveau mot de passe : <b>{{$password}}</b></p>
 
-Nous vous conseillons vivement de changer ce mot de passe dès que possible, en utilisant la fonctionnalité de
-modification de mot de passe disponible sur notre application.
+<p>Nous vous conseillons vivement de changer ce mot de passe dès que possible, en utilisant la fonctionnalité de
+modification de mot de passe disponible sur notre application.</p>
 
-Si vous avez des questions ou des préoccupations concernant cette notification, n'hésitez pas à nous contacter. Nous
-sommes disponibles pour vous aider à tout moment.
+<p>Si vous avez des questions ou des préoccupations concernant cette notification, n'hésitez pas à nous contacter. Nous
+sommes disponibles pour vous aider à tout moment.</p>
 
-Cordialement,
+Cordialement,</br>
 L'équipe de Barathon
 
 </body>

@@ -48,17 +48,38 @@ services:
             retries: 3
             timeout: 5s
 
-    #CloudBeaver Service (DataBase Management System )
-    CloudBeaver:
-        image: dbeaver/cloudbeaver:latest
-        container_name: barathon-cloudbeaver
-        restart: unless-stopped
-        links:
-            - pgsql
+    #Postgres Service (Database)
+    sirene_pgsql:
+        image: 'postgres:14'
+        container_name: barathon-pgsql-sirene
         ports:
-            - '${FORWARD_DB_PORT:-8080}:8978'
+            - '${FORWARD_DB_PORT_SIRENE:-5433}:5432'
+        environment:
+            PGPASSWORD: '${DB_PASSWORD_SIRENE:-secret}'
+            POSTGRES_DB: '${DB_DATABASE_SIRENE}'
+            POSTGRES_USER: '${DB_USERNAME_SIRENE}'
+            POSTGRES_PASSWORD: '${DB_PASSWORD_SIRENE:-secret}'
         volumes:
-            - cloudbeaver:/opt/cloudbeaver/workspace
+            - 'barathon-sirene-pgsql:/var/lib/postgresql/data'
+        networks:
+            - barathon
+        healthcheck:
+            test: [ "CMD", "pg_sirene_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}" ]
+            retries: 3
+            timeout: 5s
+
+    #PgAdmin Service (DataBase Management System )
+    pgadmin:
+        image: dpage/pgadmin4:latest
+        container_name: barathon-pgadmin
+        restart: unless-stopped
+        environment:
+            PGADMIN_DEFAULT_EMAIL: '${PGADMIN_DEFAULT_EMAIL}'
+            PGADMIN_DEFAULT_PASSWORD: '${PGADMIN_DEFAULT_PASSWORD}'
+        ports:
+            - "8080:80"
+        volumes:
+            - pgadmin:/var/lib/pgadmin
         networks:
             - barathon
 
@@ -68,5 +89,7 @@ networks:
 volumes:
     barathon-pgsql:
         driver: local
-    cloudbeaver:
+    barathon-sirene-pgsql:
+        driver: local
+    pgadmin:
         driver: local

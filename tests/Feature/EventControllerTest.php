@@ -1,6 +1,7 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature;
+
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -8,7 +9,6 @@ use Tests\TestCase;
 class EventControllerTest extends TestCase
 {
     use RefreshDatabase;
-
 
 
     /**
@@ -192,7 +192,6 @@ public function test_delete_event()
         "message"
     ]);
 }
-
 
     /**
      * A Test for check if we can have the events with the same city than the user in parametter
