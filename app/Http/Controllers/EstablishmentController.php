@@ -121,7 +121,7 @@ class EstablishmentController extends Controller
 
         
 
-        $validation_code = Crypt::encryptString(rand(1000, 9999));
+        $validation_code = Crypt::encryptString(random_int(1000, 9999));
         Log::info('Generated validation code: ' . $validation_code);
         Log::info('Establishment data: ' . json_encode([
             'trade_name' => $request->trade_name,
