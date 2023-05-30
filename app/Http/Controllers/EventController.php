@@ -53,7 +53,7 @@ class EventController extends Controller
     /**
      * Display the specified event.
      */
-    public function show(Request $request,int $establishmentId, int $eventId): JsonResponse
+    public function show(Request $request, int $establishmentId, int $eventId): JsonResponse
     {
         // Check if the current authenticated user is the owner of the establishment
         $user = $request->user();

@@ -19,6 +19,7 @@ class EstablishmentController extends Controller
     use HttpResponses;
 
     private const ESTABLISHMENT_NOT_FOUND = "Establishment not found";
+    private const UNAUTHORIZED_ACTION = "This action is unauthorized.";
     private const STRING_VALIDATION = 'required|string|max:255';
     private const ADDRESS_ERROR = "L\'adresse est invalide";
     private const PHONEVALIDATION = ['regex:/^([0-9\s\-\+\(\)]*)$/', 'min:10'];
@@ -35,7 +36,7 @@ class EstablishmentController extends Controller
     {
         $user = $request->user();
         if ($user->owner->owner_id !== $ownerId) {
-            return response()->json(['error' => 'This action is unauthorized.'], 403);
+            return response()->json(['error' => self::UNAUTHORIZED_ACTION], 403);
         }
         // get all establishments from the owner
         $establishments = DB::table('establishments')
@@ -74,7 +75,7 @@ class EstablishmentController extends Controller
         // verify match
         if ($user->owner->owner_id !== $ownerId) {
             // error message
-            return response()->json(['error' => 'This action is unauthorized.'], 403);
+            return response()->json(['error' => self::UNAUTHORIZED_ACTION], 403);
         }
 
         $request->validate([
@@ -121,8 +122,8 @@ class EstablishmentController extends Controller
 
         
 
-        $validation_code = Crypt::encryptString(random_int(1000, 9999));
-        Log::info('Generated validation code: ' . $validation_code);
+        $validationCode = Crypt::encryptString(random_int(1000, 9999));
+        Log::info('Generated validation code: ' . $validationCode);
         Log::info('Establishment data: ' . json_encode([
             'trade_name' => $request->trade_name,
             'siret' => $request->siret,
@@ -133,7 +134,7 @@ class EstablishmentController extends Controller
             'opening' => $opening,
             'owner_id' => $ownerId,
             'address_id' => $address->address_id,
-            'validation_code' => $validation_code,
+            'validation_code' => $validationCode,
             'status_id' => $establPending
         ]));
 
@@ -151,7 +152,7 @@ class EstablishmentController extends Controller
             'opening' => $opening,
             'owner_id' => $ownerId,
             'address_id' => $address->address_id,
-            'validation_code' => $validation_code,
+            'validation_code' => $validationCode,
             'status_id' => $establPending
         ]);
 
@@ -181,7 +182,7 @@ class EstablishmentController extends Controller
         // Vérifiez si l'utilisateur authentifié est le propriétaire des établissements
         if ($user->owner->owner_id !== $ownerId) {
             // Si l'utilisateur n'est pas le propriétaire des établissements, retournez une réponse HTTP 403 (Interdit)
-            return response()->json(['error' => 'This action is unauthorized.'], 403);
+            return response()->json(['error' => self::UNAUTHORIZED_ACTION], 403);
         }
 
         // get all establishments from the owner
@@ -213,7 +214,7 @@ class EstablishmentController extends Controller
             ->findOrFail($establishmentId);
 
         if ($user->owner->owner_id !== $establishment->owner_id) {
-            return response()->json(['error' => 'This action is unauthorized.'], 403);
+            return response()->json(['error' => self::UNAUTHORIZED_ACTION], 403);
         }
 
         $request->validate([
@@ -320,7 +321,7 @@ class EstablishmentController extends Controller
         // Vérifiez si l'utilisateur authentifié est le propriétaire des établissements
         if ($user->owner->owner_id !== $ownerId) {
             // Si l'utilisateur n'est pas le propriétaire des établissements, retournez une réponse HTTP 403 (Interdit)
-            return response()->json(['error' => 'This action is unauthorized.'], 403);
+            return response()->json(['error' => self::UNAUTHORIZED_ACTION], 403);
         }
 
         $establishment = Establishment::withTrashed()->where('owner_id', $ownerId)
@@ -346,7 +347,7 @@ class EstablishmentController extends Controller
     {
         $user = $request->user();
         if ($user->owner->owner_id !== $ownerId) {
-            return response()->json(['error' => 'This action is unauthorized.'], 403);
+            return response()->json(['error' => self::UNAUTHORIZED_ACTION], 403);
         }
 
         $establishment = Establishment::withTrashed()->where('owner_id', $ownerId)
