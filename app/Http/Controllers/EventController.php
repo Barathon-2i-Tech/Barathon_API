@@ -229,14 +229,8 @@ class EventController extends Controller
             return $this->error(null, "Event already deleted", 404);
         }
 
-        //get the owner of the establishment
-        $owner = User::join('establishments', 'users.owner_id', '=', 'establishments.owner_id')
-            ->join('events', 'establishments.establishment_id', '=', 'events.establishment_id')
-            ->where('events.event_id', $eventId)
-            ->first(['users.*']);
-
-        // if the autenticated user is not the owner of the establishment
-            if ($user->user_id !== $owner->user_id) {
+        // Check if the current authenticated user is the owner of the establishment
+            if ($user->user_id !== $event->user_id) {
                 return response()->json(['error' => 'Unauthorized'], 403);
             }
 
