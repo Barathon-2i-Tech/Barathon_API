@@ -15,19 +15,18 @@ class InseeControllerTest extends TestCase
 
    /**
     * A test to check if the access token is created
-    * FIXME: API DOWN
     */
 
 
-//    public function test_generateToken_Returns_Valid_Access_Token(): void
-//    {
-//        $inseeApi = new InseeController();
-//        $accessToken = $inseeApi->generateToken();
-//
-//        $this->assertNotEmpty($accessToken);
-//        $this->assertIsString($accessToken);
-//
-//    }
+    public function test_generateToken_Returns_Valid_Access_Token(): void
+    {
+        $inseeApi = new InseeController();
+        $accessToken = $inseeApi->generateToken();
+
+        $this->assertNotEmpty($accessToken);
+        $this->assertIsString($accessToken);
+
+    }
 
     /**
      * A test to get a 200 response with valid siren with http fake.

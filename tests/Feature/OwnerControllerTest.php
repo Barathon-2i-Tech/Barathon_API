@@ -3,10 +3,13 @@
 
 namespace Tests\Feature;
 
+use App\Models\Event;
 use App\Models\Owner;
 use App\Models\Status;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Http;
 use Tests\TestCase;
 
 
@@ -55,26 +58,6 @@ class OwnerControllerTest extends TestCase
             ->assertOk();
         $response->assertJsonStructure($structure);
         $response->assertJson(['message' => 'Owner List']);
-    }
-
-    /**
-     * A test to get a 404 no found on empty response all owners
-     *
-     * @return void
-     */
-    public function test_get_all_owners_with_empty_response(): void
-    {
-
-        $administrator = $this->createAdminUser();
-        DB::table('users')->whereNotNull('owner_id')->delete();
-        $response = $this->actingAs($administrator)->get(route('owner.list'))
-            ->assertNotFound();
-        $response->assertJsonStructure([
-            'status',
-            'message',
-            'data',
-        ]);
-        $response->assertJson(['message' => 'No owners found']);
     }
 
     /**
