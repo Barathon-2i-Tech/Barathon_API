@@ -8,7 +8,7 @@ services:
             dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
-        image: sail-8.1/app
+        image: sail-8.1/barathon
         container_name: barathon-laravel
         extra_hosts:
             - 'host.docker.internal:host-gateway'
@@ -48,26 +48,6 @@ services:
             retries: 3
             timeout: 5s
 
-    #Postgres Service (Database)
-    sirene_pgsql:
-        image: 'postgres:14'
-        container_name: barathon-pgsql-sirene
-        ports:
-            - '${FORWARD_DB_PORT_SIRENE:-5433}:5432'
-        environment:
-            PGPASSWORD: '${DB_PASSWORD_SIRENE:-secret}'
-            POSTGRES_DB: '${DB_DATABASE_SIRENE}'
-            POSTGRES_USER: '${DB_USERNAME_SIRENE}'
-            POSTGRES_PASSWORD: '${DB_PASSWORD_SIRENE:-secret}'
-        volumes:
-            - 'barathon-sirene-pgsql:/var/lib/postgresql/data'
-        networks:
-            - barathon
-        healthcheck:
-            test: [ "CMD", "pg_sirene_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}" ]
-            retries: 3
-            timeout: 5s
-
     #PgAdmin Service (DataBase Management System )
     pgadmin:
         image: dpage/pgadmin4:latest
@@ -89,7 +69,6 @@ networks:
 volumes:
     barathon-pgsql:
         driver: local
-    barathon-sirene-pgsql:
-        driver: local
+
     pgadmin:
         driver: local

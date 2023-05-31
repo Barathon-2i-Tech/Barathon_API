@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::connection('pgsql_db_sirene')->create('siren', function (Blueprint $table) {
+        Schema::create('siren', function (Blueprint $table) {
             $table->string('siren', 9);
             $table->string('statutDiffusionUniteLegale', 1);
             $table->boolean('unitePurgeeUniteLegale')->nullable();
@@ -58,6 +58,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::connection('pgsql_db_sirene')->dropIfExists('siren');
+        Schema::dropIfExists('siren');
     }
 };
