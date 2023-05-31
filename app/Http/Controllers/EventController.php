@@ -6,6 +6,7 @@ use App\Models\Address;
 use App\Models\Booking;
 use App\Models\Establishment;
 use App\Models\Event;
+use App\Models\Owner;
 use App\Models\Status;
 use App\Models\User;
 use App\Traits\HttpResponses;
@@ -227,10 +228,17 @@ class EventController extends Controller
         if ($event->deleted_at !== null) {
             return $this->error(null, "Event already deleted", 404);
         }
-        // If the authenticated user's id doesn't match with the event's user_id, return an error
-        if ($user->user_id !== $event->user_id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+
+        //get the owner of the establishment
+        $owner = User::join('establishments', 'users.owner_id', '=', 'establishments.owner_id')
+            ->join('events', 'establishments.establishment_id', '=', 'events.establishment_id')
+            ->where('events.event_id', $eventId)
+            ->first(['users.*']);
+
+        // if the autenticated user is not the owner of the establishment
+            if ($user->user_id !== $owner->user_id) {
+                return response()->json(['error' => 'Unauthorized'], 403);
+            }
 
         $event->delete();
         return $this->success(null, "Event Deleted successfully");
