@@ -185,7 +185,7 @@ class InseeController extends Controller
      */
     public function getSirenFromLocal(string $siren): JsonResponse
     {
-        $response = DB::connection('pgsql_db_sirene')->table('siren')
+        $response = DB::table('siren')
             ->join('siret', 'siren.siren', '=', 'siret.siren')
             ->select(
                 'siren.siren',
@@ -230,7 +230,7 @@ class InseeController extends Controller
     public function getSiretFromLocal(string $siret)
     {
 
-        $response = DB::connection('pgsql_db_sirene')->table('siret')
+        $response = DB::table('siret')
             ->join('siren', 'siret.siren', '=', 'siren.siren')
             ->select(
                 'siret.siren',

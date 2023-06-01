@@ -122,8 +122,8 @@ class EventControllerTest extends TestCase
         $eventData = [
             'event_name' => 'Test Event',
             'description' => 'Test Event Description',
-            'start_event' => '2023-06-01 18:00:00',
-            'end_event' => '2023-06-01 22:00:00',
+            'start_event' => '2024-06-01 18:00:00',
+            'end_event' => '2024-06-01 22:00:00',
             'price' => 20,
             'capacity' => 100,
             'establishment_id' => $establishment->establishment_id,
@@ -156,8 +156,8 @@ class EventControllerTest extends TestCase
         $updatedEventData = [
             'event_name' => 'Updated Test Event',
             'description' => 'Updated Test Event Description',
-            'start_event' => '2023-06-01 18:00:00',
-            'end_event' => '2023-06-01 22:00:00',
+            'start_event' => '2024-06-01 18:00:00',
+            'end_event' => '2024-06-01 22:00:00',
             'price' => 25,
             'capacity' => 150,
             'establishment_id' => $event->establishment_id,
