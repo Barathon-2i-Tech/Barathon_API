@@ -34,7 +34,7 @@ class EventController extends Controller
         $establishment = Establishment::find($establishmentId);
 
         if ($user->owner_id !== $establishment->owner_id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+            return $this->error(null, "Unauthorized", 401);
         }
 
         $events = DB::table('events')
@@ -61,7 +61,7 @@ class EventController extends Controller
         $establishment = Establishment::find($establishmentId);
 
         if ($user->owner_id !== $establishment->owner_id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+            return $this->error(null, "Unauthorized", 401);
         }
 
         // Get the specific event from the establishment
@@ -89,7 +89,7 @@ class EventController extends Controller
         $establishment = Establishment::find($request->input('establishment_id'));
 
         if ($user->owner_id !== $establishment->owner_id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+            return $this->error(null, "Unauthorized", 401);
         }
 
         $request->validate([
@@ -105,7 +105,7 @@ class EventController extends Controller
         ]);
         // Validate that the start and end event dates are not in the past
         if (Carbon::parse($request->input('start_event'))->isPast() || Carbon::parse($request->input('end_event'))->isPast()) {
-            return $this->error(null, "L'événement ne peut avoir lieu dans le passé", 400);
+            return $this->error(null, "The event can not take place in the past", 400);
         }
 
         $eventPending = Status::where('comment->code', 'EVENT_PENDING')->first();
@@ -155,7 +155,7 @@ class EventController extends Controller
 
         // Ensure that the user trying to modify the event is the same user who created the event
         if ($user->owner_id !== $establishment->owner_id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+            return $this->error(null, "Unauthorized", 401);
         }
 
         $request->validate([
@@ -172,7 +172,7 @@ class EventController extends Controller
 
         // Validate that the start and end event dates are not in the past
         if (Carbon::parse($request->input('start_event'))->isPast() || Carbon::parse($request->input('end_event'))->isPast()) {
-            return $this->error(null, "L'événement ne peut avoir lieu dans le passé", 400);
+            return $this->error(null, "The event can not take place in the past", 400);
         }
 
         // Handle poster file upload if a new poster is present in the request
@@ -231,7 +231,7 @@ class EventController extends Controller
 
         // Check if the current authenticated user is the owner of the establishment
             if ($user->user_id !== $event->user_id) {
-                return response()->json(['error' => 'Unauthorized'], 403);
+                return $this->error(null, "Unauthorized", 401);
             }
 
         $event->delete();
