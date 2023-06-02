@@ -6,6 +6,7 @@ use App\Models\Address;
 use App\Models\Booking;
 use App\Models\Establishment;
 use App\Models\Event;
+use App\Models\Owner;
 use App\Models\Status;
 use App\Models\User;
 use App\Traits\HttpResponses;
@@ -33,7 +34,7 @@ class EventController extends Controller
         $establishment = Establishment::find($establishmentId);
 
         if ($user->owner_id !== $establishment->owner_id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+            return $this->error(null, "Unauthorized", 401);
         }
 
         $events = DB::table('events')
@@ -60,7 +61,7 @@ class EventController extends Controller
         $establishment = Establishment::find($establishmentId);
 
         if ($user->owner_id !== $establishment->owner_id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+            return $this->error(null, "Unauthorized", 401);
         }
 
         // Get the specific event from the establishment
@@ -88,7 +89,7 @@ class EventController extends Controller
         $establishment = Establishment::find($request->input('establishment_id'));
 
         if ($user->owner_id !== $establishment->owner_id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+            return $this->error(null, "Unauthorized", 401);
         }
 
         $request->validate([
@@ -96,15 +97,31 @@ class EventController extends Controller
             'description' => 'required|string',
             'start_event' => 'required|date',
             'end_event' => 'required|date',
-            'poster' => 'nullable|image|mimes:jpeg,png,jpg,gif,svg|max:2048',
             'price' => 'nullable|numeric',
             'capacity' => 'nullable|integer',
             'establishment_id' => 'required|integer',
             'user_id' => 'required|integer',
+        ],[
+            'event_name.required' => 'The event name is required',
+            'event_name.string' => 'The event name must be a string',
+            'event_name.max' => 'The event name must not exceed 255 characters',
+            'description.required' => 'The event description is required',
+            'description.string' => 'The event description must be a string',
+            'start_event.required' => 'The event start date is required',
+            'start_event.date' => 'The event start date must be a date',
+            'end_event.required' => 'The event end date is required',
+            'end_event.date' => 'The event end date must be a date',
+            'price.numeric' => 'The event price must be a number',
+            'capacity.integer' => 'The event capacity must be an integer',
+            'establishment_id.required' => 'The establishment id is required',
+            'establishment_id.integer' => 'The establishment id must be an integer',
+            'user_id.required' => 'The user id is required',
+            'user_id.integer' => 'The user id must be an integer',
         ]);
+        
         // Validate that the start and end event dates are not in the past
         if (Carbon::parse($request->input('start_event'))->isPast() || Carbon::parse($request->input('end_event'))->isPast()) {
-            return $this->error(null, "L'événement ne peut avoir lieu dans le passé", 400);
+            return $this->error(null, "The event can not take place in the past", 400);
         }
 
         $eventPending = Status::where('comment->code', 'EVENT_PENDING')->first();
@@ -154,7 +171,7 @@ class EventController extends Controller
 
         // Ensure that the user trying to modify the event is the same user who created the event
         if ($user->owner_id !== $establishment->owner_id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
+            return $this->error(null, "Unauthorized", 401);
         }
 
         $request->validate([
@@ -166,12 +183,29 @@ class EventController extends Controller
             'capacity' => 'nullable|integer',
             'establishment_id' => 'required|integer',
             'user_id' => 'required|integer',
-            'event_update_id' => 'nullable|string',
+            'event_update_id' => 'nullable|integer',
+        ],[
+            'event_name.required' => 'The event name is required',
+            'event_name.string' => 'The event name must be a string',
+            'event_name.max' => 'The event name must not exceed 255 characters',
+            'description.required' => 'The event description is required',
+            'description.string' => 'The event description must be a string',
+            'start_event.required' => 'The event start date is required',
+            'start_event.date' => 'The event start date must be a date',
+            'end_event.required' => 'The event end date is required',
+            'end_event.date' => 'The event end date must be a date',
+            'price.numeric' => 'The event price must be a number',
+            'capacity.integer' => 'The event capacity must be an integer',
+            'establishment_id.required' => 'The establishment id is required',
+            'establishment_id.integer' => 'The establishment id must be an integer',
+            'user_id.required' => 'The user id is required',
+            'user_id.integer' => 'The user id must be an integer',
+            'event_update_id.integer' => 'The event update id must be an integer',
         ]);
 
         // Validate that the start and end event dates are not in the past
         if (Carbon::parse($request->input('start_event'))->isPast() || Carbon::parse($request->input('end_event'))->isPast()) {
-            return $this->error(null, "L'événement ne peut avoir lieu dans le passé", 400);
+            return $this->error(null, "The event can not take place in the past", 400);
         }
 
         // Handle poster file upload if a new poster is present in the request
@@ -227,10 +261,11 @@ class EventController extends Controller
         if ($event->deleted_at !== null) {
             return $this->error(null, "Event already deleted", 404);
         }
-        // If the authenticated user's id doesn't match with the event's user_id, return an error
-        if ($user->user_id !== $event->user_id) {
-            return response()->json(['error' => 'Unauthorized'], 403);
-        }
+
+        // Check if the current authenticated user is the owner of the establishment
+            if ($user->user_id !== $event->user_id) {
+                return $this->error(null, "Unauthorized", 401);
+            }
 
         $event->delete();
         return $this->success(null, "Event Deleted successfully");

@@ -2,7 +2,8 @@
 
 namespace Tests\Feature;
 
-
+use App\Models\Establishment;
+use App\Models\Event;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -16,7 +17,7 @@ class EventControllerTest extends TestCase
      */
     public function test_get_events_by_establishment_id()
     {
-        $establishmentId = 1; // Replace with a valid establishment ID
+        $establishment = Establishment::all()->first();
 
         $structure = [
             "status",
@@ -42,6 +43,7 @@ class EventControllerTest extends TestCase
                     "siret",
                     "address_id",
                     "logo",
+                    "validation_code",
                     "phone",
                     "email",
                     "website",
@@ -54,7 +56,7 @@ class EventControllerTest extends TestCase
 
         $owner = $this->createOwnerUser();
 
-        $response = $this->actingAs($owner)->get(route('pro.eventsByEstablishmentId', ["establishmentId" => $establishmentId]))
+        $response = $this->actingAs($owner)->get(route('pro.eventsByEstablishmentId', ["establishmentId" => $establishment->establishment_id]))
             ->assertOk();
 
         $response->assertJsonStructure($structure);
@@ -65,8 +67,8 @@ class EventControllerTest extends TestCase
      */
     public function test_show_specific_event()
     {
-        $establishmentId = 1; // Replace with a valid establishment ID
-        $eventId = 1; // Replace with a valid event ID
+        $establishment = Establishment::all()->first();
+        $event = Event::where("establishment_id", $establishment->establishment_id)->first();
 
         $structure = [
             "status",
@@ -90,6 +92,7 @@ class EventControllerTest extends TestCase
                 "siret",
                 "address_id",
                 "logo",
+                "validation_code",
                 "phone",
                 "email",
                 "website",
@@ -100,7 +103,7 @@ class EventControllerTest extends TestCase
 
         $owner = $this->createOwnerUser();
 
-        $response = $this->actingAs($owner)->get(route('event.show', ["establishmentId" => $establishmentId, "eventId" => $eventId]))
+        $response = $this->actingAs($owner)->get(route('event.show', ["establishmentId" => $establishment->establishment_id, "eventId" => $event->event_id]))
             ->assertOk();
 
         $response->assertJsonStructure($structure);
@@ -111,16 +114,54 @@ class EventControllerTest extends TestCase
      */
     public function test_store_event()
     {
+
+        $owner = $this->createOwnerUser();
+        $establishment = Establishment::all()->first();
+
         // Prepare the event data
         $eventData = [
             'event_name' => 'Test Event',
             'description' => 'Test Event Description',
-            'start_event' => '2023-06-01 18:00:00',
-            'end_event' => '2023-06-01 22:00:00',
+            'start_event' => '2024-06-01 18:00:00',
+            'end_event' => '2024-06-01 22:00:00',
             'price' => 20,
             'capacity' => 100,
-            'establishment_id' => 1, // Replace with a valid establishment ID
-            'user_id' => 1, // Replace with a valid user ID
+            'establishment_id' => $establishment->establishment_id,
+            'user_id' => $owner->owner_id,
+        ];
+
+        $structure = [
+            "status",
+            "message",
+            "data" => [
+                "event"
+            ]
+        ];
+
+
+        $response = $this->actingAs($owner)->post(route('pro.postEvents'), $eventData)
+            ->assertStatus(201);
+
+        $response->assertJsonStructure($structure);
+    }
+
+    /**
+     * A Test for check if we can update an event
+     */
+    public function test_update_event()
+    {
+
+        $event = Event::all()->first();
+        // Prepare the updated event data
+        $updatedEventData = [
+            'event_name' => 'Updated Test Event',
+            'description' => 'Updated Test Event Description',
+            'start_event' => '2024-06-01 18:00:00',
+            'end_event' => '2024-06-01 22:00:00',
+            'price' => 25,
+            'capacity' => 150,
+            'establishment_id' => $event->establishment_id,
+            'user_id' => $event->user_id,
         ];
 
         $structure = [
@@ -133,65 +174,95 @@ class EventControllerTest extends TestCase
 
         $owner = $this->createOwnerUser();
 
-        $response = $this->actingAs($owner)->post(route('pro.postEvents'), $eventData)
-            ->assertStatus(201);
+        $response = $this->actingAs($owner)->put(route('pro.putEvent', ["establishmentId" =>  $event->establishment_id, "eventId" => $event->event_id]), $updatedEventData)
+            ->assertOk();
 
         $response->assertJsonStructure($structure);
+
+        $response->assertJson(['message' => 'Event Updated']);
     }
 
-/**
- * A Test for check if we can update an event
- */
-public function test_update_event()
-{
-    $establishmentId = 1; // Replace with a valid establishment ID
-    $eventId = 1; // Replace with a valid event ID
 
-    // Prepare the updated event data
-    $updatedEventData = [
-        'event_name' => 'Updated Test Event',
-        'description' => 'Updated Test Event Description',
-        'start_event' => '2023-06-01 18:00:00',
-        'end_event' => '2023-06-01 22:00:00',
-        'price' => 25,
-        'capacity' => 150,
-        'establishment_id' => 1, // Replace with a valid establishment ID
-        'user_id' => 1, // Replace with a valid user ID
-    ];
+    public function test_update_event_unauthorized_user()
+    {
 
-    $structure = [
-        "status",
-        "message",
-        "data" => [
-            "event"
-        ]
-    ];
+        $barathonien = $this->createBarathonienUser();
 
-    $owner = $this->createOwnerUser();
+        $event = Event::all()->first();
+        // Prepare the updated event data
+        $updatedEventData = [
+            'event_name' => 'Updated Test Event',
+            'description' => 'Updated Test Event Description',
+            'start_event' => '2023-06-01 18:00:00',
+            'end_event' => '2023-06-01 22:00:00',
+            'price' => 25,
+            'capacity' => 150,
+            'establishment_id' => $event->establishment_id,
+            'user_id' => $event->user_id,
+        ];
 
-    $response = $this->actingAs($owner)->put(route('pro.putEvent', ["establishmentId" => $establishmentId, "eventId" => $eventId]), $updatedEventData)
-        ->assertOk();
+        $structure = [
+            "status",
+            "message",
+            "data",
+        ];
 
-    $response->assertJsonStructure($structure);
-}
+        $response = $this->actingAs($barathonien)->put(route('pro.putEvent', ["establishmentId" =>  $event->establishment_id, "eventId" => $event->event_id]), $updatedEventData)
+        ->assertUnauthorized();
 
-/**
- * A Test for check if we can delete an event
- */
-public function test_delete_event()
-{
-    $eventId = 1; // Replace with a valid event ID
+        $response->assertJsonStructure($structure);
+        $response->assertJson(['message' => 'Unauthorized']);
+    }
 
-    $owner = $this->createOwnerUser();
+    public function test_update_if_event_in_the_past()
+    {
+        $owner = $this->createOwnerUser();
 
-    $response = $this->actingAs($owner)->delete(route('pro.event.delete', ["eventId" => $eventId]))
-        ->assertOk();
-        
-    $response->assertJsonStructure([
-        "status",
-        "message"
-    ]);
-}
+        $event = Event::all()->first();
+        // Prepare the updated event data
+        $updatedEventData = [
+            'event_name' => 'Updated Test Event',
+            'description' => 'Updated Test Event Description',
+            'start_event' => '1910-06-01 18:00:00',
+            'end_event' => '1933-06-01 22:00:00',
+            'price' => 25,
+            'capacity' => 150,
+            'establishment_id' => $event->establishment_id,
+            'user_id' => $event->user_id,
+        ];
+
+        $structure = [
+            "status",
+            "message",
+            "data",
+        ];
+
+        $response = $this->actingAs($owner)->put(route('pro.putEvent', ["establishmentId" =>  $event->establishment_id, "eventId" => $event->event_id]), $updatedEventData)
+        ->assertBadRequest();
+
+        $response->assertJsonStructure($structure);
+        $response->assertJson(['message' => 'The event can not take place in the past']);
+    }
+
+
+
+    /**
+     * A Test for check if we can delete an event
+     */
+    public function test_delete_event()
+    {
+        $event = Event::all()->first();
+
+        $owner = $this->createOwnerUser();
+
+        $response = $this->actingAs($owner)->delete(route('pro.event.delete', ["eventId" => $event->event_id]))
+            ->assertOk();
+
+        $response->assertJsonStructure([
+            "status",
+            "message"
+        ]);
+    }
 
     /**
      * A Test for check if we can have the events with the same city than the user in parametter
@@ -205,7 +276,8 @@ public function test_delete_event()
             "message",
             "data" => [
                 "event"
-            ]];
+            ]
+        ];
 
         $user = $this->createBarathonienUser();
 
@@ -213,7 +285,6 @@ public function test_delete_event()
             ->assertOk();
 
         $response->assertJsonStructure($structure);
-
     }
 
     /**
@@ -226,7 +297,8 @@ public function test_delete_event()
         $structure = [
             "status",
             "message",
-            "data"];
+            "data"
+        ];
 
         $user = $this->createAdminUser();
 
@@ -234,7 +306,6 @@ public function test_delete_event()
             ->assertStatus(500);
 
         $response->assertJsonStructure($structure);
-
     }
 
 
@@ -250,7 +321,8 @@ public function test_delete_event()
             "message",
             "data" => [
                 "bookings"
-            ]];
+            ]
+        ];
 
         $user = $this->createBarathonienUser();
 
@@ -258,7 +330,6 @@ public function test_delete_event()
             ->assertOk();
 
         $response->assertJsonStructure($structure);
-
     }
 
     /**
@@ -271,7 +342,8 @@ public function test_delete_event()
         $structure = [
             "status",
             "message",
-            "data"];
+            "data"
+        ];
 
         $user = $this->createAdminUser();
 
@@ -279,7 +351,6 @@ public function test_delete_event()
             ->assertStatus(500);
 
         $response->assertJsonStructure($structure);
-
     }
 
     /**
@@ -295,7 +366,8 @@ public function test_delete_event()
             "data" => [
                 "booking",
                 "event"
-            ]];
+            ]
+        ];
 
         $user = $this->createBarathonienUser();
 
@@ -303,7 +375,6 @@ public function test_delete_event()
             ->assertOk();
 
         $response->assertJsonStructure($structure);
-
     }
 
     /**
@@ -316,7 +387,8 @@ public function test_delete_event()
         $structure = [
             "status",
             "message",
-            "data"];
+            "data"
+        ];
 
         $user = $this->createAdminUser();
 
@@ -324,7 +396,5 @@ public function test_delete_event()
             ->assertStatus(500);
 
         $response->assertJsonStructure($structure);
-
     }
-
 }
