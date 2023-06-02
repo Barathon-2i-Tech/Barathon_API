@@ -263,14 +263,12 @@ class EventController extends Controller
             return $this->error(null, "Event already deleted", 404);
         }
 
-        // Check if the current authenticated user is the owner of the establishment
-        if ($user->owner_id !== $event->establishment->owner_id  && $user->owner_id !== null || $user->administrator_id === null) {
+        // Check if the current authenticated user is the owner of the establishment or an administrator
+        if ($user->owner_id !== $event->establishment->owner_id && $user->owner_id !== null || $user->administrator_id === null) {
             return $this->error(null, "Unauthorized", 401);
         }
 
-        if ($user->user_id !== $event->user_id) {
-                return $this->error(null, "Unauthorized", 401);
-            }
+
 
         $event->delete();
         return $this->success(null, "Event Deleted successfully");

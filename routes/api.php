@@ -77,7 +77,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(OwnerController::class)->group(function () {
         Route::get('/pro/list', 'getOwnerList')->name('owner.list');
         Route::get('/admin/pro-to-validate', 'getOwnerToValidate')->name('admin.pro-to-validate');
-        Route::put('/pro/{owner_id}/validation/{status_code}', 'validateOwner')->name('pro.validation');
+        Route::patch('/pro/{owner_id}/validation/{status_code}', 'validateOwner')->name('pro.validation');
         Route::get('pro/{user_id}', 'show')->name('owner.show');
         Route::put('pro/{user_id}', 'update')->name('owner.update');
         Route::delete('pro/{user_id}', 'destroy')->name('owner.delete');
@@ -111,7 +111,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(EstablishmentController::class)->group(function () {
         Route::get('/establishments/list', 'getAllEstablishments')->name('admin.establishment.list');
         Route::get('/admin/establishment-to-validate', 'getEstablishmentToValidate')->name('admin.establishment-to-validate');
-        Route::put('/establishment/{establishment_id}/validation/{status_code}', 'validateEstablishment')->name('establishment.validation');
+        Route::patch('/establishment/{establishment_id}/validation/{status_code}', 'validateEstablishment')->name('establishment.validation');
         Route::get('/pro/{owner_id}/establishment', 'getEstablishmentListByOwnerId')->name('establishment.list');
         Route::get('/pro/{owner_id}/establishment/{establishment_id}', 'show')->name('establishment.show');
         Route::put('/pro/establishment/{establishment_id}', 'update')->name('establishment.update');
