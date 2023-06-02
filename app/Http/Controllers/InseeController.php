@@ -216,7 +216,7 @@ class InseeController extends Controller
             ->where('siren.siren', $siren)
             ->where('siret.etablissementSiege', true)
             ->get();
-        if (empty($response)) {
+        if ($response->isEmpty()) {
             return $this->error(null, 'Siren not found in local database', 404);
         } else {
             return $this->success(['local' => true, 'response' => $response[0]], "Siren found from local database");
@@ -257,7 +257,7 @@ class InseeController extends Controller
             )
             ->where('siret.siret', $siret)
             ->get();
-        if (empty($response)) {
+        if ($response->isEmpty()) {
             return $this->error(null, 'Siret not found in local database', 404);
         } else {
             return $this->success(['local' => true, 'response' => $response[0]], "siret found from local database");
