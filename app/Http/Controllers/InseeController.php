@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Traits\HttpResponses;
 use GuzzleHttp\Client;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -14,6 +15,7 @@ class InseeController extends Controller
 
     private const BASE_URL = 'https://api.insee.fr/entreprises/sirene/V3/';
     private string $apiKey;
+    private const UNAUTHORIZED_ACTION = "This action is unauthorized.";
 
     public function __construct()
     {
@@ -27,8 +29,7 @@ class InseeController extends Controller
      */
     public function checkHost(): bool
     {
-       $host = 'api.insee.fr';
-        // $host = 'google';
+        $host = 'api.insee.fr';
         $isHostResolvable = false;
         $ipAddress = gethostbyname($host);
 
@@ -81,6 +82,12 @@ class InseeController extends Controller
      */
     public function getSiren(string $siren): JsonResponse
     {
+        //check if user is admin
+        $user = Auth::user();
+        if ($user->administrator_id === null) {
+            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
+        }
+
         // removing blank space
         $sirenToCheck = str_replace(' ', '', $siren);
 
@@ -139,6 +146,12 @@ class InseeController extends Controller
      */
     public function getSiret(string $siret): JsonResponse
     {
+        //check if user is admin
+        $user = Auth::user();
+        if ($user->administrator_id === null) {
+            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
+        }
+
         // format siren
         $siretToCheck = str_replace(' ', '', $siret);
 
@@ -229,7 +242,6 @@ class InseeController extends Controller
      */
     public function getSiretFromLocal(string $siret)
     {
-
         $response = DB::table('siret')
             ->join('siren', 'siret.siren', '=', 'siren.siren')
             ->select(
