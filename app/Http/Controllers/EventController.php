@@ -332,6 +332,7 @@ class EventController extends Controller
      */
     public function getEventsLocation(): JsonResponse
     {
+
         $dateNow = date('Y-m-j H:i:s');
 
         $establishments = Establishment::with('address')->get();
