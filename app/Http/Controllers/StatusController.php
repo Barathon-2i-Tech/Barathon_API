@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Status;
 use App\Traits\HttpResponses;
-use Exception;
 use Illuminate\Http\JsonResponse;
 
 class StatusController extends Controller
@@ -18,14 +17,9 @@ class StatusController extends Controller
      */
     public function establishmentStatus()
     {
-        try {
-            $status = Status::where('comment->code', 'LIKE', 'ESTABL%')
-                ->get();
-            return $this->success($status, "Status List");
-
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 500);
-        }
+        $status = Status::where('comment->code', 'LIKE', 'ESTABL%')
+            ->get();
+        return $this->success($status, "Establishments Status List");
     }
 
     /**
@@ -33,13 +27,20 @@ class StatusController extends Controller
      */
     public function ownerStatus(): JsonResponse
     {
-        try {
-            $status = Status::where('comment->code', 'LIKE', 'OWNER%')
-                ->get();
+        $status = Status::where('comment->code', 'LIKE', 'OWNER%')
+            ->get();
 
-            return $this->success($status, 'Status List');
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 500);
-        }
+        return $this->success($status, ' Owners Status List');
+    }
+
+    /**
+     * Display a listing of all status about events.
+     */
+    public function eventsStatus(): JsonResponse
+    {
+        $status = Status::where('comment->code', 'LIKE', 'EVENT%')
+            ->get();
+
+        return $this->success($status, 'Events Status List');
     }
 }

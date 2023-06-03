@@ -1,6 +1,8 @@
 <?php
 
 
+namespace Tests\Feature;
+
 use App\Models\Status;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
@@ -15,9 +17,9 @@ class StatusModelTest extends TestCase
      */
     public function test_status_model_exist()
     {
-       $status = Status::query()->first();
+        $status = Status::query()->first();
 
-       $this->assertModelExists($status);
+        $this->assertModelExists($status);
     }
 
 

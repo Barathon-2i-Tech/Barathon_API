@@ -11,6 +11,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Storage;
 
 class Establishment extends Model
 {
@@ -29,7 +30,6 @@ class Establishment extends Model
     protected $primaryKey = 'establishment_id';
 
     /**
-
      * The attributes that should be cast.
      *
      * @var array
@@ -39,7 +39,6 @@ class Establishment extends Model
     ];
 
     /**
-
      * The attributes that are mass assignable.
      *
      * @var string[]
@@ -55,7 +54,7 @@ class Establishment extends Model
         'opening',
         'owner_id',
         'status_id',
-        'deleted_at',
+        'validation_code',
     ];
 
     /**
@@ -87,7 +86,7 @@ class Establishment extends Model
      */
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, "category_establishment", "establishment_id", "category_id");
+        return $this->belongsToMany(Category::class, "categories_establishments", "establishment_id", "category_id");
     }
 
     /**
@@ -107,4 +106,14 @@ class Establishment extends Model
     {
         return $this->hasOne(Address::class, 'address_id');
     }
+
+    public function getLogoUrlAttribute()
+    {
+        if ($this->logo) {
+            return Storage::url($this->logo);
+        }
+
+        return null;
+    }
 }
+

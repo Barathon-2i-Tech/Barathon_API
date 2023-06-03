@@ -1,5 +1,6 @@
 <?php
 
+namespace Tests\Feature;
 
 use App\Models\Barathonien;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -17,7 +18,7 @@ class BarathonienModelTest extends TestCase
     {
         $barathonien = Barathonien::query()->first();
 
-       $this->assertModelExists($barathonien);
+        $this->assertModelExists($barathonien);
     }
 
 

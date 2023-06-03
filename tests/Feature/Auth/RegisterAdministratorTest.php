@@ -2,9 +2,9 @@
 
 namespace Auth;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 
 class RegisterAdministratorTest extends TestCase
@@ -31,8 +31,9 @@ class RegisterAdministratorTest extends TestCase
                 ],
                 "token"
             ]];
+        $administrator = $this->createAdminUser();
 
-        $response = $this->postJson(route('user.register.admin'), [
+        $response = $this->actingAs($administrator)->postJson(route('user.register.admin'), [
             'first_name' => 'Pierre',
             'last_name' => 'Dupont',
             'email' => 'toto@gmail.com',

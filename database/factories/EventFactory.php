@@ -25,15 +25,14 @@ class EventFactory extends Factory
     public function definition()
     {
         $establishment = Establishment::where('trade_name', 'Fait Foif')->first();
-        $eventValid = Status::where('comment->code', 'EVENT_VALID')->first();
+        $eventValid = Status::where('comment->code', 'EVENT_PENDING')->first();
         $nb = rand(1, 30);
 
         $user = DB::table('users')
-            ->join('employees', 'users.employee_id', '=', 'employees.employee_id')
-            ->join('establishments_employees', 'employees.employee_id', '=', 'establishments_employees.employee_id')
+           ->join('owners', 'users.owner_id', '=', 'owners.owner_id')
             ->join(
                 'establishments',
-                'establishments_employees.establishment_id',
+                'owners.owner_id',
                 '=',
                 'establishments.establishment_id'
             )

@@ -1,5 +1,6 @@
 <?php
 
+namespace Tests\Feature;
 
 use App\Models\Category_Establishment;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -15,8 +16,8 @@ class Category_establishmentModelTest extends TestCase
      */
     public function test_category_establishment_model_exist()
     {
-    $categoryEstablishment = Category_Establishment::factory()->create();
-    $this->assertModelExists($categoryEstablishment);
+        $categoryEstablishment = Category_Establishment::factory()->create();
+        $this->assertModelExists($categoryEstablishment);
 
     }
 

@@ -17,6 +17,7 @@ class ApiAuthController extends Controller
 
     private const TOKEN_NAME = 'API Token';
 
+
     public function login(LoginUserRequest $request): JsonResponse
     {
         $request->validated();
@@ -72,5 +73,38 @@ class ApiAuthController extends Controller
         $message = 'You have successfully been logged out and your tokens has been removed';
 
         return $this->success([], $message);
+    }
+
+     /**
+     * Update owner password.
+     */
+    public function updateUserPassword(Request $request, int $userId): JsonResponse
+    {
+        // Check if the user exists
+        $user = User::find($userId);
+        if ($user === null) {
+            return $this->error(null, 'User not found', 404);
+        }
+
+        // Validate the request data
+        $request->validate([
+            'password' => 'required|string',
+            'new_password' => ['required', 'string', 'confirmed', Rules\Password::defaults()],
+        ], [
+            'password.required' => 'L\'ancien mot de passe est obligatoire.',
+            'new_password.required' => 'Le nouveau mot de passe est obligatoire.',
+            'new_password.confirmed' => 'Les mots de passe ne correspondent pas.',
+        ]);
+
+        // Check if the old password is correct
+        if (!Hash::check($request->input('password'), $user->password)) {
+            return $this->error(null, 'L\'ancien mot de passe est incorrect.', 401);
+        }
+
+        // Update the user's password
+        $user->password = Hash::make($request->input('new_password'));
+        $user->save();
+
+        return $this->success(null, 'Mot de passe mis à jour');
     }
 }

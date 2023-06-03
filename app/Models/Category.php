@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Category extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     public $timestamps = false;
 
@@ -48,6 +49,6 @@ class Category extends Model
 
     public function events(): BelongsToMany
     {
-        return $this->belongsToMany(Event::class, 'categories_establishments', 'category_id', 'establishment_id');
+        return $this->belongsToMany(Event::class, 'categories_events', 'category_id', 'event_id');
     }
 }

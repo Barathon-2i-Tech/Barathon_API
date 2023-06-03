@@ -5,7 +5,6 @@ namespace App\Http\Controllers;
 use App\Models\Owner;
 use App\Models\User;
 use App\Traits\HttpResponses;
-use Exception;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -21,7 +20,11 @@ class OwnerController extends Controller
     private const STRINGVALIDATION = 'required|string|max:255';
     private const OWNERNOTFOUND = 'Owner not found';
     private const USERNOTFOUND = 'User not found';
-
+    private const AVATARURL_P1 = 'https://img.freepik.com/free-photo/tasty-american-';
+    private const AVATARURL_P2 = 'beer-arrangement_23-2148907580.jpg?w=740&t=st=';
+    private const AVATARURL_P3 = '1683116391~exp=1683116991~';
+    private const AVATARURL_P4 = 'hmac=584918e27d013319c35203ce268841f480637965556343c6173885ba806453f2';
+    private const AVATARURL = self::AVATARURL_P1 . self::AVATARURL_P2 . self::AVATARURL_P3 . self::AVATARURL_P4;
     private const PHONEVALIDATION = ['regex:/^([0-9\s\-\+\(\)]*)$/', 'min:10'];
 
     /**
@@ -36,7 +39,7 @@ class OwnerController extends Controller
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'siren' => 'required|string|size:9|unique:owners',
             'kbis' => 'required|file|mimes:pdf|max:2048',
-            'company_name' => 'string|max:255',
+            'company_name' => 'nullable|string|max:255',
             'phone' => self::PHONEVALIDATION,
         ], [
             'first_name.required' => 'Le prénom est obligatoire.',
@@ -61,7 +64,7 @@ class OwnerController extends Controller
         $kbisFile = $request->file('kbis');
 
         // Check if the file is valid
-        if (! $kbisFile->isValid()) {
+        if (!$kbisFile->isValid()) {
             return $this->error(null, 'Le fichier KBIS n\'est pas valide.', 500);
         }
 
@@ -79,7 +82,7 @@ class OwnerController extends Controller
             'last_name' => $request->input('last_name'),
             'email' => $request->input('email'),
             'password' => Hash::make($request->input('password')),
-            'avatar' => 'https://picsum.photos/180',
+            'avatar' => self::AVATARURL,
         ]);
 
         $owner = Owner::create([
@@ -102,187 +105,180 @@ class OwnerController extends Controller
     /**
      * Display the specified owner.
      */
-    public function show( $userId): JsonResponse
+    public function show(int $userId): JsonResponse
     {
-        try {
-            $owner = DB::table('users')
-                ->join('owners', 'users.owner_id', '=', 'owners.owner_id')
-                ->join('status', 'owners.status_id', '=', 'status.status_id')
-                ->select('users.*', 'owners.*', 'status.*')
-                ->where('users.user_id', $userId)
-                ->get();
+        $owner = DB::table('users')
+            ->join('owners', 'users.owner_id', '=', 'owners.owner_id')
+            ->join('status', 'owners.status_id', '=', 'status.status_id')
+            ->select('users.*', 'owners.*', 'status.*')
+            ->where('users.user_id', $userId)
+            ->get();
 
-            if ($owner->isEmpty()) {
-                return $this->error(null, self::OWNERNOTFOUND, 404);
-            }
-
-            return $this->success($owner, 'Owner Details');
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 500);
+        if ($owner->isEmpty()) {
+            return $this->error(null, self::OWNERNOTFOUND, 404);
         }
+
+        return $this->success($owner, 'Owner Details');
     }
 
     /**
      * Update the specified owner in storage.
      */
-    public function update(Request $request,  $userId): JsonResponse
+    public function update(Request $request, int $userId): JsonResponse
     {
-        try {
-            //get the user given in parameter
-            $user = User::find($userId);
+        
+    //get the user given in parameter
+    $user = User::find($userId);
 
-            if ($user === null) {
-                return $this->error(null, self::OWNERNOTFOUND, 404);
-            }
+    if ($user === null) {
+        return $this->error(null, self::OWNERNOTFOUND, 404);
+    }
 
-            // check if the user is an owner
-            if ($user->owner_id === null) {
-                return $this->error(null, self::OWNERNOTFOUND, 404);
-            }
+    // check if the user is an owner
+    if ($user->owner_id === null) {
+        return $this->error(null, self::OWNERNOTFOUND, 404);
+    }
 
-            // validate the request
-            $request->validate([
-                'first_name' => self::STRINGVALIDATION,
-                'last_name' => self::STRINGVALIDATION,
-                'email' => [
-                    'required',
-                    'string',
-                    'email',
-                    Rule::unique('users')->ignore($user), // Ignore the user given in parameter
-                ],
-                'company_name' => 'string|max:255',
-                'phone' => self::PHONEVALIDATION,
-            ], [
-                'first_name.required' => 'Le prénom est obligatoire.',
-                'last_name.required' => 'Le nom est obligatoire.',
-                'email.required' => "L'adresse e-mail est obligatoire.",
-                'email.email' => "L'adresse e-mail n'est pas valide.",
-                'email.unique' => "L'adresse e-mail est déjà utilisée.",
-                'phone.required' => 'Le numéro de téléphone est obligatoire.',
-                'phone.regex' => 'Le numéro de téléphone n\'est pas valide.',
-            ]);
+    // validate the request
+    $request->validate([
+        'first_name' => self::STRINGVALIDATION,
+        'last_name' => self::STRINGVALIDATION,
+        'email' => [
+            'required',
+            'string',
+            'email',
+            Rule::unique('users')->ignore($user), // Ignore the user given in parameter
+        ],
+        'company_name' => 'nullable|string|max:255',
+        'phone' => self::PHONEVALIDATION,
+    ], [
+        'first_name.required' => 'Le prénom est obligatoire.',
+        'last_name.required' => 'Le nom est obligatoire.',
+        'email.required' => "L'adresse e-mail est obligatoire.",
+        'email.email' => "L'adresse e-mail n'est pas valide.",
+        'email.unique' => "L'adresse e-mail est déjà utilisée.",
+        'phone.required' => 'Le numéro de téléphone est obligatoire.',
+        'phone.regex' => 'Le numéro de téléphone n\'est pas valide.',
+    ]);
+    
+     // Handle avatar file upload if a new avatar is present in the request
+     if ($request->hasFile('avatar')) {
+        $request->validate([
+            'avatar' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+        ]);
+        $avatarPath = $request->file('avatar')->store('avatars', 'public');
+        // add path in db
+        $avatarPath = env('APP_URL') . Storage::url($avatarPath);
+    } else {
+        $avatarPath = $user->avatar;
+    }
 
-            $user->fill($request->only(['first_name', 'last_name', 'email']));
-            $user->save();
+    $user->fill($request->only(['first_name', 'last_name', 'email']));
+    $user->avatar = $avatarPath;
+    $user->save();
 
-            // Update the owner data
-            $owner = Owner::find($user->owner_id);
-            $owner->fill($request->only(['company_name', 'phone']));
-            $owner->save();
+    // Récupérez l'instance $owner avant de l'utiliser
+    $owner = Owner::find($user->owner_id);
+    // Update the owner data
+    $owner->fill($request->only(['company_name', 'phone']));
+    $owner->save();
 
-            $userChanges = $user->getChanges();
-            $ownerChanges = $owner->getChanges();
+    $userChanges = $user->getChanges();
+    $ownerChanges = $owner->getChanges();
 
-            if (empty($userChanges) && empty($ownerChanges)) {
-                return $this->success(null, 'Owner not updated');
-            }
 
-            return $this->success([$user, $owner], 'Owner Updated');
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 500);
-        }
+    if (empty($userChanges) && empty($ownerChanges)) {
+        return $this->success(null, 'Owner not updated');
+    }
+
+    return $this->success([$user, $owner], 'Owner Updated');
     }
 
     /**
      * Deleting the owner ( softDelete )
      */
-    public function destroy( $userId): JsonResponse
+    public function destroy(int $userId): JsonResponse
     {
-        try {
-            //check if the user exist
-            $user = User::withTrashed()->where('user_id', $userId)->first();
-            if ($user === null) {
-                return $this->error(null, self::USERNOTFOUND, 404);
-            }
-            //check if the user is an owner
-            if ($user->owner_id === null) {
-                return $this->error(null, self::OWNERNOTFOUND, 404);
-            }
-            //check if the user is already deleted
-            if ($user->deleted_at !== null) {
-                return $this->error(null, 'Owner already deleted', 404);
-            }
-            //delete the user
-            User::where('user_id', $userId)->delete();
-
-            return $this->success(null, 'Owner Deleted');
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 500);
+        //check if the user exist
+        $user = User::withTrashed()->where('user_id', $userId)->first();
+        if ($user === null) {
+            return $this->error(null, self::USERNOTFOUND, 404);
         }
+        //check if the user is an owner
+        if ($user->owner_id === null) {
+            return $this->error(null, self::OWNERNOTFOUND, 404);
+        }
+        //check if the user is already deleted
+        if ($user->deleted_at !== null) {
+            return $this->error(null, 'Owner already deleted', 404);
+        }
+        //delete the user
+        User::where('user_id', $userId)->delete();
+
+        return $this->success(null, 'Owner Deleted');
     }
 
     /**
      * Restoring the owner
      */
-    public function restore( $userId): JsonResponse
+    public function restore(int $userId): JsonResponse
     {
-        try {
-            //check if the user exist
-            $user = User::withTrashed()->where('user_id', $userId)->first();
-            if ($user === null) {
-                return $this->error(null, self::USERNOTFOUND, 404);
-            }
-            //check if the user is an owner
-            if ($user->owner_id === null) {
-                return $this->error(null, self::OWNERNOTFOUND, 404);
-            }
-            //check if the user is already restored
-            if ($user->deleted_at === null) {
-                return $this->error(null, 'Owner already restored', 404);
-            }
-            User::withTrashed()->where('user_id', $userId)->restore();
-
-            return $this->success(null, 'Owner Restored');
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 500);
+        //check if the user exist
+        $user = User::withTrashed()->where('user_id', $userId)->first();
+        if ($user === null) {
+            return $this->error(null, self::USERNOTFOUND, 404);
         }
+        //check if the user is an owner
+        if ($user->owner_id === null) {
+            return $this->error(null, self::OWNERNOTFOUND, 404);
+        }
+        //check if the user is already restored
+        if ($user->deleted_at === null) {
+            return $this->error(null, 'Owner already restored', 404);
+        }
+        User::withTrashed()->where('user_id', $userId)->restore();
+
+        return $this->success(null, 'Owner Restored');
     }
+   
 
     /**
      * Display a listing of all owners
      */
     public function getOwnerList(): JsonResponse
     {
-        try {
-            $owners = DB::table('users')
-                ->join('owners', 'users.owner_id', '=', 'owners.owner_id')
-                ->join('status', 'owners.status_id', '=', 'status.status_id')
-                ->select('users.*', 'owners.*', 'status.status_id', 'status.comment')
-                ->get();
+        $owners = DB::table('users')
+            ->join('owners', 'users.owner_id', '=', 'owners.owner_id')
+            ->join('status', 'owners.status_id', '=', 'status.status_id')
+            ->select('users.*', 'owners.*', 'status.status_id', 'status.comment')
+            ->get();
 
-            if ($owners->isEmpty()) {
-                return $this->error(null, 'No owners found', 404);
-            }
-
-            return $this->success($owners, 'Owner List');
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 500);
+        if ($owners->isEmpty()) {
+            return $this->error(null, 'No owners found', 404);
         }
+
+        return $this->success($owners, 'Owner List');
     }
 
     /**
      * Validate the owner
      */
-    public function validateOwner( $ownerId,  $statusCode): jsonResponse
+    public function validateOwner(int $ownerId, int $statusCode): jsonResponse
     {
-        try {
-            $owner = Owner::find($ownerId);
+        $owner = Owner::find($ownerId);
 
-            if (! $owner) {
-                return $this->error(null, self::OWNERNOTFOUND, 404);
-            }
-
-            if ($owner->status_id == $statusCode) {
-                return $this->error(null, 'Owner already validated', 404);
-            }
-
-            $owner->status_id = $statusCode;
-            $owner->save();
-
-            return $this->success(null, 'Validation updated');
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 500);
+        if (!$owner) {
+            return $this->error(null, self::OWNERNOTFOUND, 404);
         }
+
+        if ($owner->status_id === $statusCode) {
+            return $this->error(null, 'Owner with same status', 409);
+        }
+
+        $owner->status_id = $statusCode;
+        $owner->save();
+
+        return $this->success(null, 'Status updated');
     }
 
     /**
@@ -290,12 +286,10 @@ class OwnerController extends Controller
      */
     public function getOwnerToValidate(): JsonResponse
     {
-        try {
-            $ownerToValidate = Owner::where('status_id', 3)->count();
-
-            return $this->success($ownerToValidate, 'Owner to validate');
-        } catch (Exception $error) {
-            return $this->error(null, $error->getMessage(), 500);
-        }
+        $ownerToValidate = Owner::where('status_id', 3)->count();
+        return $this->success($ownerToValidate, 'Owner to validate');
     }
+
+
+
 }

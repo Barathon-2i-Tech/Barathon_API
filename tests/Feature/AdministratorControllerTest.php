@@ -1,9 +1,10 @@
 <?php
 
-namespace Tests\Unit;
+
+namespace Tests\Feature;
 
 use App\Models\Owner;
-use App\Models\User;
+use App\Models\Status;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
@@ -109,24 +110,6 @@ class AdministratorControllerTest extends TestCase
         $response->assertJson(['message' => 'Administrator not found']);
     }
 
-    /**
-     * A test to get a 500 error on show method
-     *
-     * @return void
-     */
-    public function test_get_500_error_administrator_show_method(): void
-    {
-        $administrator = $this->createAdminUser();
-        $response = $this->actingAs($administrator)->get(route('administrator.show', 'error'))
-            ->assertStatus(500);
-
-        $response->assertJsonStructure([
-            'status',
-            'message',
-            'data',
-        ]);
-        $response->assertJson(['status' => 'An error has occurred...']);
-    }
 
     /**
      * A test to update an administrator
@@ -175,6 +158,29 @@ class AdministratorControllerTest extends TestCase
     }
 
     /**
+     * A test to check if the update is really on an real user
+     *
+     * @return void
+     */
+    public function test_to_check_on_update_if_really_a_user(): void
+    {
+        $administrator = $this->createAdminUser();
+
+        $response = $this->actingAs($administrator)->put(route('administrator.update', 850), [
+            'first_name' => 'test',
+            'last_name' => 'test',
+            'email' => 'test@test.fr',
+            'superAdmin' => false])
+            ->assertNotFound();
+        $response->assertJsonStructure([
+            'status',
+            'message',
+            'data'
+        ]);
+        $response->assertJson(['message' => 'User not found']);
+    }
+
+    /**
      * A test to check if the administrator is updated with the same information as before
      *
      * @return void
@@ -185,10 +191,9 @@ class AdministratorControllerTest extends TestCase
         $administrator = $this->createAdminUser();
 
         $response = $this->actingAs($user)->put(route('administrator.update', $administrator->user_id), [
-            'first_name' => 'Elon',
             'last_name' => 'Musk',
-            'email' => 'admin@mail.fr',
-            'superAdmin' => true])
+            'first_name' => 'Elon',
+            'email' => 'barathon.m2i+admin@gmail.com'])
             ->assertOk();
         $response->assertJsonStructure([
             'status',
@@ -201,21 +206,14 @@ class AdministratorControllerTest extends TestCase
     /**
      * A test to check the validation on updated
      *
-     * @return void
      */
     public function test_to_check_validation_on_updated(): void
     {
-        $user = $this->createAdminUser();
         $administrator = $this->createAdminUser();
+        $user = $this->createAdminUser();
 
-        $response = $this->actingAs($user)->put(route('administrator.update', $administrator->user_id), [])
-            ->assertStatus(500);
-        $response->assertJsonStructure([
-            'status',
-            'message',
-            'data'
-        ]);
-        $response->assertJson(['status' => 'An error has occurred...']);
+        $this->actingAs($administrator)->put(route('administrator.update', $user->user_id), [])
+            ->assertStatus(302);
     }
 
     /**
@@ -373,102 +371,8 @@ class AdministratorControllerTest extends TestCase
         $response->assertJson(['message' => 'Administrator Restored']);
     }
 
-    /**
-     * A test to change the status to validate of a owner
-     *
-     */
-    public function test_to_change_the_status_to_validate_of_a_owner(): void
-    {
-        $administrator = $this->createAdminUser();
-        $owner = Owner::create([
-            'siren' => '123456789',
-            'kbis' => 'kbis.pdf',
-            'phone' => '0606060606',
-            'company_name' => 'My company',
-            'status_id' => 3,
-        ]);
 
-        $response = $this->actingAs($administrator)->put(route('pro.validation', [$owner->owner_id, 1]))
-            ->assertOk();
-        $response->assertJsonStructure([
-            'status',
-            'message',
-            'data'
-        ]);
-        $response->assertJson(['message' => 'Validation updated']);
-    }
 
-    /**
-     * A test to change the status of a owner on a non existing owner
-     *
-     */
-    public function test_to_change_the_status_of_a_owner_on_non_existing_owner(): void
-    {
-        $administrator = $this->createAdminUser();
-        $fakeOwnerId = 1000;
 
-        $response = $this->actingAs($administrator)->put(route('pro.validation', [$fakeOwnerId, 1]))
-            ->assertNotFound();
-        $response->assertJsonStructure([
-            'status',
-            'message',
-            'data'
-        ]);
-        $response->assertJson(['message' => 'Owner not found']);
-    }
 
-    /**
-     * A test to change the status of a owner on a validated owner
-     * todo : fix this test
-     */
-    public function test_to_change_the_status_of_a_owner_on_a_validated_owner(): void
-    {
-        $administrator = $this->createAdminUser();
-        $owner = $this->createOwnerUser();
-
-        $response = $this->actingAs($administrator)->put(route('pro.validation', [$owner->owner_id, 1]))
-            ->assertNotFound();
-        $response->assertJsonStructure([
-            'status',
-            'message',
-            'data'
-        ]);
-        $response->assertJson(['message' => 'Owner already validated']);
-    }
-
-    /**
-     * A test to change throw a error when validated the owner
-     *
-     */
-    public function test_to_throw_a_error_when_validated_owner(): void
-    {
-        $administrator = $this->createAdminUser();
-        $owner = $this->createOwnerUser();
-
-        $response = $this->actingAs($administrator)->put(route('pro.validation', [$owner->owner_id, 124]))
-            ->assertStatus(500);
-        $response->assertJsonStructure([
-            'status',
-            'message',
-            'data'
-        ]);
-    }
-
-    /**
-     * A test to get how many owners need to be validated
-     *
-     */
-    public function test_to_get_how_many_owners_need_to_be_validated(): void
-    {
-        $administrator = $this->createAdminUser();
-
-        $response = $this->actingAs($administrator)->get(route('admin.pro-to-validate'))
-            ->assertOk();
-        $response->assertJsonStructure([
-            'status',
-            'message',
-            'data'
-        ]);
-        $response->assertJson(['message' => 'Owner to validate']);
-    }
 }

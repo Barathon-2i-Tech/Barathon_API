@@ -1,5 +1,6 @@
 <?php
 
+namespace Tests\Feature;
 
 use App\Models\Employee;
 use Illuminate\Foundation\Testing\RefreshDatabase;

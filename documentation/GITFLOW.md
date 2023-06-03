@@ -3,6 +3,7 @@
 ## Git CLI
 
 ### Retrieve a remote repository
+
 `git clone <my-url-project>`
 
 ```
@@ -14,8 +15,9 @@ Cloning into `<my-url-project>`...
 ```
 
 ### To know the status of our git tracking
+
 `git status`
->👇 If you are 'ahead' of the remote branch.
+> 👇 If you are 'ahead' of the remote branch.
 
 ```
 On branch main
@@ -30,7 +32,8 @@ Changes not staged for commit:
 
 no changes added to commit (use "git add" and/or "git commit -a")
 ```
->👇 If you are up to date.
+
+> 👇 If you are up to date.
 
 ```
 On branch develop
@@ -40,8 +43,9 @@ nothing to commit, working tree clean
 ```
 
 ### Update from remote repository
+
 `git pull`
->👇 Here we get 2 new branches and update 10 files.
+> 👇 Here we get 2 new branches and update 10 files.
 
 ```
 Unpacking objects: 100% (10/10), done.
@@ -52,9 +56,11 @@ From 'https://github.com/Barathon-2i-Tech/Barathon_desktop.git'
 ```
 
 ### Send to remote repository
+
 Before sending your local code 💻 to the remote repository (eg: github)
 `git push`
->👇 Here, we push one branch
+> 👇 Here, we push one branch
+
 ```
 Total 0 (delta 0), réutilisés 0 (delta 0), réutilisés du pack 0
 remote:
@@ -67,17 +73,22 @@ La branche 'feat/#26-database_seeders' est paramétrée pour suivre la branche d
 ```
 
 ### List all branches
+
 Local
 `git branch`
->👇 Note that the branch you are on is marked with an *.
+> 👇 Note that the branch you are on is marked with an *.
+
 ```
 * develop
 main
 ```
+
 Remote
 `git branch -r`
->👇  **origin** is not the name of the remote repository. Instead, it is an alias **local** defined as a key instead of the remote repository URL.
-This saves the user from having to type the entire remote URL when requesting a push.
+> 👇  **origin** is not the name of the remote repository. Instead, it is an alias **local** defined as a key instead of
+> the remote repository URL.
+> This saves the user from having to type the entire remote URL when requesting a push.
+
 ```
 origin/24431_menu_section
 origin/24438_add_authentification
@@ -85,9 +96,11 @@ origin/HEAD -> origin/main
 origin/develop
 origin/main
 ```
+
 Local + Remote
 `git branch -a`
->👇 Note that remote branches start with **remote**.
+> 👇 Note that remote branches start with **remote**.
+
  ```
 * develop
  main
@@ -96,26 +109,37 @@ remotes/origin/HEAD -> origin/main
 remotes/origin/develop
 remotes/origin/main
 ```
+
 ### Create a new branch
+
 `git checkout -b <my-branch-name>`
->👇 Note that it is the **-b** option that allows you to create a new branch and automatically move to it when you create it.
+> 👇 Note that it is the **-b** option that allows you to create a new branch and automatically move to it when you
+> create it.
+
 ```
 Switched to a new branch '<my-branch-name>'
 ```
+
 ### Moving through the branches
+
 Local
 `git checkout <my-branch-name>`
->👇  Note that checkout runs **without** option.
+> 👇 Note that checkout runs **without** option.
+
 ```
 Switched to branch '<my-branch-name>'
 ```
+
 ### Delete a branch
+
 Local
 `git checkout <my-branch-name>`
->👇 Note that checkout is executed with the **-d** option.
+> 👇 Note that checkout is executed with the **-d** option.
+
 ```
 Deleted branch <my-branch-name> (was f187012).
 ```
+
 Remote
 `git push origin --delete <my-branch-name>`
->☝️ **ONLY** in case you push a branch that you didn't want to send to the remote repository!
+> ☝️ **ONLY** in case you push a branch that you didn't want to send to the remote repository!

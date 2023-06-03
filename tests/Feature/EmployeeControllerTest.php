@@ -1,10 +1,8 @@
 <?php
 
-namespace Tests\Unit;
+namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Schema;
 use Tests\TestCase;
 
 class EmployeeControllerTest extends TestCase
@@ -179,7 +177,7 @@ class EmployeeControllerTest extends TestCase
         $response = $this->actingAs($administrator)->put(route('employee.update', $employee->user_id), [
             'first_name' => 'Jane',
             'last_name' => 'Doe',
-            'email' => 'employee@mail.fr',
+            'email' => 'barathon.m2i+employe@gmail.com',
             ])
             ->assertOk();
         $response->assertJsonStructure([
@@ -200,14 +198,8 @@ class EmployeeControllerTest extends TestCase
         $employee = $this->createEmployeeUser();
         $administrator = $this->createAdminUser();
 
-        $response = $this->actingAs($administrator)->put(route('employee.update', $employee->user_id), [])
-            ->assertStatus(500);
-        $response->assertJsonStructure([
-            'status',
-            'message',
-            'data'
-        ]);
-        $response->assertJson(['status' => 'An error has occurred...']);
+        $this->actingAs($administrator)->put(route('employee.update', $employee->user_id), [])
+            ->assertStatus(302);
     }
 
     /**

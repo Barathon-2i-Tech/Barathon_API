@@ -14,14 +14,14 @@ class BookingSeeder extends Seeder
      */
     public function run()
     {
-        Booking::create(['user_id' => 1, 'event_id' => 1, 'isFav' => false]);
+        Booking::create(['user_id' => 1, 'event_id' => 1, 'ticket' => false]);
 
-        Booking::create(['user_id' => 1, 'event_id' => 3, 'isFav' => false]);
+        Booking::create(['user_id' => 1, 'event_id' => 3, 'ticket' => false]);
 
-        Booking::create(['user_id' => 1, 'event_id' => 5, 'isFav' => false]);
+        Booking::create(['user_id' => 1, 'event_id' => 5, 'ticket' => false]);
 
-        Booking::create(['user_id' => 1, 'event_id' => 6, 'isFav' => false]);
+        Booking::create(['user_id' => 1, 'event_id' => 6, 'ticket' => false]);
 
-        Booking::create(['user_id' => 1, 'event_id' => 7, 'isFav' => false]);
+        Booking::create(['user_id' => 1, 'event_id' => 7, 'ticket' => false]);
     }
 }

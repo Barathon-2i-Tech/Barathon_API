@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up()
     {
         Schema::create('establishments', function (Blueprint $table) {
@@ -19,6 +18,7 @@ return new class extends Migration
             $table->string('email')->nullable();
             $table->string('website')->nullable();
             $table->json('opening')->nullable();
+            $table->string('validation_code');
             $table->foreignId('owner_id');
             $table->foreign('owner_id')->references('owner_id')->on('owners');
             $table->foreignId('status_id');

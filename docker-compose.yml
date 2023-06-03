@@ -1,14 +1,14 @@
 # For more information: https://laravel.com/docs/sail
 version: '3'
 services:
-#Laravel Service
+    #Laravel Service
     laravel.test:
         build:
             context: ./vendor/laravel/sail/runtimes/8.1
             dockerfile: Dockerfile
             args:
                 WWWGROUP: '${WWWGROUP}'
-        image: sail-8.1/app
+        image: sail-8.1/barathon
         container_name: barathon-laravel
         extra_hosts:
             - 'host.docker.internal:host-gateway'
@@ -26,10 +26,8 @@ services:
             - barathon
         depends_on:
             - pgsql
-            - meilisearch
-            - mailhog
 
-#Postgres Service (Database)
+    #Postgres Service (Database)
     pgsql:
         image: 'postgres:14'
         container_name: barathon-pgsql
@@ -46,46 +44,22 @@ services:
         networks:
             - barathon
         healthcheck:
-            test: ["CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}"]
+            test: [ "CMD", "pg_isready", "-q", "-d", "${DB_DATABASE}", "-U", "${DB_USERNAME}" ]
             retries: 3
             timeout: 5s
 
-#CloudBeaver Service (DataBase Management System )
-    CloudBeaver:
-        image: dbeaver/cloudbeaver:latest
-        container_name: barathon-cloudbeaver
+    #PgAdmin Service (DataBase Management System )
+    pgadmin:
+        image: dpage/pgadmin4:latest
+        container_name: barathon-pgadmin
         restart: unless-stopped
-        links:
-            - pgsql
+        environment:
+            PGADMIN_DEFAULT_EMAIL: '${PGADMIN_DEFAULT_EMAIL}'
+            PGADMIN_DEFAULT_PASSWORD: '${PGADMIN_DEFAULT_PASSWORD}'
         ports:
-            - '${FORWARD_DB_PORT:-8080}:8978'
+            - "8080:80"
         volumes:
-            - cloudbeaver:/opt/cloudbeaver/workspace
-        networks:
-            - barathon
-
-#MeiliSearch Service ( search engine)
-    meilisearch:
-        image: 'getmeili/meilisearch:latest'
-        container_name: barathon-meilisearch
-        ports:
-            - '${FORWARD_MEILISEARCH_PORT:-7700}:7700'
-        volumes:
-            - 'barathon-meilisearch:/meili_data'
-        networks:
-            - barathon
-        healthcheck:
-            test: ["CMD", "wget", "--no-verbose", "--spider",  "http://localhost:7700/health"]
-            retries: 3
-            timeout: 5s
-
-#Mailhog Service (for email testing)
-    mailhog:
-        image: 'mailhog/mailhog:latest'
-        container_name: barathon-mailhog
-        ports:
-            - '${FORWARD_MAILHOG_PORT:-1025}:1025'
-            - '${FORWARD_MAILHOG_DASHBOARD_PORT:-8025}:8025'
+            - pgadmin:/var/lib/pgadmin
         networks:
             - barathon
 
@@ -95,7 +69,6 @@ networks:
 volumes:
     barathon-pgsql:
         driver: local
-    cloudbeaver:
-        driver: local
-    barathon-meilisearch:
+
+    pgadmin:
         driver: local

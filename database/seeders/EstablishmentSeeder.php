@@ -4,10 +4,10 @@ namespace Database\Seeders;
 
 use App\Models\Address;
 use App\Models\Establishment;
-use App\Models\Owner;
 use App\Models\Status;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Crypt;
 
 class EstablishmentSeeder extends Seeder
 {
@@ -37,9 +37,11 @@ class EstablishmentSeeder extends Seeder
             'city' => "Decines Charpieu"
         ]);
 
-        $ownerRothschild = User::where ('last_name', 'Rothschild')->first();
+        $ownerRothschild = User::where('last_name', 'Rothschild')->first();
 
-        $ownerJacobs = User::where ('last_name', 'Jacobs')->first();
+        $ownerJacobs = User::where('last_name', 'Jacobs')->first();
+
+        $code = 0000;
 
         $datas = [
             [
@@ -48,7 +50,7 @@ class EstablishmentSeeder extends Seeder
                 'address_id' => $FaifFoifAddress->address_id,
                 'logo' => fake()->imageUrl(180, 180, 'Establishment logo', false),
                 'phone' => fake()->phoneNumber(),
-                'email' => 'etablissement@mail.fr',
+                'email' => 'barathon.m2i+establishment@gmail.com',
                 'website' => 'www.google.fr',
                 'opening' => [
                     'Lundi' => 'fermé',
@@ -59,6 +61,7 @@ class EstablishmentSeeder extends Seeder
                     'Samedi' => '17h00 - 01h00',
                     'Dimanche' => '17h00 - 01h00',
                 ],
+                'validation_code' => Crypt::encryptString($code),
                 'owner_id' => $ownerRothschild->owner_id,
                 'status_id' => $establValid->status_id,
             ],
@@ -68,7 +71,7 @@ class EstablishmentSeeder extends Seeder
                 'address_id' => $fantomeOperaAddress->address_id,
                 'logo' => fake()->imageUrl(180, 180, 'Establishment logo', false),
                 'phone' => '0437920388',
-                'email' => 'fantomeoperalyon@gmail.com',
+                'email' => 'barathon.m2i+establishment2@gmail.com',
                 'website' => 'www.lefantomedelopera.fr',
                 'opening' => [
                     'Lundi' => 'fermé',
@@ -79,6 +82,7 @@ class EstablishmentSeeder extends Seeder
                     'Samedi' => '18h00 - 01h00',
                     'Dimanche' => 'fermé',
                 ],
+                'validation_code' => Crypt::encryptString($code),
                 'owner_id' => $ownerJacobs->owner_id,
                 'status_id' => $establPending->status_id,
             ],
@@ -88,7 +92,7 @@ class EstablishmentSeeder extends Seeder
                 'address_id' => $cafeLumiereAddress->address_id,
                 'logo' => fake()->imageUrl(180, 180, 'Establishment logo', false),
                 'phone' => "0472055598",
-                'email' => 'cafelumiere@mail.fr',
+                'email' => 'barathon.m2i+establishment3@gmail.com',
                 'website' => 'https://le-cafe-lumiere.business.site/',
                 'opening' => [
                     'Lundi' => '07h00 - 21h30',
@@ -99,6 +103,7 @@ class EstablishmentSeeder extends Seeder
                     'Samedi' => '10h30 - 20h00',
                     'Dimanche' => '08h00 - 18h00',
                 ],
+                'validation_code' => Crypt::encryptString($code),
                 'owner_id' => $ownerRothschild->owner_id,
                 'status_id' => $establPending->status_id,
             ],

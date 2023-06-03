@@ -7,10 +7,13 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Event extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
+
 
     /**
      * The table associated with the model.
@@ -71,9 +74,9 @@ class Event extends Model
     /**
      * Get the event associated with the event update
      */
-    public function eventParent(): BelongsTo
+    public function eventUpdate(): HasOne
     {
-        return $this->belongsTo(Event::class, 'event_update_id');
+        return $this->hasOne(Event::class, 'event_update_id');
     }
 
     /**
@@ -81,15 +84,15 @@ class Event extends Model
      */
     public function categories(): BelongsToMany
     {
-        return $this->belongsToMany(Category::class, 'category_event', 'event_id', 'category_id');
+        return $this->belongsToMany(Category::class, 'categories_events', 'event_id', 'category_id');
     }
 
     /*
      * Get the event associated with the event update
      */
-    public function eventChild(): HasMany
+    public function eventChild(): HasOne
     {
-        return $this->hasMany(Event::class, 'event_id');
+        return $this->hasOne(Event::class, 'event_id');
     }
 
     /**
