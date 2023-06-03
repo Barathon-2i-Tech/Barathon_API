@@ -2,6 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Siren;
+use App\Models\Siret;
 use App\Traits\HttpResponses;
 use GuzzleHttp\Client;
 use Illuminate\Http\JsonResponse;
@@ -29,7 +31,7 @@ class InseeController extends Controller
      */
     public function checkHost(): bool
     {
-        $host = 'api.insee.fr';
+        $host = 'https://api.insee.fr/';
         $isHostResolvable = false;
         $ipAddress = gethostbyname($host);
 
@@ -157,6 +159,10 @@ class InseeController extends Controller
 
         $validator = Validator::make(['siret' => $siretToCheck], [
             'siret' => 'required|numeric|digits:14',
+        ], [
+            'siret.required' => 'Le numero SIRET est obligatoire',
+            'siret.numeric' => 'Le numero SIRET doit etre compose de chiffres',
+            'siret.digits' => 'Le numero SIRET doit etre compose de 14 chiffres',
         ]);
 
         if ($validator->fails()) {
@@ -198,8 +204,7 @@ class InseeController extends Controller
      */
     public function getSirenFromLocal(string $siren): JsonResponse
     {
-        $response = DB::table('siren')
-            ->join('siret', 'siren.siren', '=', 'siret.siren')
+        $response = Siren::join('siret', 'siren.siren', '=', 'siret.siren')
             ->select(
                 'siren.siren',
                 'siren.sexeUniteLegale',
@@ -229,6 +234,7 @@ class InseeController extends Controller
             ->where('siren.siren', $siren)
             ->where('siret.etablissementSiege', true)
             ->get();
+
         if ($response->isEmpty()) {
             return $this->error(null, 'Siren not found in local database', 404);
         } else {
@@ -242,8 +248,7 @@ class InseeController extends Controller
      */
     public function getSiretFromLocal(string $siret)
     {
-        $response = DB::table('siret')
-            ->join('siren', 'siret.siren', '=', 'siren.siren')
+        $response = Siret::join('siren', 'siret.siren', '=', 'siren.siren')
             ->select(
                 'siret.siren',
                 'siret.siret',
@@ -269,6 +274,7 @@ class InseeController extends Controller
             )
             ->where('siret.siret', $siret)
             ->get();
+
         if ($response->isEmpty()) {
             return $this->error(null, 'Siret not found in local database', 404);
         } else {
