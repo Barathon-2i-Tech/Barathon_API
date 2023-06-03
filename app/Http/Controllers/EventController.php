@@ -369,12 +369,12 @@ class EventController extends Controller
         $booking = Booking::where('user_id', '=', $user->user_id)->Where('event_id', '=', $idEvent)->get();
 
         // get the event with his establishment
-        $event = Event::with('establishments')->where('event_id', '=', $idEvent)->get();
+        $event = Event::with('establishment')->where('event_id', '=', $idEvent)->get();
 
         //get the address of event
-        $address = Address::find($event[0]->establishments->address_id);
+        $address = Address::find($event[0]->establishment->address_id);
 
-        $event[0]->establishments->address = $address;
+        $event[0]->establishment->address = $address;
 
         return $this->success([
             'booking' => $booking,
