@@ -115,7 +115,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::get('/pro/{owner_id}/establishment', 'getEstablishmentListByOwnerId')->name('establishment.list');
         Route::get('/pro/{owner_id}/establishment/{establishment_id}', 'show')->name('establishment.show');
         Route::put('/pro/establishment/{establishment_id}', 'update')->name('establishment.update');
-        Route::post('/pro/{owner_id}/establishment/', 'store')->name('establishment.store');
+        Route::post('/pro/{owner_id}/establishment', 'store')->name('establishment.store');
         Route::delete('/pro/establishment/{establishment_id}', 'destroy')->name('establishment.delete');
         Route::get('/pro/establishment/{establishment_id}/restore', 'restore')->name('establishment.restore');
     });
