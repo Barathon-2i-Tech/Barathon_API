@@ -264,11 +264,9 @@ class EventController extends Controller
         }
 
         // Check if the current authenticated user is the owner of the establishment or an administrator
-        if (($user->owner_id !== $event->establishment->owner_id && $user->owner_id !== null) && $user->administrator_id === null) {
+        if ($user->owner_id !== $event->establishment->owner_id && $user->owner_id !== null || $user->administrator_id === null) {
             return $this->error(null, "Unauthorized", 401);
         }
-
-
 
         $event->delete();
         return $this->success(null, "Event Deleted successfully");
