@@ -301,13 +301,14 @@ class EstablishmentController extends Controller
         $establishment = Establishment::withTrashed()->where('establishment_id', $establishmentId)
             ->first();
 
+        if ($establishment === null) {
+            return $this->error(null, self::ESTABLISHMENT_NOT_FOUND, 404);
+        }
+
         if (!($user->owner_id === $establishment->owner_id || $user->administrator_id !== null)) {
             return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
         }
 
-        if ($establishment === null) {
-            return $this->error(null, self::ESTABLISHMENT_NOT_FOUND, 404);
-        }
         if ($establishment->deleted_at !== null) {
             return $this->error(null, "Establishment already deleted", 404);
         }
