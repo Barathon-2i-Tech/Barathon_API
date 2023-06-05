@@ -45,8 +45,11 @@ Route::post('mail/change/password', [MailController::class, 'changePassword']);
 Route::middleware('auth:sanctum')->group(function () {
 
 
-
-
+    //Get the events with location
+    Route::get(
+        'barathonien/events',
+        [EventController::class, 'getEventsLocation']
+    )->name('barathonien.eventslocation');
 
     Route::controller(MailController::class)->group(function () {
         Route::get('send', 'hello');
@@ -127,13 +130,6 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 Route::middleware('auth:sanctum')->group(function () {
-
-    //Get the events with location
-    Route::get(
-        'barathonien/events',
-        [EventController::class, 'getEventsLocation']
-    )->name('barathonien.eventslocation');
-
     Route::controller(EventController::class)->group(function () {
         Route::get('/events/list', 'getEventList')->name('admin.event.list');
         Route::get('/admin/event-to-validate', 'getEventsToValidate')->name('admin.event-to-validate');
