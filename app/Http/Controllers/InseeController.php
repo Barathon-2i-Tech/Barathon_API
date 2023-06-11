@@ -31,9 +31,19 @@ class InseeController extends Controller
      */
     public function checkHost(): bool
     {
+        //define host
         $host = 'api.insee.fr';
         $isHostResolvable = false;
-        $ipAddress = gethostbyname($host);
+
+        //define cache storage time (1 hour)
+        $expiration= 3600;
+
+        //get IP address from host
+        $ipAddress = cache()->remember($host, $expiration, function () use ($host) {
+            return gethostbyname($host);
+        });
+
+        // if we get the IP address, the host is resolvable
         if ($ipAddress !== $host) {
             $isHostResolvable = true;
         }
