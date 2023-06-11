@@ -57,6 +57,7 @@ class InseeController extends Controller
             'form_params' => [
                 'grant_type' => 'client_credentials',
             ],
+            'verify' => false
         ]);
 
         $result = json_decode($result->getBody());
