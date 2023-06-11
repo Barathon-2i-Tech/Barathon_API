@@ -31,10 +31,9 @@ class InseeController extends Controller
      */
     public function checkHost(): bool
     {
-        $host = 'https://api.insee.fr/';
+        $host = 'api.insee.fr';
         $isHostResolvable = false;
         $ipAddress = gethostbyname($host);
-
         if ($ipAddress !== $host) {
             $isHostResolvable = true;
         }
