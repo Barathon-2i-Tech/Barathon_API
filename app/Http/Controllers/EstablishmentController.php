@@ -161,7 +161,7 @@ class EstablishmentController extends Controller
 
         // Récupérez l'utilisateur authentifié
         $user = $request->user();
-        if ($user->owner_id !== $ownerId && $user->owner_id !== null || $user->administrator_id === null) {
+        if (!($user->owner_id === $ownerId || $user->administrator_id !== null)) {
             return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
         }
 
@@ -301,13 +301,14 @@ class EstablishmentController extends Controller
         $establishment = Establishment::withTrashed()->where('establishment_id', $establishmentId)
             ->first();
 
-        if ($user->owner_id !== $establishment->owner_id && $user->owner_id !== null || $user->administrator_id === null) {
-            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
-        }
-
         if ($establishment === null) {
             return $this->error(null, self::ESTABLISHMENT_NOT_FOUND, 404);
         }
+
+        if (!($user->owner_id === $establishment->owner_id || $user->administrator_id !== null)) {
+            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
+        }
+
         if ($establishment->deleted_at !== null) {
             return $this->error(null, "Establishment already deleted", 404);
         }
