@@ -104,9 +104,62 @@ class InseeControllerTest extends TestCase
     }
 
     /**
-     * A test to get a 200 response from the database with valid siren.
+     * A test to get a 200 response with valid siren with http fake.
      */
-    public function test_Get_404_error_With_existent_Siren_In_Database(): void
+    public function test_Get_Siren_With_existent_Siren(): void
+    {
+        $siren = '838506756';
+        $mockedResponse = [
+            "status" => "Request was successful.",
+            "message" => "Siren found",
+            "data" => [
+                "local" => false,
+                "response" => [
+                    "siren" => "838506756",
+                    "dateCreationUniteLegale" => "2018-04-15",
+                    "sexeUniteLegale" => "M",
+                    "prenom1UniteLegale" => "EDDY",
+                    "trancheEffectifsUniteLegale" => null,
+                    "dateDernierTraitementUniteLegale" => "2020-03-12T14:31:10",
+                    "categorieEntreprise" => "PME",
+                    "periodesUniteLegale" => [
+                        [
+                            "dateFin" => null,
+                            "dateDebut" => "2018-04-15",
+                            "etatAdministratifUniteLegale" => "A",
+                            "nomUniteLegale" => "MANDRAN",
+                            "nomUsageUniteLegale" => null,
+                            "denominationUniteLegale" => null,
+                            "denominationUsuelle1UniteLegale" => null,
+                            "categorieJuridiqueUniteLegale" => "1000",
+                            "activitePrincipaleUniteLegale" => "95.11Z",
+                            "nicSiegeUniteLegale" => "00017"
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        Http::fake([
+            'https://api.insee.fr/entreprises/sirene/V3/siren/838506756?champs=identificationStandardUniteLegale' => Http::response($mockedResponse, 200),
+        ]);
+
+        $controller = new InseeController();
+
+        $response = $controller->getSiren($siren);
+
+        $responseData = $response->getData(true);
+
+        $this->assertEquals('Siren found', $responseData['message']);
+        $this->assertEquals($mockedResponse['data']['response'], $responseData['data']['response']);
+        $this->assertEquals(false, $responseData['data']['local']);
+
+    }
+
+    /**
+     * A test to get a 404 response from the database with valid siren.
+     */
+    public function test_Get_404_error_With_Siren_In_Database(): void
     {
         $structure = [
             "status",
@@ -122,6 +175,7 @@ class InseeControllerTest extends TestCase
         $response->assertJsonStructure($structure);
         $response->assertJsonPath('message', 'Siren not found in local database');
     }
+
 
 
     /**

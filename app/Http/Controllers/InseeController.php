@@ -27,7 +27,6 @@ class InseeController extends Controller
 
     /**
      * Check if the host (Insee API) is resolvable.
-     *
      */
     public function checkHost(): bool
     {
@@ -57,8 +56,10 @@ class InseeController extends Controller
      */
     public function generateToken(): string
     {
+        // create a new Guzzle client
         $client = new Client();
 
+        // send a POST request to the INSEE API to get an access token
         $result = $client->post('https://api.insee.fr/token', [
             'headers' => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
@@ -67,10 +68,12 @@ class InseeController extends Controller
             'form_params' => [
                 'grant_type' => 'client_credentials',
             ],
-            'verify' => false
+            'verify' => false // to avoid SSL certificate verification, -k option in curl
         ]);
 
+        // get the access token from the response
         $result = json_decode($result->getBody());
+
         return $result->access_token;
     }
 
@@ -120,9 +123,8 @@ class InseeController extends Controller
         // check if host is available
         $hostAvailable = $this->checkHost();
 
+        // if host is available
         if ($hostAvailable) {
-
-            //generate token
             $tokenGenerated = $this->generateToken();
 
             // sending http get request with the token generated
@@ -132,7 +134,7 @@ class InseeController extends Controller
                     'Accept' => "application/json",
                     'Authorization' => 'Bearer ' . $tokenGenerated,
                 ],
-                'http_errors' => false,
+                'http_errors' => false, // manage errors manually
             ]);
 
             // checking response return by INSEE API SIRENE
