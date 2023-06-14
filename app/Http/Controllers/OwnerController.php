@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Traits\HttpResponses;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -26,6 +27,9 @@ class OwnerController extends Controller
     private const AVATARURL_P4 = 'hmac=584918e27d013319c35203ce268841f480637965556343c6173885ba806453f2';
     private const AVATARURL = self::AVATARURL_P1 . self::AVATARURL_P2 . self::AVATARURL_P3 . self::AVATARURL_P4;
     private const PHONEVALIDATION = ['regex:/^([0-9\s\-\+\(\)]*)$/', 'min:10'];
+
+    private const UNAUTHORIZED_ACTION = "This action is unauthorized.";
+
 
     /**
      * Store a newly created owner in storage.
@@ -126,72 +130,72 @@ class OwnerController extends Controller
      */
     public function update(Request $request, int $userId): JsonResponse
     {
-        
-    //get the user given in parameter
-    $user = User::find($userId);
 
-    if ($user === null) {
-        return $this->error(null, self::OWNERNOTFOUND, 404);
-    }
+        //get the user given in parameter
+        $user = User::find($userId);
 
-    // check if the user is an owner
-    if ($user->owner_id === null) {
-        return $this->error(null, self::OWNERNOTFOUND, 404);
-    }
+        if ($user === null) {
+            return $this->error(null, self::OWNERNOTFOUND, 404);
+        }
 
-    // validate the request
-    $request->validate([
-        'first_name' => self::STRINGVALIDATION,
-        'last_name' => self::STRINGVALIDATION,
-        'email' => [
-            'required',
-            'string',
-            'email',
-            Rule::unique('users')->ignore($user), // Ignore the user given in parameter
-        ],
-        'company_name' => 'nullable|string|max:255',
-        'phone' => self::PHONEVALIDATION,
-    ], [
-        'first_name.required' => 'Le prénom est obligatoire.',
-        'last_name.required' => 'Le nom est obligatoire.',
-        'email.required' => "L'adresse e-mail est obligatoire.",
-        'email.email' => "L'adresse e-mail n'est pas valide.",
-        'email.unique' => "L'adresse e-mail est déjà utilisée.",
-        'phone.required' => 'Le numéro de téléphone est obligatoire.',
-        'phone.regex' => 'Le numéro de téléphone n\'est pas valide.',
-    ]);
-    
-     // Handle avatar file upload if a new avatar is present in the request
-     if ($request->hasFile('avatar')) {
+        // check if the user is an owner
+        if ($user->owner_id === null) {
+            return $this->error(null, self::OWNERNOTFOUND, 404);
+        }
+
+        // validate the request
         $request->validate([
-            'avatar' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            'first_name' => self::STRINGVALIDATION,
+            'last_name' => self::STRINGVALIDATION,
+            'email' => [
+                'required',
+                'string',
+                'email',
+                Rule::unique('users')->ignore($user), // Ignore the user given in parameter
+            ],
+            'company_name' => 'nullable|string|max:255',
+            'phone' => self::PHONEVALIDATION,
+        ], [
+            'first_name.required' => 'Le prénom est obligatoire.',
+            'last_name.required' => 'Le nom est obligatoire.',
+            'email.required' => "L'adresse e-mail est obligatoire.",
+            'email.email' => "L'adresse e-mail n'est pas valide.",
+            'email.unique' => "L'adresse e-mail est déjà utilisée.",
+            'phone.required' => 'Le numéro de téléphone est obligatoire.',
+            'phone.regex' => 'Le numéro de téléphone n\'est pas valide.',
         ]);
-        $avatarPath = $request->file('avatar')->store('avatars', 'public');
-        // add path in db
-        $avatarPath = env('APP_URL') . Storage::url($avatarPath);
-    } else {
-        $avatarPath = $user->avatar;
-    }
 
-    $user->fill($request->only(['first_name', 'last_name', 'email']));
-    $user->avatar = $avatarPath;
-    $user->save();
+        // Handle avatar file upload if a new avatar is present in the request
+        if ($request->hasFile('avatar')) {
+            $request->validate([
+                'avatar' => 'image|mimes:jpeg,png,jpg,gif,svg|max:2048',
+            ]);
+            $avatarPath = $request->file('avatar')->store('avatars', 'public');
+            // add path in db
+            $avatarPath = env('APP_URL') . Storage::url($avatarPath);
+        } else {
+            $avatarPath = $user->avatar;
+        }
 
-    // Récupérez l'instance $owner avant de l'utiliser
-    $owner = Owner::find($user->owner_id);
-    // Update the owner data
-    $owner->fill($request->only(['company_name', 'phone']));
-    $owner->save();
+        $user->fill($request->only(['first_name', 'last_name', 'email']));
+        $user->avatar = $avatarPath;
+        $user->save();
 
-    $userChanges = $user->getChanges();
-    $ownerChanges = $owner->getChanges();
+        // Récupérez l'instance $owner avant de l'utiliser
+        $owner = Owner::find($user->owner_id);
+        // Update the owner data
+        $owner->fill($request->only(['company_name', 'phone']));
+        $owner->save();
+
+        $userChanges = $user->getChanges();
+        $ownerChanges = $owner->getChanges();
 
 
-    if (empty($userChanges) && empty($ownerChanges)) {
-        return $this->success(null, 'Owner not updated');
-    }
+        if (empty($userChanges) && empty($ownerChanges)) {
+            return $this->success(null, 'Owner not updated');
+        }
 
-    return $this->success([$user, $owner], 'Owner Updated');
+        return $this->success([$user, $owner], 'Owner Updated');
     }
 
     /**
@@ -240,13 +244,19 @@ class OwnerController extends Controller
 
         return $this->success(null, 'Owner Restored');
     }
-   
+
 
     /**
      * Display a listing of all owners
      */
     public function getOwnerList(): JsonResponse
     {
+        //check if user is admin
+        $user = Auth::user();
+        if ($user->administrator_id === null) {
+            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
+        }
+
         $owners = DB::table('users')
             ->join('owners', 'users.owner_id', '=', 'owners.owner_id')
             ->join('status', 'owners.status_id', '=', 'status.status_id')
@@ -265,6 +275,12 @@ class OwnerController extends Controller
      */
     public function validateOwner(int $ownerId, int $statusCode): jsonResponse
     {
+        //check if user is admin
+        $user = Auth::user();
+        if ($user->administrator_id === null) {
+            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
+        }
+
         $owner = Owner::find($ownerId);
 
         if (!$owner) {
@@ -286,10 +302,15 @@ class OwnerController extends Controller
      */
     public function getOwnerToValidate(): JsonResponse
     {
+        //check if user is admin
+        $user = Auth::user();
+        if ($user->administrator_id === null) {
+            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
+        }
+
         $ownerToValidate = Owner::where('status_id', 3)->count();
         return $this->success($ownerToValidate, 'Owner to validate');
     }
-
 
 
 }
