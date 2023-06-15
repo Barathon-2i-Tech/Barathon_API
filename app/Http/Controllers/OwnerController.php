@@ -172,7 +172,7 @@ class OwnerController extends Controller
             ]);
             $avatarPath = $request->file('avatar')->store('avatars', 'public');
             // add path in db
-            $avatarPath = env('APP_URL') . Storage::url($avatarPath);
+            $avatarPath = config('app.url') . Storage::url($avatarPath);
         } else {
             $avatarPath = $user->avatar;
         }

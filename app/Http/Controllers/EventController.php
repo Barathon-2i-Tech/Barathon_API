@@ -133,7 +133,7 @@ class EventController extends Controller
         if ($request->hasFile('poster')) {
             $eventPosterPath = $request->file('poster')->storePublicly('posters', 'public');
             // Ajout du chemin complet
-            $eventPosterPath = env('APP_URL') . Storage::url($eventPosterPath);
+            $eventPosterPath = config('app.url') . Storage::url($eventPosterPath);
         }
 
 
@@ -217,7 +217,7 @@ class EventController extends Controller
 
             $posterPath = $request->file('poster')->store('posters', 'public');
             // add path in db
-            $posterPath = env('APP_URL') . Storage::url($posterPath);
+            $posterPath = config('app.url') . Storage::url($posterPath);
         } else {
             $posterPath = $event->poster;
         }

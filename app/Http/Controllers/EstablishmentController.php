@@ -110,7 +110,7 @@ class EstablishmentController extends Controller
         if ($request->hasFile('logo')) {
             $establishmentLogoPath = $request->file('logo')->storePublicly('logos', 'public');
 
-            $establishmentLogoPath = env('APP_URL') . Storage::url($establishmentLogoPath);
+            $establishmentLogoPath = config('app.url') . Storage::url($establishmentLogoPath);
         }
 
         $address = Address::create([
@@ -232,7 +232,7 @@ class EstablishmentController extends Controller
 
             // Store the new logo and update the establishment object with the new logo path
             $logoPath = $request->file('logo')->storePublicly('logos', 'public');
-            $logoPath = env('APP_URL') . Storage::url($logoPath);
+            $logoPath = config('app.url') . Storage::url($logoPath);
             $establishment->logo = $logoPath;
             $establishment->save();
         }
