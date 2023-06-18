@@ -50,7 +50,7 @@ class Event extends Model
     /**
      * Get the establishment associated with the event
      */
-    public function establishments(): BelongsTo
+    public function establishment(): BelongsTo
     {
         return $this->belongsTo(Establishment::class, 'establishment_id');
     }

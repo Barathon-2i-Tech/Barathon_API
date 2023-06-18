@@ -6,7 +6,6 @@ use App\Models\Address;
 use App\Models\Booking;
 use App\Models\Establishment;
 use App\Models\Event;
-use App\Models\Owner;
 use App\Models\Status;
 use App\Models\User;
 use App\Traits\HttpResponses;
@@ -16,6 +15,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 
@@ -28,6 +28,8 @@ class EventController extends Controller
     private const API_GOUV = "https://api-adresse.data.gouv.fr/search/";
     private const EVENT_NOT_FOUND = "Event not found";
 
+    private const UNAUTHORIZED_ACTION = "This action is unauthorized.";
+
     /**
      * Display all event by establishment ID.
      */
@@ -38,8 +40,9 @@ class EventController extends Controller
         $establishment = Establishment::find($establishmentId);
 
         if ($user->owner_id !== $establishment->owner_id) {
-            return $this->error(null, "Unauthorized", 401);
+            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
         }
+
 
         $events = DB::table('events')
             ->join('establishments', 'events.establishment_id', '=', 'establishments.establishment_id')
@@ -58,22 +61,21 @@ class EventController extends Controller
     /**
      * Display the specified event.
      */
-    public function show(Request $request, int $establishmentId, int $eventId): JsonResponse
+    public function show(Request $request, int $eventId): JsonResponse
     {
         // Check if the current authenticated user is the owner of the establishment
         $user = $request->user();
-        $establishment = Establishment::find($establishmentId);
-
-        if ($user->owner_id !== $establishment->owner_id) {
-            return $this->error(null, "Unauthorized", 401);
-        }
 
         // Get the specific event from the establishment
         $event = Event::select('events.*', 'establishments.*')
             ->join('establishments', 'establishments.establishment_id', '=', 'events.establishment_id')
-            ->where('events.establishment_id', '=', $establishmentId)
             ->where('events.event_id', '=', $eventId)
             ->first();
+
+        if ($user->owner_id !== $event->establishment->owner_id) {
+            return $this->error(null, "Unauthorized", 401);
+        }
+
 
         // If the event is not found
         if (!$event) {
@@ -122,7 +124,7 @@ class EventController extends Controller
             'user_id.required' => 'The user id is required',
             'user_id.integer' => 'The user id must be an integer',
         ]);
-        
+
         // Validate that the start and end event dates are not in the past
         if (Carbon::parse($request->input('start_event'))->isPast() || Carbon::parse($request->input('end_event'))->isPast()) {
             return $this->error(null, "The event can not take place in the past", 400);
@@ -165,13 +167,12 @@ class EventController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, int $establishmentId, int $eventId): JsonResponse
+    public function update(Request $request, int $eventId): JsonResponse
     {
         $user = $request->user();
         $establishment = Establishment::find($request->input('establishment_id'));
 
-        $event = Event::where('establishment_id', $establishmentId)
-            ->findOrFail($eventId);
+        $event = Event::findOrFail($eventId);
 
         // Ensure that the user trying to modify the event is the same user who created the event
         if ($user->owner_id !== $establishment->owner_id) {
@@ -262,14 +263,15 @@ class EventController extends Controller
         if ($event === null) {
             return $this->error(null, self::EVENT_NOT_FOUND, 404);
         }
+
+        // Check if the current authenticated user is the owner of the establishment or an administrator
+        if (!($user->owner_id === $event->establishment->owner_id || $user->administrator_id !== null)) {
+            return $this->error(null, "Unauthorized", 401);
+        }
+
         if ($event->deleted_at !== null) {
             return $this->error(null, "Event already deleted", 404);
         }
-
-        // Check if the current authenticated user is the owner of the establishment
-            if ($user->user_id !== $event->user_id) {
-                return $this->error(null, "Unauthorized", 401);
-            }
 
         $event->delete();
         return $this->success(null, "Event Deleted successfully");
@@ -280,6 +282,8 @@ class EventController extends Controller
      */
     public function restore(int $eventId): JsonResponse
     {
+        $user = Auth::user();
+
         $event = Event::withTrashed()->where('event_id', $eventId)->first();
 
         if ($event === null) {
@@ -287,6 +291,10 @@ class EventController extends Controller
         }
         if ($event->deleted_at === null) {
             return $this->error(null, "Event already restored", 404);
+        }
+
+        if ($user->administrator_id === null) {
+            return $this->error(null, "Unauthorized", 401);
         }
 
         $event->restore();
@@ -420,12 +428,12 @@ class EventController extends Controller
         $booking = Booking::where('user_id', '=', $user->user_id)->Where('event_id', '=', $idEvent)->get();
 
         // get the event with his establishment
-        $event = Event::with('establishments')->where('event_id', '=', $idEvent)->get();
+        $event = Event::with('establishment')->where('event_id', '=', $idEvent)->get();
 
         //get the address of event
-        $address = Address::find($event[0]->establishments->address_id);
+        $address = Address::find($event[0]->establishment->address_id);
 
-        $event[0]->establishments->address = $address;
+        $event[0]->establishment->address = $address;
 
         return $this->success([
             'booking' => $booking,
@@ -439,6 +447,12 @@ class EventController extends Controller
      */
     public function getEventList(): JsonResponse
     {
+        $user = Auth::user();
+
+        if ( $user->administrator_id === null) {
+            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
+        }
+
         $events = DB::table("events")
             ->join("establishments", "events.establishment_id", "=", "establishments.establishment_id")
             ->join("status", "events.status_id", "=", "status.status_id")
@@ -458,6 +472,11 @@ class EventController extends Controller
      */
     public function showEventWithHistory(int $eventId): JsonResponse
     {
+        $user = Auth::user();
+
+        if ( $user->administrator_id === null) {
+            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
+        }
 
         $event = Event::leftJoin('establishments', 'events.establishment_id', '=', 'establishments.establishment_id')
             ->where('events.event_id', '=', $eventId)
@@ -483,6 +502,12 @@ class EventController extends Controller
      */
     public function getEventsToValidate(): JsonResponse
     {
+        $user = Auth::user();
+
+        if ( $user->administrator_id === null) {
+            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
+        }
+
         $eventToValidate = Event::where('status_id', 9)->count();
         return $this->success($eventToValidate, 'Event to validate');
     }
@@ -492,6 +517,12 @@ class EventController extends Controller
      */
     public function validateEvent(int $eventId, int $statusCode): jsonResponse
     {
+        $user = Auth::user();
+
+        if ( $user->administrator_id === null) {
+            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
+        }
+
         $event = Event::find($eventId);
 
         if (!$event) {

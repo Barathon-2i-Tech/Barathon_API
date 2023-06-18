@@ -8,6 +8,7 @@ use App\Models\User;
 use App\Traits\HttpResponses;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -20,6 +21,8 @@ class EmployeeController extends Controller
     private const NO_EMPLOYEE_FOUND = 'No employee found';
     private const USER_NOT_FOUND = 'User not found';
     private const STRINGVALIDATION = 'required|string|max:255';
+
+    private const UNAUTHORIZED_ACTION = "This action is unauthorized.";
 
     /**
      * Store a newly created employee in storage.
@@ -208,6 +211,12 @@ class EmployeeController extends Controller
      */
     public function getEmployeeList(): JsonResponse
     {
+        $user = Auth::user();
+
+        if ( $user->administrator_id === null) {
+            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
+        }
+
         $employees = DB::table('users')
             ->join('employees', 'users.employee_id', '=', 'employees.employee_id')
             ->join('establishments_employees', 'employees.employee_id', '=', 'establishments_employees.employee_id')

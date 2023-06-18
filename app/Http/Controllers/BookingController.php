@@ -73,7 +73,7 @@ class BookingController extends Controller
     public function valideTicket(Request $request, $id): JsonResponse
     {
         $book = Booking::where("booking_id", "=", $id)->first();
-        $establishment = Event::find($book->event_id)->with("establishments")->first()->establishments;
+        $establishment = Event::find($book->event_id)->with("establishment")->first()->establishment;
         
         $request->validate([
             'code' => 'required|string',

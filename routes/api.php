@@ -85,7 +85,7 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(OwnerController::class)->group(function () {
         Route::get('/pro/list', 'getOwnerList')->name('owner.list');
         Route::get('/admin/pro-to-validate', 'getOwnerToValidate')->name('admin.pro-to-validate');
-        Route::put('/pro/{owner_id}/validation/{status_code}', 'validateOwner')->name('pro.validation');
+        Route::patch('/pro/{owner_id}/validation/{status_code}', 'validateOwner')->name('pro.validation');
         Route::get('pro/{user_id}', 'show')->name('owner.show');
         Route::put('pro/{user_id}', 'update')->name('owner.update');
         Route::delete('pro/{user_id}', 'destroy')->name('owner.delete');
@@ -119,13 +119,13 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(EstablishmentController::class)->group(function () {
         Route::get('/establishments/list', 'getAllEstablishments')->name('admin.establishment.list');
         Route::get('/admin/establishment-to-validate', 'getEstablishmentToValidate')->name('admin.establishment-to-validate');
-        Route::put('/establishment/{establishment_id}/validation/{status_code}', 'validateEstablishment')->name('establishment.validation');
+        Route::patch('/establishment/{establishment_id}/validation/{status_code}', 'validateEstablishment')->name('establishment.validation');
         Route::get('/pro/{owner_id}/establishment', 'getEstablishmentListByOwnerId')->name('establishment.list');
         Route::get('/pro/{owner_id}/establishment/{establishment_id}', 'show')->name('establishment.show');
-        Route::put('/pro/{owner_id}/establishment/{establishment_id}', 'update')->name('establishment.update');
-        Route::post('/pro/{owner_id}/establishment/', 'store')->name('establishment.store');
-        Route::delete('/pro/{owner_id}/establishment/{establishment_id}', 'destroy')->name('establishment.delete');
-        Route::get('/pro/{owner_id}/establishment/{establishment_id}/restore', 'restore')->name('establishment.restore');
+        Route::put('/pro/establishment/{establishment_id}', 'update')->name('establishment.update');
+        Route::post('/pro/{owner_id}/establishment', 'store')->name('establishment.store');
+        Route::delete('/pro/establishment/{establishment_id}', 'destroy')->name('establishment.delete');
+        Route::get('/pro/establishment/{establishment_id}/restore', 'restore')->name('establishment.restore');
     });
 });
 
@@ -133,15 +133,15 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::controller(EventController::class)->group(function () {
         Route::get('/events/list', 'getEventList')->name('admin.event.list');
         Route::get('/admin/event-to-validate', 'getEventsToValidate')->name('admin.event-to-validate');
-        Route::put('/event/{event_id}/validation/{status_code}', 'validateEvent')->name('event.validation');
+        Route::patch('/event/{event_id}/validation/{status_code}', 'validateEvent')->name('event.validation');
         Route::get('/barathonien/{id}/city/events', 'getEventsByUserCity')->name('barathonien.eventsByUserCity');
         Route::get('/barathonien/{id}/booking/events', 'getEventsBookingByUser')->name('barathonien.eventsBookByUser');
         Route::get('/barathonien/event/{idevent}/user/{iduser}', 'getEventByUserChoice')->name('barathonien.eventByUserChoice');
         Route::get('/pro/events/{establishmentId}', 'getEventsByEstablishmentId')->name('pro.eventsByEstablishmentId');
         Route::post('/pro/events', 'store')->name('pro.postEvents');
-        Route::put('/pro/establishment/{establishmentId}/event/{eventId}', 'update')->name('pro.putEvent');
+        Route::put('/pro/event/{eventId}', 'update')->name('pro.putEvent');
         Route::delete('/pro/event/{eventId}', 'destroy')->name('pro.event.delete');
-        Route::get('/pro/establishment/{establishmentId}/event/{eventId}', 'show')->name('event.show');
+        Route::get('/pro/event/{eventId}', 'show')->name('event.show');
         Route::get('admin/event/{eventId}/history', 'showEventWithHistory')->name('event.show.history');
         
     });

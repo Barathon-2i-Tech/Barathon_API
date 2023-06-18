@@ -7,6 +7,7 @@ use App\Models\User;
 use App\Traits\HttpResponses;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rule;
@@ -20,11 +21,19 @@ class AdministratorController extends Controller
     private const ADMINISTRATOR_NOT_FOUND = 'Administrator not found';
     private const STRINGVALIDATION = 'required|string|max:255';
 
+    private const UNAUTHORIZED_ACTION = "This action is unauthorized.";
+
     /**
      * Store a newly created administrator in storage.
      */
     public function store(Request $request): JsonResponse
     {
+        //check if user is admin
+        $user = Auth::user();
+        if ($user->administrator_id === null) {
+            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
+        }
+
         $request->validate([
             'first_name' => self::STRINGVALIDATION,
             'last_name' => self::STRINGVALIDATION,
@@ -67,6 +76,12 @@ class AdministratorController extends Controller
      */
     public function show(int $userId): JsonResponse
     {
+        //check if user is admin
+        $user = Auth::user();
+        if ($user->administrator_id === null) {
+            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
+        }
+
         $administrator = DB::table('users')
             ->join('administrators', 'users.administrator_id', '=', 'administrators.administrator_id')
             ->select('users.*', 'administrators.*')
@@ -85,6 +100,12 @@ class AdministratorController extends Controller
      */
     public function update(Request $request, int $userId): JsonResponse
     {
+        //check if user is admin
+        $user = Auth::user();
+        if ($user->administrator_id === null) {
+            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
+        }
+
         $user = User::find($userId);
         if ($user === null) {
             return $this->error(null, self::USER_NOT_FOUND, 404);
@@ -136,6 +157,12 @@ class AdministratorController extends Controller
      */
     public function destroy(int $userId): JsonResponse
     {
+        //check if user is admin
+        $user = Auth::user();
+        if ($user->administrator_id === null) {
+            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
+        }
+
         $user = User::withTrashed()
             ->where('user_id', $userId)
             ->whereNotNull('administrator_id')
@@ -159,6 +186,12 @@ class AdministratorController extends Controller
      */
     public function restore(int $userId): JsonResponse
     {
+        //check if user is admin
+        $user = Auth::user();
+        if ($user->administrator_id === null) {
+            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
+        }
+
         $user = User::withTrashed()
             ->where('user_id', $userId)
             ->whereNotNull('administrator_id')
@@ -182,6 +215,12 @@ class AdministratorController extends Controller
      */
     public function getAdministratorList(): JsonResponse
     {
+        //check if user is admin
+        $user = Auth::user();
+        if ($user->administrator_id === null) {
+            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
+        }
+
         $administrators = DB::table('users')
             ->join('administrators', 'users.administrator_id', '=', 'administrators.administrator_id')
             ->select('users.*', 'administrators.*')

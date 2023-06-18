@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Siren;
+use App\Models\Siret;
 use App\Traits\HttpResponses;
 use GuzzleHttp\Client;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
@@ -14,6 +17,7 @@ class InseeController extends Controller
 
     private const BASE_URL = 'https://api.insee.fr/entreprises/sirene/V3/';
     private string $apiKey;
+    private const UNAUTHORIZED_ACTION = "This action is unauthorized.";
 
     public function __construct()
     {
@@ -23,15 +27,22 @@ class InseeController extends Controller
 
     /**
      * Check if the host (Insee API) is resolvable.
-     *
      */
     public function checkHost(): bool
     {
-       $host = 'api.insee.fr';
-        // $host = 'google';
+        //define host
+        $host = 'api.insee.fr';
         $isHostResolvable = false;
-        $ipAddress = gethostbyname($host);
 
+        //define cache storage time (1 hour)
+        $expiration= 3600;
+
+        //get IP address from host
+        $ipAddress = cache()->remember($host, $expiration, function () use ($host) {
+            return gethostbyname($host);
+        });
+
+        // if we get the IP address, the host is resolvable
         if ($ipAddress !== $host) {
             $isHostResolvable = true;
         }
@@ -45,8 +56,10 @@ class InseeController extends Controller
      */
     public function generateToken(): string
     {
+        // create a new Guzzle client
         $client = new Client();
 
+        // send a POST request to the INSEE API to get an access token
         $result = $client->post('https://api.insee.fr/token', [
             'headers' => [
                 'Content-Type' => 'application/x-www-form-urlencoded',
@@ -55,9 +68,12 @@ class InseeController extends Controller
             'form_params' => [
                 'grant_type' => 'client_credentials',
             ],
+            'verify' => false // to avoid SSL certificate verification, -k option in curl
         ]);
 
+        // get the access token from the response
         $result = json_decode($result->getBody());
+
         return $result->access_token;
     }
 
@@ -81,6 +97,12 @@ class InseeController extends Controller
      */
     public function getSiren(string $siren): JsonResponse
     {
+        //check if user is admin
+        $user = Auth::user();
+        if ($user->administrator_id === null) {
+            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
+        }
+
         // removing blank space
         $sirenToCheck = str_replace(' ', '', $siren);
 
@@ -101,9 +123,8 @@ class InseeController extends Controller
         // check if host is available
         $hostAvailable = $this->checkHost();
 
+        // if host is available
         if ($hostAvailable) {
-
-            //generate token
             $tokenGenerated = $this->generateToken();
 
             // sending http get request with the token generated
@@ -113,7 +134,7 @@ class InseeController extends Controller
                     'Accept' => "application/json",
                     'Authorization' => 'Bearer ' . $tokenGenerated,
                 ],
-                'http_errors' => false,
+                'http_errors' => false, // manage errors manually
             ]);
 
             // checking response return by INSEE API SIRENE
@@ -139,11 +160,21 @@ class InseeController extends Controller
      */
     public function getSiret(string $siret): JsonResponse
     {
+        //check if user is admin
+        $user = Auth::user();
+        if ($user->administrator_id === null) {
+            return $this->error(null, self::UNAUTHORIZED_ACTION, 401);
+        }
+
         // format siren
         $siretToCheck = str_replace(' ', '', $siret);
 
         $validator = Validator::make(['siret' => $siretToCheck], [
             'siret' => 'required|numeric|digits:14',
+        ], [
+            'siret.required' => 'Le numero SIRET est obligatoire',
+            'siret.numeric' => 'Le numero SIRET doit etre compose de chiffres',
+            'siret.digits' => 'Le numero SIRET doit etre compose de 14 chiffres',
         ]);
 
         if ($validator->fails()) {
@@ -185,8 +216,7 @@ class InseeController extends Controller
      */
     public function getSirenFromLocal(string $siren): JsonResponse
     {
-        $response = DB::table('siren')
-            ->join('siret', 'siren.siren', '=', 'siret.siren')
+        $response = Siren::join('siret', 'siren.siren', '=', 'siret.siren')
             ->select(
                 'siren.siren',
                 'siren.sexeUniteLegale',
@@ -216,7 +246,8 @@ class InseeController extends Controller
             ->where('siren.siren', $siren)
             ->where('siret.etablissementSiege', true)
             ->get();
-        if (empty($response)) {
+
+        if ($response->isEmpty()) {
             return $this->error(null, 'Siren not found in local database', 404);
         } else {
             return $this->success(['local' => true, 'response' => $response[0]], "Siren found from local database");
@@ -229,9 +260,7 @@ class InseeController extends Controller
      */
     public function getSiretFromLocal(string $siret)
     {
-
-        $response = DB::table('siret')
-            ->join('siren', 'siret.siren', '=', 'siren.siren')
+        $response = Siret::join('siren', 'siret.siren', '=', 'siren.siren')
             ->select(
                 'siret.siren',
                 'siret.siret',
@@ -257,7 +286,8 @@ class InseeController extends Controller
             )
             ->where('siret.siret', $siret)
             ->get();
-        if (empty($response)) {
+
+        if ($response->isEmpty()) {
             return $this->error(null, 'Siret not found in local database', 404);
         } else {
             return $this->success(['local' => true, 'response' => $response[0]], "siret found from local database");
