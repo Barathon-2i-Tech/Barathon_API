@@ -65,7 +65,8 @@ sail up -d
 
 <div align="center">
 
-![sail-up.png](./documentation/readme_image/sail-up.png)
+
+![reopenInContainer.png](./documentation/readme_image/sailUp.png)
 
 </div>
 
@@ -132,6 +133,6 @@ sail down
 
 <div align="center">
 
-![sail-down.png](./documentation/readme_image/sail-down.png)
+![sail-down.png](./documentation/readme_image/sailDown.png)
 
 </div>
