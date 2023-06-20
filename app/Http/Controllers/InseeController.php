@@ -19,10 +19,16 @@ class InseeController extends Controller
     private string $apiKey;
     private const UNAUTHORIZED_ACTION = "This action is unauthorized.";
 
+    private string $inseeConsumerKey;
+    private string $inseeConsumerSecret;
+
     public function __construct()
     {
         // initialise the API key for the INSEE API SIRENE
-        $this->apiKey = base64_encode(env('INSEE_CONSUMER_KEY') . ':' . env('INSEE_CONSUMER_SECRET'));
+        $this->inseeConsumerKey = config('services.insee.CONSUMER_KEY');
+        $this->inseeConsumerSecret = config('services.insee.CONSUMER_SECRET');
+
+        $this->apiKey = base64_encode($this->inseeConsumerKey . ':' . $this->inseeConsumerSecret);
     }
 
     /**

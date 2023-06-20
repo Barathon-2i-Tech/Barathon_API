@@ -10,7 +10,7 @@
 }
 .container{
   position: absolute;
-  right: 30px;
+  right: 300px;
 }
 .message{
   font-family: 'Poppins', sans-serif;
@@ -43,7 +43,7 @@
   letter-spacing: 3px;
   text-shadow: 0 0 5px #6EECC1;
   animation: flux 2s linear infinite;
-  
+
 }
 .trash{
   width: 170px;
@@ -133,7 +133,7 @@
   }
   5% {
     transform: scaleX(0.2);
-  } 
+  }
   70%{
     transform: scaleX(0.2);
   }
@@ -186,7 +186,7 @@
   }
 }
 
-  
+
     </style>
 </head>
 <body>
@@ -194,7 +194,7 @@
   </div>
   <div class="message2">You tried to access a page you did not have prior authorization for.</div>
   <div class="container">
-    <div class="neon">403</div>
+    <div class="neon">Barathon</div>
     <div class="door-frame">
       <div class="door">
         <div class="rectangle">
@@ -207,9 +207,9 @@
           <div class="eye eye2">
           </div>
           <div class="leaf">
-          </div> 
+          </div>
         </div>
-      </div>  
+      </div>
     </div>
   </div>
 </body>

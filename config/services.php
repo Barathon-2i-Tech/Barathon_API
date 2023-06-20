@@ -31,4 +31,8 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'insee' => [
+        'CONSUMER_KEY' => env('INSEE_CONSUMER_KEY'),
+        'CONSUMER_SECRET' => env('INSEE_CONSUMER_SECRET'),
+    ]
 ];
