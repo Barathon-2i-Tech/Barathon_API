@@ -170,7 +170,7 @@ class EventController extends Controller
     public function update(Request $request, int $eventId): JsonResponse
     {
         $user = $request->user();
-        $establishment = Establishment::find($request->input('establishment_id'));
+        $establishment = Establishment::findOrFail($request->input('establishment_id'));
 
         $event = Event::findOrFail($eventId);
 
