@@ -43,6 +43,14 @@ Route::post('mail/change/password', [MailController::class, 'changePassword']);
 
 
 Route::middleware('auth:sanctum')->group(function () {
+
+
+    //Get the events with location
+    Route::get(
+        'barathonien/events',
+        [EventController::class, 'getEventsLocation']
+    )->name('barathonien.eventslocation');
+
     Route::controller(MailController::class)->group(function () {
         Route::get('send', 'hello');
         Route::get('pro/mail/welcome/{id}', 'welcomePro');
@@ -135,6 +143,7 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::delete('/pro/event/{eventId}', 'destroy')->name('pro.event.delete');
         Route::get('/pro/event/{eventId}', 'show')->name('event.show');
         Route::get('admin/event/{eventId}/history', 'showEventWithHistory')->name('event.show.history');
+        
     });
 });
 

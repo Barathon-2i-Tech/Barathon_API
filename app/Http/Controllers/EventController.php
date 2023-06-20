@@ -12,6 +12,9 @@ use App\Traits\HttpResponses;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -22,6 +25,7 @@ class EventController extends Controller
     use HttpResponses;
 
     private const NOT_BARATHONIEN = 'the User is not a barathonien';
+    private const API_GOUV = "https://api-adresse.data.gouv.fr/search/";
     private const EVENT_NOT_FOUND = "Event not found";
 
     private const UNAUTHORIZED_ACTION = "This action is unauthorized.";
@@ -185,7 +189,7 @@ class EventController extends Controller
             'establishment_id' => 'required|integer',
             'user_id' => 'required|integer',
             'event_update_id' => 'nullable|integer',
-        ],[
+        ], [
             'event_name.required' => 'The event name is required',
             'event_name.string' => 'The event name must be a string',
             'event_name.max' => 'The event name must not exceed 255 characters',
@@ -328,6 +332,62 @@ class EventController extends Controller
         // Return all events
         return $this->success([
             'event' => $allEvents,
+        ]);
+    }
+
+    /**
+     * Get the events with location
+     */
+    public function getEventsLocation(): JsonResponse
+    {
+
+        $dateNow = date('Y-m-j H:i:s');
+
+        $establishments = Establishment::with('address')->get();
+
+        //For each establishment take all events and add location with API GOUV for location
+        for ($i=0; $i < count($establishments); $i++) {
+            $events = Event::where(
+                    [['start_event', '>=', $dateNow], ['establishment_id', '=', $establishments[$i]->establishment_id]]
+                )
+                ->get();
+            
+            $client = new Client();
+            $res = $client->get(self::API_GOUV . "?q=" . $establishments[$i]->address->address . ", " . $establishments[$i]->address->postal_code . ", " . $establishments[$i]->address->city . "&type=housenumber&autocomplete=1");
+
+            if ($res->getStatusCode() == 200) {
+                $establishments[$i]->latitude = json_decode($res->getBody())->features[0]->geometry->coordinates[1];
+                $establishments[$i]->longitude = json_decode($res->getBody())->features[0]->geometry->coordinates[0];
+            }
+
+            $establishments[$i]->events = $events;
+            
+        }
+
+        $dateOneWeek = strtotime($dateNow);
+        $dateOneWeek = strtotime("+7 day", $dateOneWeek);
+        $dateOneWeek = date('Y-m-j H:i:s', $dateOneWeek);
+
+        $allEvents = Event::where([['start_event', '>=', $dateNow], ['start_event', '<=', $dateOneWeek]])->get();
+
+        //For each events add location with API GOUV for location
+        for ($i=0; $i < count($allEvents); $i++) {
+            $establishment = Establishment::with('address')->find($allEvents[$i]->establishment_id)->first();
+            $client = new Client();
+            $res = $client->get(self::API_GOUV . "?q=" . $establishment->address->address . ", " . $establishment->address->postal_code . ", " . $establishment->address->city . "&type=housenumber&autocomplete=1");
+
+            if ($res->getStatusCode() == 200) {
+
+                $allEvents[$i]->latitude = json_decode($res->getBody())->features[0]->geometry->coordinates[1];
+                $allEvents[$i]->longitude = json_decode($res->getBody())->features[0]->geometry->coordinates[0];
+            }
+
+        }
+
+        // Return all establishments
+        return $this->success([
+            'establishments' => $establishments,
+            'events' => $allEvents
         ]);
     }
 
